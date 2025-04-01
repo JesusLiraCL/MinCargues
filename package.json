@@ -18,6 +18,7 @@
   "homepage": "https://github.com/JesusLiraCL/MinCargues#readme",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.1",
     "express-session": "^1.18.1",

@@ -9,6 +9,15 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
+pool.on('connect', () => {
+    console.log('Conexión establecida con la base de datos');
+});
+
+pool.on('error', (err) => {
+    console.error('Error inesperado en el pool de conexiones:', err);
+    process.exit(-1);
+});
+
 module.exports = {
     query: (text, params) => pool.query(text, params),
 };

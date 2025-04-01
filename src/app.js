@@ -1,18 +1,18 @@
-//require('dotenv').config();
+require('dotenv').config();
 const express = require("express");
 const path = require("path");
 const { engine } = require("express-handlebars");
 
 const app = express();
 
-// Routes
+// Routes required
 const loginRouter = require("./routes/loginRouter");
-
+const usersRouter = require("./routes/usersRouter");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Configuración Handlebars
+// Config Handlebars
 app.set("view engine", "hbs");
 
 app.engine('.hbs', engine({
@@ -22,10 +22,10 @@ app.engine('.hbs', engine({
 }));
 app.set('views', path.join(__dirname, 'views'));
 
-// Configuración Routes
-
-app.use("/", loginRouter);
-
-//rutas de prueba
+// Call Routes
+app.get("/", (req, res) => res.redirect("/login"));
+app.use("/login", loginRouter);
+// Test BD connection with users
+app.use("/testbd", usersRouter);
 
 module.exports = app;
