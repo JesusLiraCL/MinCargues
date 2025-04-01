@@ -5,6 +5,10 @@ const { engine } = require("express-handlebars");
 
 const app = express();
 
+// Routes
+const loginRouter = require("./routes/loginRouter");
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -18,17 +22,10 @@ app.engine('.hbs', engine({
 }));
 app.set('views', path.join(__dirname, 'views'));
 
+// Configuración Routes
+
+app.use("/", loginRouter);
 
 //rutas de prueba
-app.get('/', (req, res) => {
-    res.render('home', { title: 'Sistema de Información' });
-});
-
-app.get('/login', (req, res) => {
-    res.render('auth/login', {
-        layout: 'auth',
-        message: 'Esto es un login'
-    });
-});
 
 module.exports = app;
