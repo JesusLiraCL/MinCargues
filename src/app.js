@@ -25,6 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Call Routes
 app.get("/", (req, res) => res.redirect("/login"));
 app.use("/login", loginRouter);
+
 // Test BD connection with users
 app.use("/testbd", usersRouter);
 

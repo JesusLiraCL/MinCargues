@@ -4,7 +4,7 @@ const loginRouter = Router();
 
 loginRouter.get("/", (req, res) => {
     res.render('pages/login', {
-        layout: 'auth',
+        layout: 'main',
         message: 'Esto es un login'
     });
 });
