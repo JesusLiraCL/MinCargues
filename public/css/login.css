@@ -37,20 +37,20 @@ body {
 
 .login-title {
     color: #555;
-    font-size: 20px;
+    font-size: 22px;
     margin-bottom: 25px;
     font-weight: bold;
 }
 
 .login-form {
-    width: 50%;
+    width: 80%;
+    max-width: 350px;
 }
 
 .form-group {
     margin-bottom: 20px;
     text-align: left;
     width: 100%;
-    max-width: 1050px;
 }
 
 .form-group label {
@@ -63,11 +63,11 @@ body {
 .form-group input {
     width: 100%;
     padding: 12px;
-    max-width: 650px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 17px;
+    color: #353535;
 }
 
 .form-divider {
