@@ -14,19 +14,17 @@ passport.use(new LocalStrategy(
             const user = await User.findByUsername(username);
 
             if (!user) {
-                return done(null, false, { message: 'Usuario no encontrado' });
+                return done(null, false, { message: 'Usuario o contraseña incorrectos' });
             }
 
             // Comparar contraseñas
             const isValidPassword = await bcrypt.compare(password, user.contrasena);
 
             if (!isValidPassword) {
-                console.log("contraseña no valida");
-                return done(null, false, { message: 'Contraseña incorrecta' });
+                return done(null, false, { message: 'Usuario o contraseña incorrectos' });
             }
 
             // Si todo es correcto, retornar el usuario
-            console.log("se encontro el usuario: mandandolo");
             return done(null, user);
         } catch (error) {
             return done(error);

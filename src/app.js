@@ -11,14 +11,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
-app.use(flash());
 
 // Config Handlebars
 app.set("view engine", "hbs");
 
 app.engine('.hbs', engine({
     extname: '.hbs',
-    defaultLayout: 'main',
+    defaultLayout: 'login',
     layoutsDir: path.join(__dirname, 'views/layouts')
 }));
 app.set('views', path.join(__dirname, 'views'));
@@ -37,6 +36,7 @@ app.use(session({
     }
 }));
 
+app.use(flash());
 require("./config/passport.js");
 const passport = require('passport');
 

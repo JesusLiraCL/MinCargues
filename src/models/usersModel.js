@@ -10,7 +10,6 @@ module.exports = {
         const query = 'SELECT * FROM usuarios WHERE nombre = $1';  // Cambiado a nombre
         const { rows } = await pool.query(query, [nombre]);
 
-        console.log('Usuario encontrado:', rows[0]); // Debug
         return rows[0] || null;
     },
 

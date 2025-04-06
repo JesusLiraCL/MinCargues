@@ -3,7 +3,8 @@ const passport = require('passport');
 module.exports = {
     showLogin: (req, res) => {
         res.render('pages/login', {
-            message: req.flash('error')
+            message: req.flash('error')[0],
+            user: req.user || null
         });
     },
 
@@ -12,19 +13,18 @@ module.exports = {
             if (err) return next(err);
 
             if (!user) {
-                console.log("hubo un error");
-                req.flash('error', info.message);
+                req.flash('error', info.message || "Credenciales incorrectas");
                 return res.redirect('/');
             }
             req.login(user, (err) => {
                 if (err) return next(err);
 
-                if (user.codigo_rol === 'ROL001') {
-                    console.log("entro al if");
-                    return res.redirect('/admin/inicio');
-                }
+                if (user.codigo_rol === 'ROL001') return res.redirect('/admin/inicio');
                 if (user.codigo_rol === 'ROL002') return res.redirect('/conductor/inicio');
-                return res.redirect('/test');
+
+                req.flash('error', 'No tienes permisos para acceder');
+                return res.redirect('/');
+
             });
         })(req, res, next);
     },

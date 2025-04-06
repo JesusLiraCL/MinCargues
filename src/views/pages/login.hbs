@@ -18,6 +18,10 @@
                 <input type="password" id="password" name="password" required>
             </div>
 
+            {{#if message}}
+            <div class="error-message">{{message}}</div>
+            {{/if}}
+
             <hr class="form-divider">
 
             <button type="submit" class="login-button">INGRESAR</button>
