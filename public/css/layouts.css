@@ -2,6 +2,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    font: 18px / 1.4 'Helvetica', 'Arial', sans-serif;
 }
 
 .main-container {
