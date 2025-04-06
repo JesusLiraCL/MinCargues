@@ -4,12 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINMETAL - {{title}}</title>
-    <link rel="stylesheet" href="/css/login.css">
+    <title>{{title}}</title>
+    <!-- CDN Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/layouts.css">
+    <link rel="stylesheet" href="/css/components/header.css">
+    <link rel="stylesheet" href="/css/components/footer.css">
+    <link rel="stylesheet" href="/css/components/nav-bar.css">
 </head>
 
 <body>
-    {{{body}}}
+    {{> header}}
+    <div class="main-container">
+        {{> nav-bar}}
+        <main class="content">
+            {{{body}}}
+        </main>
+    </div>
+    {{> footer}}
+
+    <script>
+        // Año dinámico para el footer
+        document.querySelector('.footer__content p').innerHTML =
+            `&copy; ${new Date().getFullYear()} MinMetal Cargues. Todos los derechos reservados.`;
+    </script>
 </body>
 
 </html>

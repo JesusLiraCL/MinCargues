@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require("express");
 const path = require("path");
-const { engine } = require("express-handlebars");
+const { create } = require('express-handlebars');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const flash = require('express-flash');
@@ -13,13 +13,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 
 // Config Handlebars
-app.set("view engine", "hbs");
-
-app.engine('.hbs', engine({
+const hbs = create({
     extname: '.hbs',
     defaultLayout: 'login',
-    layoutsDir: path.join(__dirname, 'views/layouts')
-}));
+    layoutsDir: path.join(__dirname, 'views/layouts'),
+    partialsDir: path.join(__dirname, 'views/partials'),
+    helpers: {
+        eq: function (a, b) {
+            return a === b;
+        }
+    }
+});
+
+app.engine('.hbs', hbs.engine);
+app.set("view engine", "hbs");
 app.set('views', path.join(__dirname, 'views'));
 
 // Session Set up
@@ -49,7 +56,6 @@ const authRouter = require("./routes/authRouter");
 const usersRouter = require("./routes/usersRouter");
 const adminRouter = require('./routes/adminRouter');
 const conductorRouter = require('./routes/conductorRouter');
-
 
 const saltRounds = 10;
 

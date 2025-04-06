@@ -1,0 +1,130 @@
+/* public/css/components/header.css */
+body {
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    background-color: #efefef;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.header__company {
+    display: flex;
+    flex-direction: column;
+}
+
+.header__company-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+}
+
+.header__company-tagline {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+.header__user {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.header__user-name {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.header__user-menu {
+    position: relative;
+    color: #34495e;
+}
+
+.header__profile-img-container {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header__profile-img-container:hover {
+    border-color: #3498db;
+}
+
+.header__profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.header__dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    min-width: 180px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    border-radius: 4px;
+    padding: 0.5rem 0;
+}
+
+.header__dropdown-content a {
+    color: #34495e;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    display: block;
+    transition: background 0.2s;
+}
+
+.header__dropdown-content a:hover {
+    background-color: #f8f9fa;
+}
+
+.header__user-menu:hover .header__dropdown-content {
+    display: block;
+}
+
+.header__logo-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    height: 100%;
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
+}
+
+.header__logo-img {
+    height: 100%;
+    width: auto;
+}
+
+.header__logo-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+}
+
+.header__logo-img {
+    height: 70px;
+    width: auto;
+}

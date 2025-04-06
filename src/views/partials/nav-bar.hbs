@@ -1,0 +1,76 @@
+<nav class="sidebar">
+    <ul class="sidebar-menu">
+        {{#if (eq user.codigo_rol "ROL001")}}
+        <li class="sidebar-item">
+            <a href="/admin/calendario" class="sidebar-link">
+                <i class="fas fa-calendar-alt sidebar-icon"></i>
+                <span class="sidebar-text">Calendario</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/admin/agendar" class="sidebar-link">
+                <i class="fas fa-plus-circle sidebar-icon"></i>
+                <span class="sidebar-text">Agendar</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/admin/registro" class="sidebar-link">
+                <i class="fas fa-clipboard-list sidebar-icon"></i>
+                <span class="sidebar-text">Registro</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/admin/reporte" class="sidebar-link">
+                <i class="fas fa-chart-bar sidebar-icon"></i>
+                <span class="sidebar-text">Reporte</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/admin/camiones" class="sidebar-link">
+                <i class="fas fa-truck sidebar-icon"></i>
+                <span class="sidebar-text">Camiones</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/admin/conductores" class="sidebar-link">
+                <i class="fas fa-users sidebar-icon"></i>
+                <span class="sidebar-text">Conductores</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/admin/incidentes" class="sidebar-link">
+                <i class="fas fa-exclamation-triangle sidebar-icon"></i>
+                <span class="sidebar-text">Incidentes</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/admin/usuarios" class="sidebar-link">
+                <i class="fas fa-user-cog sidebar-icon"></i>
+                <span class="sidebar-text">Usuarios</span>
+            </a>
+        </li>
+        {{/if}}
+
+        {{#if (eq user.codigo_rol "ROL002")}}
+        {{!-- Opciones para CONDUCTOR --}}
+        <li class="sidebar-item">
+            <a href="/conductor/calendario" class="sidebar-link">
+                <i class="fas fa-calendar-alt sidebar-icon"></i>
+                <span class="sidebar-text">Calendario</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/conductor/historial" class="sidebar-link">
+                <i class="fas fa-history sidebar-icon"></i>
+                <span class="sidebar-text">Historial</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a href="/conductor/incidentes" class="sidebar-link">
+                <i class="fas fa-exclamation-triangle sidebar-icon"></i>
+                <span class="sidebar-text">Incidentes</span>
+            </a>
+        </li>
+        {{/if}}
+    </ul>
+</nav>
