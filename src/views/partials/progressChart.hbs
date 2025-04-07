@@ -1,10 +1,14 @@
-<div class="progress-chart-container">
-    <h3>PROGRAMACIÓN</h3>
-    <p>Cargues del Día</p>
+<div class="chart-layout">
 
-    <div class="chart" data-percent="50">
-        <span class="percent">86</span>
+    <div class="chart-info">
+        <h5 class="chart-title">{{title}}</h5>
+        <p class="chart-subtitle">{{subtitle}}</p>
     </div>
 
-    <p class="chart-label">Proceso Actual</p>
+    <div class="chart-panel">
+        <div class="chart mx-auto" data-percent="{{percent}}">
+            <span class="percent">{{percent}}%</span>
+        </div>
+    </div>
+
 </div>

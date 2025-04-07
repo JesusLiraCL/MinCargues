@@ -20,7 +20,7 @@ function initCharts() {
             lineCap: 'round',
             lineWidth: 25,
             trackWidth: 15,
-            size: 150,
+            size: 120,
             animate: {
                 duration: 1000,
                 enabled: true

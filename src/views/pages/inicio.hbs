@@ -1,6 +1,23 @@
 <div class="container mt-4">
-    <h2>Bienvenido al Panel de Administración</h2>
-    {{> progressChart}}
+    <h2>Bienvenido al Panel Administrativo</h2>
+
+    <div class="charts-container">
+
+        {{> progressChart
+        title="PROGRAMACIÓN"
+        subtitle="Cargues del Día"
+        percent="65"
+        label="Proceso Actual"
+        }}
+
+        {{> progressChart
+        title="DISPONIBILIDAD"
+        subtitle="Camiones en Uso"
+        percent="45"
+        label="Proceso Actual"
+        }}
+
+    </div>
 
     <div class="card">
         <div class="card-header">
