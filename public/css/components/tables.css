@@ -1,0 +1,89 @@
+/* public/css/styles.css */
+.table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-width: 400px;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+}
+
+.styled-table thead tr {
+    background-color: #f48634;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+    position: sticky;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.scrollable-tbody {
+    display: block;
+    max-height: calc(4 * 46px);
+    overflow-y: auto;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: none;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+    .styled-table {
+        font-size: 0.8em;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 8px 10px;
+    }
+}
+
+/* Añade esto al final de tu CSS actual */
+.styled-table {
+    display: flex;
+    flex-direction: column;
+}
+
+.styled-table thead,
+.styled-table tbody {
+    width: 100%;
+}
+
+.styled-table tbody {
+    display: block;
+    max-height: calc(4 * 46px);
+    /* 4 filas */
+    overflow-y: auto;
+}
+
+.styled-table tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    /* Mantiene el ancho de columnas consistente */
+}
