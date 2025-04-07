@@ -2,6 +2,12 @@
     <ul class="sidebar-menu">
         {{#if (eq user.codigo_rol "ROL001")}}
         <li class="sidebar-item">
+            <a href="/admin/inicio" class="sidebar-link">
+                <i class="fa-solid fa-house sidebar-icon"></i>
+                <span class="sidebar-text">Inicio</span>
+            </a>
+        </li>
+        <li class="sidebar-item">
             <a href="/admin/calendario" class="sidebar-link">
                 <i class="fas fa-calendar-alt sidebar-icon"></i>
                 <span class="sidebar-text">Calendario</span>

@@ -15,7 +15,7 @@ function initCharts() {
     chartElements.forEach(function (chartElement) {
         new EasyPieChart(chartElement, {
             barColor: '#f48634',
-            trackColor: '#848688',
+            trackColor: '#2c3e50',
             scaleColor: false,
             lineCap: 'round',
             lineWidth: 25,
