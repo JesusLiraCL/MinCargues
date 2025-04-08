@@ -63,7 +63,6 @@
     }
 }
 
-/* Añade esto al final de tu CSS actual */
 .styled-table {
     display: flex;
     flex-direction: column;
@@ -72,13 +71,6 @@
 .styled-table thead,
 .styled-table tbody {
     width: 100%;
-}
-
-.styled-table tbody {
-    display: block;
-    max-height: calc(4 * 46px);
-    /* 4 filas */
-    overflow-y: auto;
 }
 
 .styled-table tr {
