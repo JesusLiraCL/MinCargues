@@ -33,4 +33,17 @@ adminRouter.get('/inicio', isAdmin, (req, res) => {
     });
 });
 
+adminRouter.get("/calendario-admin", isAdmin, (req, res) => {
+    res.render("pages/admin/calendarioAdmin", {
+        layout: "main",
+        tittle: 'Calendario'
+    });
+});
+
+adminRouter.get("/usuarios", isAdmin, (req, res) => {
+    res.render("pages/admin/usuarios", {
+        layout: "main",
+    })
+});
+
 module.exports = adminRouter;

@@ -59,8 +59,6 @@ const conductorRouter = require('./routes/conductorRouter');
 
 const saltRounds = 10;
 
-// Ruta GET para mostrar formulario básico
-
 const { Pool } = require('pg'); // Añade esto al inicio con los demás requires
 
 // Configuración de la conexión a PostgreSQL
@@ -126,7 +124,6 @@ app.post('/quick-create-user', async (req, res) => {
         `);
     }
 });
-
 
 // Call Routes
 app.use("/", authRouter);

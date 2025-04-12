@@ -1,0 +1,184 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.contenedor-calendario {
+    display: flex;
+    width: 100%;
+    max-width: 1000px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-wrap: wrap;
+}
+
+.calendario-container {
+    flex: 60%;
+    padding: 15px;
+    background: #efefef;
+}
+
+.actividades-container {
+    flex: 40%;
+    padding: 15px;
+    background: white;
+    border-left: 1px solid #ddd;
+}
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendario-header button {
+    background: #f48634;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.calendario-header button:hover {
+    background: #e07a2e;
+}
+
+.calendario-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.dia-semana {
+    text-align: center;
+    font-weight: bold;
+    padding: 8px 0;
+    background: #cecece;
+    color: #555;
+    font-family: 'haveltica';
+}
+
+.dia {
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    background: #e5e5e5;
+    transition: all 0.2s;
+    font-family: 'haveltica';
+}
+
+.dia:hover {
+    background: #b5b5b5;
+}
+
+.dia.otro-mes {
+    color: #aaa;
+    background: #f9f9f9;
+}
+
+.dia.seleccionado {
+    background: #f48634;
+    color: white;
+}
+
+.dia.hoy {
+    border: 3px solid #c95700;
+}
+
+/* Niveles de actividad */
+.dia.nivel-1 {
+    background: #fdd5b5;
+}
+
+.dia.nivel-2 {
+    background: #fcb07d;
+}
+
+.dia.nivel-3 {
+    background: #fb8c45;
+}
+
+.dia.nivel-4 {
+    background: #f48634;
+}
+
+.dia.nivel-5 {
+    background: #c55a1a;
+}
+
+.dia.seleccionado.nivel-1 {
+    background: #f48634;
+    opacity: 0.8;
+}
+
+.dia.seleccionado.nivel-5 {
+    background: #b8591b;
+}
+
+.lista-actividades {
+    margin-top: 15px;
+}
+
+.actividad {
+    padding: 8px;
+    margin-bottom: 5px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .contenedor {
+        flex-direction: column;
+    }
+
+    .calendario-container,
+    .actividades-container {
+        flex: 100%;
+    }
+
+    .actividades-container {
+        border-left: none;
+        border-top: 1px solid #ddd;
+    }
+}
+
+.tabla-actividades {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.tabla-actividades thead {
+    display: none;
+}
+
+.tabla-actividades th {
+    display: none;
+}
+
+.tabla-actividades td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    border-left: none;
+    border-right: none;
+}
+
+.tabla-actividades tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tabla-actividades tr:hover {
+    background-color: #f1f1f1;
+}
