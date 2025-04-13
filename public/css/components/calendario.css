@@ -9,7 +9,7 @@
     display: flex;
     width: 100%;
     max-width: 1000px;
-    margin: 20px auto;
+    margin: 20px 0;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
@@ -84,7 +84,7 @@
 
 .dia.otro-mes {
     color: #aaa;
-    background: #f9f9f9;
+    background: #efefef;
 }
 
 .dia.seleccionado {

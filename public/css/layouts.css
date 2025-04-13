@@ -3,7 +3,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
-    font: 18px / 1.4 'Helvetica', 'Arial', sans-serif;
+    font: 17px / 1.4 'Helvetica', 'Arial', sans-serif;
 }
 
 .main-container {
@@ -13,10 +13,11 @@ body {
 
 .content {
     flex: 1;
-    padding: 20px;
+    padding: 40px;
 }
 
 h2,
+h3,
 h4 {
     color: #2c3e50;
 }

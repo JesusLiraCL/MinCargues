@@ -1,4 +1,5 @@
 <div class="container mt-4">
+
     <h2>Panel Administrativo</h2>
 
     <div class="charts-container">
@@ -19,10 +20,14 @@
 
     </div>
 
-    <h4>Cargues en Curso</h4>
-    {{> simpleTable headers=currentData.headers rows=currentData.rows}}
+    <div class="simple-table">
+        <h4>Cargues en Curso</h4>
+        {{> simpleTable headers=currentData.headers rows=currentData.rows}}
+    </div>
 
-    <h4>Cargues Proximos</h4>
-    {{> simpleTable headers=nextData.headers rows=nextData.rows}}
+    <div class="simple-table">
+        <h4>Cargues Proximos</h4>
+        {{> simpleTable headers=nextData.headers rows=nextData.rows}}
+    </div>
 
 </div>

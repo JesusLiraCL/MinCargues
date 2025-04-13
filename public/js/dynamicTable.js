@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const dynamicTable = document.getElementById('dynamic-cargue-table');
+    const dynamicTable = document.querySelector('.dynamic-cargue-table');
     const dynamicHeaders = dynamicTable.querySelectorAll('th[data-sort]');
     const dynamicSearchInput = document.getElementById('dynamic-table-search');
     let currentSort = { column: 'inicio-prog', direction: 'asc' };
@@ -10,11 +10,19 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchData() {
         // En una implementación real, esto vendría de una llamada al backend
         originalData = [
-            { id: 1, placa: 'ABC123', tipo: 'Volqueta', material: 'Arena', cantidad: 10, 'inicio-prog': '05-01 08:00 pm', 'fin-prog': '05-01 08:00 pm', estado: true, observacion: false },
-            { id: 2, placa: 'DEF456', tipo: 'Tractomula', material: 'Grava', cantidad: 15, 'inicio-prog': '05-01 9:00 am', 'fin-prog': '05-01 08:00 pm', estado: false, observacion: true },
-            { id: 3, placa: 'GHI789', tipo: 'Volqueta', material: 'Piedra', cantidad: 8, 'inicio-prog': '2023-05-02T07:00', 'fin-prog': '2023-05-02T09:00', estado: true, observacion: false },
-            { id: 4, placa: 'JKL012', tipo: 'Camión', material: 'Arena', cantidad: 12, 'inicio-prog': '2023-05-02T10:00', 'fin-prog': '2023-05-02T13:00', estado: true, observacion: true },
-            { id: 5, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '2023-05-03T08:00', 'fin-prog': '2023-05-03T11:00', estado: false, observacion: false }
+            { id: 1, placa: 'ABC123', tipo: 'Volqueta', material: 'Arena', cantidad: 10, 'inicio-prog': '05-01 ', 'fin-prog': 'asdf', estado: true, observacion: false },
+            { id: 2, placa: 'DEF456', tipo: 'Tractomula', material: 'Grava', cantidad: 15, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: true },
+            { id: 3, placa: 'GHI789', tipo: 'Volqueta', material: 'Piedra', cantidad: 8, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: true, observacion: false },
+            { id: 4, placa: 'JKL012', tipo: 'Camión', material: 'Arena', cantidad: 12, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: true, observacion: true },
+            { id: 5, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+            { id: 6, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+            { id: 7, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+            { id: 8, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+            { id: 9, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+            { id: 10, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+            { id: 11, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+            { id: 12, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
+
         ];
         filteredData = [...originalData];
         sortData();
