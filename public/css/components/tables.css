@@ -79,3 +79,62 @@
     table-layout: fixed;
     /* Mantiene el ancho de columnas consistente */
 }
+
+.dynamic-table-container {
+    margin: 20px;
+    overflow-x: auto;
+}
+
+.dynamic-table-search-container {
+    margin-bottom: 15px;
+}
+
+.dynamic-table-search-container input {
+    padding: 8px;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.dynamic-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.dynamic-table th,
+.dynamic-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.dynamic-table th {
+    background-color: #f5f5f5;
+    cursor: pointer;
+    position: relative;
+}
+
+.dynamic-table th:hover {
+    background-color: #e9e9e9;
+}
+
+.dynamic-table-sort-icon {
+    margin-left: 5px;
+}
+
+.dynamic-table-estado-true {
+    color: green;
+}
+
+.dynamic-table-estado-false {
+    color: red;
+}
+
+.dynamic-table-observacion-true {
+    color: green;
+}
+
+.dynamic-table-observacion-false {
+    color: orange;
+}
