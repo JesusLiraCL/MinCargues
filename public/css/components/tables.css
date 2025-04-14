@@ -102,20 +102,44 @@ table {
     padding: 12px;
     background-color: #f8f9fa;
     height: 60px;
+    display: flex;
+    justify-content: space-between;
+    /* Separa los grupos a izquierda y derecha */
+    align-items: center;
 }
 
-.dynamic-table-search-container input {
+.search-group {
+    display: flex;
+    gap: 8px;
+}
+
+#dynamic-table-search {
     padding: 12px 15px;
-    /* Aumenta el padding vertical */
     width: 300px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
-    /* Tamaño de fuente más grande */
     height: 40px;
-    /* Altura explícita */
     box-sizing: border-box;
-    /* Asegura que el padding no afecte la altura total */
+}
+
+.search-button {
+    padding: 0 15px;
+    background-color: #f48634;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+}
+
+.search-button:hover {
+    background-color: #c46d2a;
 }
 
 .dynamic-table {
@@ -181,23 +205,28 @@ table {
 }
 
 .dynamic-table-sort-icon[data-sort="asc"] {
-    content: "\f062"; /* Flecha hacia arriba */
+    content: "\f062";
+    /* Flecha hacia arriba */
     opacity: 1;
 }
 
 .dynamic-table-sort-icon[data-sort="desc"] {
-    content: "\f063"; /* Flecha hacia abajo */
+    content: "\f063";
+    /* Flecha hacia abajo */
     opacity: 1;
 }
 
 .dynamic-cargue-table tbody tr:nth-child(odd) td {
-    background-color: #ffffff; /* Blanco puro */
+    background-color: #ffffff;
+    /* Blanco puro */
 }
 
 .dynamic-cargue-table tbody tr:nth-child(even) td {
-    background-color: #e8e8e8; /* Gris más claro */
+    background-color: #e8e8e8;
+    /* Gris más claro */
 }
 
 .dynamic-cargue-table tbody tr:hover td {
-    background-color: #d4d4d4; /* Gris para hover */
+    background-color: #d4d4d4;
+    /* Gris para hover */
 }

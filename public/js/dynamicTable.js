@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchData() {
         // En una implementación real, esto vendría de una llamada al backend
         originalData = [
-            { id: 1, placa: 'ABC123', tipo: 'Volqueta', material: 'Arena', cantidad: 10, 'inicio-prog': '05-01 ', 'fin-prog': 'asdf', estado: true, observacion: false },
+            { id: 1, placa: 'ABC123', tipo: 'Volqueta', material: 'Arena', cantidad: 10, 'inicio-prog': '05-01 asdfasdfasdfasdfasdfasdfasdfasdf', 'fin-prog': 'asdf', estado: true, observacion: false },
             { id: 2, placa: 'DEF456', tipo: 'Tractomula', material: 'Grava', cantidad: 15, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: true },
             { id: 3, placa: 'GHI789', tipo: 'Volqueta', material: 'Piedra', cantidad: 8, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: true, observacion: false },
             { id: 4, placa: 'JKL012', tipo: 'Camión', material: 'Arena', cantidad: 12, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: true, observacion: true },
@@ -102,9 +102,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Event listener para búsqueda
-    dynamicSearchInput.addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase();
+    function performSearch() {
+        const searchTerm = dynamicSearchInput.value.toLowerCase();
 
         if (searchTerm === '') {
             filteredData = [...originalData];
@@ -112,11 +111,21 @@ document.addEventListener('DOMContentLoaded', function () {
             filteredData = originalData.filter(row =>
                 Object.values(row).some(value =>
                     String(value).toLowerCase().includes(searchTerm)
-                ));
+                )
+            );
         }
 
         sortData();
         renderTable();
+    }
+    const dynamicSearchButton = document.getElementById('dynamic-table-search-button');
+    dynamicSearchButton.addEventListener('click', performSearch);
+
+    // Búsqueda al presionar Enter en el input
+    dynamicSearchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
     });
 
     // Inicializar
