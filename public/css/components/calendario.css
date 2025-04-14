@@ -126,59 +126,63 @@
     background: #b8591b;
 }
 
-.lista-actividades {
-    margin-top: 15px;
+.actividades-container {
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
 }
 
-.actividad {
-    padding: 8px;
-    margin-bottom: 5px;
-    background: #f5f5f5;
-    border-radius: 4px;
-}
-
-@media (max-width: 768px) {
-    .contenedor {
-        flex-direction: column;
-    }
-
-    .calendario-container,
-    .actividades-container {
-        flex: 100%;
-    }
-
-    .actividades-container {
-        border-left: none;
-        border-top: 1px solid #ddd;
-    }
+#lista-actividades {
+    margin-top: 1rem;
+    overflow: auto;
+    flex-grow: 1;
+    border-radius: 5px;
+    height: calc(35px * 8);
+    max-height: calc(35px * 8);
 }
 
 .tabla-actividades {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+    text-align: center;
 }
 
-.tabla-actividades thead {
-    display: none;
-}
-
-.tabla-actividades th {
-    display: none;
+.tabla-actividades th:hover {
+    background-color: #c46d2a;
 }
 
 .tabla-actividades td {
-    border-bottom: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-    border-left: none;
-    border-right: none;
+    padding: 0 12px;
+    height: 35px;
+    white-space: nowrap;
+    border-bottom: 1px solid #eee;
+    background-color: white;
 }
 
-.tabla-actividades tr:nth-child(even) {
-    background-color: #f9f9f9;
+.tabla-actividades tbody {
+    overflow: auto;
+    cursor: pointer;
 }
 
-.tabla-actividades tr:hover {
-    background-color: #f1f1f1;
+.tabla-actividades tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla-actividades tbody tr:nth-child(odd) td {
+    background-color: #ffffff;
+    /* Blanco puro */
+}
+
+.tabla-actividades tbody tr:nth-child(even) td {
+    background-color: #e8e8e8;
+    /* Gris más claro */
+}
+
+.tabla-actividades tbody tr:hover td {
+    background-color: #d4d4d4;
+    /* Gris para hover */
 }

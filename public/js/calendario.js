@@ -129,59 +129,38 @@ document.addEventListener('DOMContentLoaded', async function () {
             ? 'Cargues para hoy:'
             : `Cargues para ${format(date, 'dd/MM/yyyy')}`;
 
-        elementos.listaActividades.innerHTML = '';
+        const contenedor = document.getElementById('lista-actividades');
+        contenedor.innerHTML = '';
 
         const actividades = state.actividades[fechaStr] || [];
 
         if (actividades.length === 0) {
-            elementos.listaActividades.innerHTML = '<p>No hay actividades programadas</p>';
+            contenedor.innerHTML = '<p>No hay actividades programadas</p>';
             return;
         }
 
-        // Crear tabla
         const tabla = document.createElement('table');
         tabla.className = 'tabla-actividades';
 
-        // Crear encabezados
-        const thead = document.createElement('thead');
-        const headerRow = document.createElement('tr');
-        ['Conductor', 'Camión', 'Material', 'Hora'].forEach(texto => {
-            const th = document.createElement('th');
-            th.textContent = texto;
-            headerRow.appendChild(th);
-        });
-        thead.appendChild(headerRow);
-        tabla.appendChild(thead);
-
-        // Crear cuerpo
+        // SOLO TBODY - SIN HEADER
         const tbody = document.createElement('tbody');
+
         actividades.forEach(actividad => {
             const tr = document.createElement('tr');
 
-            [actividad.conductor, actividad.camion, actividad.material, actividad.hora].forEach(texto => {
+            // Columnas: Conductor, Camión, Material, Hora
+            ['conductor', 'camion', 'material', 'hora'].forEach(campo => {
                 const td = document.createElement('td');
-                td.textContent = texto;
+                td.textContent = actividad[campo];
+                td.title = actividad[campo]; // Tooltip para contenido largo
                 tr.appendChild(td);
             });
 
             tbody.appendChild(tr);
         });
+
         tabla.appendChild(tbody);
-
-        elementos.listaActividades.appendChild(tabla);
-    }
-
-    // Event listeners
-    function setupEventListeners() {
-        elementos.prevMonth.addEventListener('click', () => {
-            state.currentDate = subMonths(state.currentDate, 1);
-            renderCalendario();
-        });
-
-        elementos.nextMonth.addEventListener('click', () => {
-            state.currentDate = addMonths(state.currentDate, 1);
-            renderCalendario();
-        });
+        contenedor.appendChild(tabla);
     }
 
     // Datos de ejemplo
@@ -200,7 +179,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             const fechaStr = format(fecha, 'yyyy-MM-dd');
 
             // Número de actividades para este día (entre 1 y 4)
-            const numActividades = Math.max(1, Math.floor(Math.random() * 6));
+            const numActividades = Math.max(1, Math.floor(Math.random() * 10));
 
             datos[fechaStr] = [];
             for (let j = 0; j < numActividades; j++) {
@@ -233,6 +212,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         return datos;
+    }
+
+    function setupEventListeners() {
+        elementos.prevMonth.addEventListener('click', () => {
+            state.currentDate = subMonths(state.currentDate, 1);
+            renderCalendario();
+        });
+
+        elementos.nextMonth.addEventListener('click', () => {
+            state.currentDate = addMonths(state.currentDate, 1);
+            renderCalendario();
+        });
     }
 
     // Iniciar
