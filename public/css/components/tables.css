@@ -4,58 +4,75 @@ table {
 }
 
 .table-container {
-    overflow-x: auto;
     margin: 20px 0;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+    flex-grow: 1;
+    border-radius: 5px;
+    height: calc(46px * 5);
+    max-height: calc(46px * 5);
 }
 
 .simple-table {
     margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+    max-width: 1000px;
 }
 
 .styled-table {
     width: 100%;
-    border-collapse: collapse;
-    min-width: 400px;
-    border-radius: 5px 5px 0 0;
-    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.styled-table thead tr {
-    background-color: #f48634;
-    color: #ffffff;
-    text-align: left;
-    font-weight: bold;
+.styled-table thead {
     position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.styled-table th,
+.styled-table th {
+    background-color: #f48634;
+    color: white;
+    font-weight: bold;
+    padding: 0 12px;
+    height: 46px;
+    white-space: nowrap;
+    position: relative;
+}
+
 .styled-table td {
-    padding: 12px 15px;
-}
-
-.scrollable-tbody {
-    display: block;
-    max-height: calc(5 * 46px);
-    overflow-y: auto;
-    text-align: left;
+    padding: 0 12px;
+    height: 46px;
+    white-space: nowrap;
+    border-bottom: 1px solid #eee;
+    background-color: white;
 }
 
 .styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-.styled-table tbody tr:last-of-type {
-    border-bottom: none;
-}
-
-.styled-table tbody tr:hover {
-    background-color: #f1f1f1;
     cursor: pointer;
+}
+
+.styled-table tbody tr:nth-child(odd) td {
+    background-color: #ffffff;
+    /* Blanco puro */
+}
+
+.styled-table tbody tr:nth-child(even) td {
+    background-color: #e8e8e8;
+    /* Gris más claro */
+}
+
+.styled-table tbody tr:hover td {
+    background-color: #d4d4d4;
+    /* Gris para hover */
 }
 
 /* Responsive */
