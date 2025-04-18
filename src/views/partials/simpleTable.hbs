@@ -1,21 +1,24 @@
-<!-- views/partials/table.hbs -->
-<div class="table-container">
-    <table class="styled-table">
-        <thead>
-            <tr>
-                {{#each headers}}
-                <th>{{this}}</th>
+<div class="dynamic-table-container">
+    <h4>{{tableTitle}}</h4>
+
+    <div class="dynamic-table">
+        <table class="dynamic-cargue-table">
+            <thead>
+                <tr>
+                    {{#each headers}}
+                    <th>{{this}}</th>
+                    {{/each}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each rows}}
+                <tr>
+                    {{#each this}}
+                    <td>{{this}}</td>
+                    {{/each}}
+                </tr>
                 {{/each}}
-            </tr>
-        </thead>
-        <tbody>
-            {{#each rows}}
-            <tr>
-                {{#each this}}
-                <td>{{this}}</td>
-                {{/each}}
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>

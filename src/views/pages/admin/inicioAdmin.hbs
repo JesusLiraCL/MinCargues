@@ -7,27 +7,22 @@
         {{> progressChart
         title="PROGRAMACIÓN"
         subtitle="Cargues del Día"
-        percent="65"
+        percent=progress
         label="Proceso Actual"
         }}
 
         {{> progressChart
         title="DISPONIBILIDAD"
         subtitle="Camiones en Uso"
-        percent="45"
+        percent=truckUsage
         label="Proceso Actual"
         }}
 
     </div>
 
-    <div class="simple-table">
-        <h4>Cargues en Curso</h4>
-        {{> simpleTable headers=currentData.headers rows=currentData.rows}}
-    </div>
 
-    <div class="simple-table">
-        <h4>Cargues Proximos</h4>
-        {{> simpleTable headers=nextData.headers rows=nextData.rows}}
-    </div>
+    {{> simpleTable tableTitle="Cargues en Curso" headers=currentData.headers rows=currentData.rows}}
+
+    {{> simpleTable tableTitle="Cargues Próximos" headers=nextData.headers rows=nextData.rows}}
 
 </div>
