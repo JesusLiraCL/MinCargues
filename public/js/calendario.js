@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const state = {
         currentDate: new Date(),
         selectedDate: null,
-        actividades: generarDatosEjemplo(),
+        actividades: window.carguesCalendario || {},
     };
 
     // Elementos del DOM

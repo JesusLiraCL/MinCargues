@@ -1,6 +1,6 @@
 const db = require('../config/database');
 
-const CamionModel = {
+const camionModel = {
     getTotalCamionesHabilitados: async () => {
         const result = await db.query(
             `SELECT COUNT(*) as total 
@@ -11,4 +11,4 @@ const CamionModel = {
     },
 };
 
-module.exports = CamionModel;
+module.exports = camionModel;

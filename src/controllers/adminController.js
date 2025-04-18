@@ -1,5 +1,5 @@
-const CargueModel = require('../models/carguesModel');
-const CamionModel = require('../models/camionesModel');
+const cargueModel = require('../models/cargueModel');
+const camionModel = require('../models/camionModel');
 
 const adminController = {
     getDashboardData: async (req, res) => {
@@ -12,11 +12,11 @@ const adminController = {
             carguesEnCurso,
             carguesPendientes
         ] = await Promise.all([
-            CamionModel.getTotalCamionesHabilitados(),
-            CargueModel.getCarguesCompletadosHoy(),
-            CargueModel.getCarguesAsignadosHoy(),
-            CargueModel.getCarguesEnCurso(),
-            CargueModel.getCarguesPendientesHoy()
+            camionModel.getTotalCamionesHabilitados(),
+            cargueModel.getCarguesCompletadosHoy(),
+            cargueModel.getCarguesAsignadosHoy(),
+            cargueModel.getCarguesEnCurso(),
+            cargueModel.getCarguesPendientesHoy()
         ]);
 
         // 2. Calcular métricas
@@ -78,6 +78,31 @@ const adminController = {
             }
         });
 
+    },
+
+    getCalendarData: async (req, res) => {
+        const cargues = await cargueModel.getCarguesDesdeHoy();
+    
+        // Agrupa por fecha (YYYY-MM-DD)
+        const carguesPorFecha = {};
+        cargues.forEach(c => {
+            // Suponiendo que c.fecha_inicio_programada es "YYYY-MM-DD HH:mm"
+            const fecha = c.fecha_inicio_programada.slice(0, 10);
+            if (!carguesPorFecha[fecha]) carguesPorFecha[fecha] = [];
+            carguesPorFecha[fecha].push({
+                conductor: c.conductor,
+                camion: c.placa,
+                material: c.material,
+                hora: c.fecha_inicio_programada.slice(11, 16)
+            });
+        });
+    
+        res.render("pages/admin/calendarioAdmin", {
+            layout: "main",
+            user: req.user,
+            tittle: 'Calendario',
+            carguesCalendario: JSON.stringify(carguesPorFecha),
+        });
     }
 };
 
