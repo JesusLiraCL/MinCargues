@@ -10,6 +10,22 @@ import {
     addDays
 } from 'https://cdn.jsdelivr.net/npm/date-fns@2.29.3/esm/index.js';
 
+function agruparPorFecha(cargues) {
+    const agrupado = {};
+    cargues.forEach(c => {
+        const fecha = c.fecha_inicio_programada.slice(0, 10);
+        if (!agrupado[fecha]) agrupado[fecha] = [];
+        agrupado[fecha].push({
+            id: c.id,
+            conductor: c.conductor,
+            material: c.material,
+            estado: c.estado,
+            hora: c.fecha_inicio_programada.slice(11, 16)
+        });
+    });
+    return agrupado;
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
 
     console.log(format(new Date(), 'yyyy-MM-dd'));
@@ -18,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const state = {
         currentDate: new Date(),
         selectedDate: null,
-        actividades: window.carguesCalendario || {},
+        actividades: agruparPorFecha(window.carguesCalendario) || {},
     };
 
     // Elementos del DOM
@@ -148,11 +164,24 @@ document.addEventListener('DOMContentLoaded', async function () {
         actividades.forEach(actividad => {
             const tr = document.createElement('tr');
 
-            // Columnas: Conductor, Camión, Material, Hora
-            ['conductor', 'camion', 'material', 'hora'].forEach(campo => {
+            const tdEstado = document.createElement('td');
+            tdEstado.className = `dynamic-table-estado ${actividad.estado ? 'estado-' + actividad.estado.toLowerCase().replace(/\s/g, '-') : ''}`;
+            tdEstado.textContent = ''; // Sin texto
+            tdEstado.title = actividad.estado; // Tooltip con el estado
+            tr.appendChild(tdEstado);
+
+            // Columnas: estado, id, Conductor, Camión, Material, Hora
+            const hora = actividad.hora || (actividad.fecha_inicio_programada ? actividad.fecha_inicio_programada.slice(11, 16) : '');
+            const columnas = [
+                actividad.id,
+                hora,
+                actividad.conductor,
+                actividad.material,
+            ];
+            columnas.forEach(valor => {
                 const td = document.createElement('td');
-                td.textContent = actividad[campo];
-                td.title = actividad[campo]; // Tooltip para contenido largo
+                td.textContent = valor;
+                td.title = valor;
                 tr.appendChild(td);
             });
 
@@ -161,57 +190,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         tabla.appendChild(tbody);
         contenedor.appendChild(tabla);
-    }
-
-    // Datos de ejemplo
-    function generarDatosEjemplo() {
-        const datos = {};
-        const hoy = new Date();
-
-        // Nombres de ejemplo para datos realistas
-        const conductores = ['Juan Pérez', 'Carlos Gómez', 'Ana Rodríguez', 'Luis Martínez'];
-        const camiones = ['CAM-001', 'CAM-002', 'CAM-003', 'CAM-004'];
-        const materiales = ['Arena', 'Grava', 'Cemento', 'Piedra', 'Adoquines'];
-
-        // Primeros 8 días con actividades garantizadas
-        for (let i = 0; i < 8; i++) {
-            const fecha = addDays(hoy, i);
-            const fechaStr = format(fecha, 'yyyy-MM-dd');
-
-            // Número de actividades para este día (entre 1 y 4)
-            const numActividades = Math.max(1, Math.floor(Math.random() * 10));
-
-            datos[fechaStr] = [];
-            for (let j = 0; j < numActividades; j++) {
-                datos[fechaStr].push({
-                    conductor: conductores[Math.floor(Math.random() * conductores.length)],
-                    camion: camiones[Math.floor(Math.random() * camiones.length)],
-                    material: materiales[Math.floor(Math.random() * materiales.length)],
-                    hora: `${Math.floor(Math.random() * 24).toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`
-                });
-            }
-        }
-
-        // Resto del mes con actividades aleatorias
-        for (let i = 8; i < 30; i++) {
-            const fecha = addDays(hoy, i);
-            const fechaStr = format(fecha, 'yyyy-MM-dd');
-            const numActividades = Math.floor(Math.random() * 4); // 0-3 actividades
-
-            if (numActividades > 0) {
-                datos[fechaStr] = [];
-                for (let j = 0; j < numActividades; j++) {
-                    datos[fechaStr].push({
-                        conductor: conductores[Math.floor(Math.random() * conductores.length)],
-                        camion: camiones[Math.floor(Math.random() * camiones.length)],
-                        material: materiales[Math.floor(Math.random() * materiales.length)],
-                        hora: `${Math.floor(Math.random() * 24).toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`
-                    });
-                }
-            }
-        }
-
-        return datos;
     }
 
     function setupEventListeners() {

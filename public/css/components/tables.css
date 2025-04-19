@@ -29,7 +29,6 @@
     height: 60px;
     display: flex;
     justify-content: space-between;
-    /* Separa los grupos a izquierda y derecha */
     align-items: center;
 }
 
@@ -92,7 +91,7 @@
     background-color: #f48634;
     color: white;
     font-weight: bold;
-    padding: 0 12px;
+    /*padding: 0 12px;*/
     height: 46px;
     white-space: nowrap;
     position: relative;
@@ -107,7 +106,6 @@
     padding: 0 12px;
     height: 46px;
     white-space: nowrap;
-    border-bottom: 1px solid #eee;
     background-color: white;
 }
 
@@ -146,11 +144,38 @@
 }
 
 .dynamic-cargue-table tbody tr:nth-child(even) td {
-    background-color: #e8e8e8;
+    background-color: #f1f1f1;
     /* Gris más claro */
 }
 
 .dynamic-cargue-table tbody tr:hover td {
     background-color: #d4d4d4;
     /* Gris para hover */
+}
+
+.dynamic-cargue-table th.columna-estado,
+.dynamic-cargue-table td.dynamic-table-estado {
+    padding: 0 !important;
+    width: 10px;
+    min-width: 16px;
+    max-width: 16px;
+}
+
+.dynamic-table-estado {
+    box-sizing: border-box;
+    padding: 0;
+    width: 10px;
+    border-left: 8px solid transparent;
+}
+
+.dynamic-table-estado.estado-en-progreso {
+    border-left-color: #f48634;
+}
+
+.dynamic-table-estado.estado-completado {
+    border-left-color: #24c75d; 
+}
+
+.dynamic-table-estado.estado-pendiente {
+    border-left-color: transparent;
 }

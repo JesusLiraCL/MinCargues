@@ -6,24 +6,25 @@ document.addEventListener('DOMContentLoaded', function () {
     let originalData = [];
     let filteredData = [];
 
+    function transformarCarguesCalendarioAArray() {
+        const resultado = [];
+        if (!window.carguesCalendario) return resultado;
+    
+        Object.entries(window.carguesCalendario).forEach(([fecha, cargues]) => {
+            cargues.forEach((cargue, idx) => {
+                resultado.push({
+                    id: `${fecha}-${idx + 1}`,
+                    fecha: fecha,
+                    ...cargue
+                });
+            });
+        });
+        return resultado;
+    }
+
     // Obtener datos iniciales (simulados)
     function fetchData() {
-        // En una implementación real, esto vendría de una llamada al backend
-        originalData = [
-            { id: 1, placa: 'ABC123', tipo: 'Volqueta', material: 'Arena', cantidad: 10, 'inicio-prog': '05-01 asdfasdfasdfasdfasdfasdfasdfasdf', 'fin-prog': 'asdf', estado: true, observacion: false },
-            { id: 2, placa: 'DEF456', tipo: 'Tractomula', material: 'Grava', cantidad: 15, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: true },
-            { id: 3, placa: 'GHI789', tipo: 'Volqueta', material: 'Piedra', cantidad: 8, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: true, observacion: false },
-            { id: 4, placa: 'JKL012', tipo: 'Camión', material: 'Arena', cantidad: 12, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: true, observacion: true },
-            { id: 5, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-            { id: 6, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-            { id: 7, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-            { id: 8, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-            { id: 9, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-            { id: 10, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-            { id: 11, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-            { id: 12, placa: 'MNO345', tipo: 'Tractomula', material: 'Grava', cantidad: 20, 'inicio-prog': '05-01 asdf', 'fin-prog': 'asdf', estado: false, observacion: false },
-
-        ];
+        originalData = window.carguesCalendario || [];
         filteredData = [...originalData];
         sortData();
         renderTable();
@@ -47,25 +48,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para renderizar la tabla
     function renderTable() {
+        const columnas = [
+            'estado',
+            'id',
+            'placa',
+            'conductor',
+            'material',
+            'cantidad',
+            'cliente',
+            'fecha_inicio_programada',
+        ];
+    
         const tbody = dynamicTable.querySelector('tbody');
         tbody.innerHTML = '';
-
+    
         filteredData.forEach(row => {
             const tr = document.createElement('tr');
-
-            Object.keys(row).forEach(key => {
+            columnas.forEach(key => {
                 const td = document.createElement('td');
-
-                if (key === 'estado' || key === 'observacion') {
-                    td.className = `dynamic-table-${key}-${row[key]}`;
-                    td.textContent = row[key] ? '✔' : '✖';
+                let valor = row[key];
+            
+                if (key === 'estado') {
+                    td.className = `dynamic-table-estado ${valor ? 'estado-' + valor.toLowerCase().replace(/\s/g, '-') : ''}`;
+                    td.textContent = ''; // Sin texto
+                    td.title = valor;    // Tooltip con el estado
                 } else {
-                    td.textContent = row[key];
+                    if (key === 'cantidad' && row.unidad) {
+                        valor = valor + ' ' + row.unidad;
+                    }
+                    td.textContent = valor;
+                    td.title = valor;
                 }
-
                 tr.appendChild(td);
             });
-
             tbody.appendChild(tr);
         });
 

@@ -28,14 +28,14 @@ const cargueModel = {
         const hoy = new Date().toLocaleDateString('en-CA');
         const result = await db.query(
             `SELECT 
+                c.id,
                 c.placa,
-                cam.tipo_camion as tipo_camion,
-                m.nombre as material,
                 con.nombre as conductor,
-                cli.nombre as cliente,
-                TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') as fecha_inicio_real,
+                m.nombre as material,
+                c.cantidad,
+                m.unidad_medida as unidad,
                 TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') as fecha_inicio_programada,
-                TO_CHAR(c.fecha_fin_programada, 'YYYY-MM-DD HH24:MI') as fecha_fin_programada
+                TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') as fecha_inicio_real
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
             INNER JOIN conductores con ON c.cedula = con.cedula
@@ -54,14 +54,14 @@ const cargueModel = {
         const hoy = new Date().toLocaleDateString('en-CA');
         const result = await db.query(
             `SELECT 
+                c.id,
                 c.placa,
-                cam.tipo_camion as tipo_camion,
-                m.nombre as material,
                 con.nombre as conductor,
-                cli.nombre as cliente,
-                TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') as fecha_inicio_real,
+                m.nombre as material,
+                c.cantidad,
+                m.unidad_medida as unidad,
                 TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') as fecha_inicio_programada,
-                TO_CHAR(c.fecha_fin_programada, 'YYYY-MM-DD HH24:MI') as fecha_fin_programada
+                TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') as fecha_inicio_real
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
             INNER JOIN conductores con ON c.cedula = con.cedula
@@ -80,14 +80,17 @@ const cargueModel = {
         const hoy = new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
         const result = await db.query(
             `SELECT 
+                c.id,
                 c.placa,
-                cam.tipo_camion as tipo_camion,
-                m.nombre as material,
-                con.nombre as conductor,
-                cli.nombre as cliente,
-                TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') as fecha_inicio_real,
-                TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') as fecha_inicio_programada,
-                TO_CHAR(c.fecha_fin_programada, 'YYYY-MM-DD HH24:MI') as fecha_fin_programada
+                cam.tipo_camion AS tipo_camion,
+                m.nombre AS material,
+                m.unidad_medida AS unidad,
+                c.cantidad,
+                con.nombre AS conductor,
+                cli.nombre AS cliente,
+                TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') AS fecha_inicio_programada,
+                TO_CHAR(c.fecha_fin_programada, 'YYYY-MM-DD HH24:MI') AS fecha_fin_programada,
+                c.estado
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
             INNER JOIN conductores con ON c.cedula = con.cedula
@@ -97,7 +100,6 @@ const cargueModel = {
             ORDER BY c.fecha_inicio_programada ASC`,
             [hoy]
         );
-        console.log(result.rows.length)
         return result.rows;
     },
 };

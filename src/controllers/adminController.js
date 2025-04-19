@@ -41,31 +41,29 @@ const adminController = {
 
             // Tabla de cargues en curso
             currentData: {
-                headers: ["Placa", "Tipo de camión", "Material", "Conductor", "Cliente", "Inicio real", "Inicio prog.", "Fin prog."],
+                headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Inicio real"],     
                 rows: carguesEnCurso.map(c => ([
+                    c.id,
                     c.placa,
-                    c.tipo_camion,
-                    c.material,
                     c.conductor,
-                    c.cliente,
-                    c.fecha_inicio_real,
+                    c.material,
+                    c.cantidad + (c.unidad ? ` ${c.unidad}` : ''),
                     c.fecha_inicio_programada,
-                    c.fecha_fin_programada
+                    c.fecha_inicio_real
                 ]))
             },
 
             // Tabla de cargues pendientes
             nextData: {
-                headers: ["Placa", "Tipo de camión", "Material", "Conductor", "Cliente", "Inicio real", "Inicio prog.", "Fin prog."],
+                headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Inicio real"],
                 rows: carguesPendientes.map(c => ([
+                    c.id,
                     c.placa,
-                    c.tipo_camion,
-                    c.material,
                     c.conductor,
-                    c.cliente,
-                    c.fecha_inicio_real,
+                    c.material,
+                    c.cantidad + (c.unidad ? ` ${c.unidad}` : ''),
                     c.fecha_inicio_programada,
-                    c.fecha_fin_programada
+                    c.fecha_inicio_real
                 ]))
             },
 
@@ -82,28 +80,14 @@ const adminController = {
 
     getCalendarData: async (req, res) => {
         const cargues = await cargueModel.getCarguesDesdeHoy();
-    
-        // Agrupa por fecha (YYYY-MM-DD)
-        const carguesPorFecha = {};
-        cargues.forEach(c => {
-            // Suponiendo que c.fecha_inicio_programada es "YYYY-MM-DD HH:mm"
-            const fecha = c.fecha_inicio_programada.slice(0, 10);
-            if (!carguesPorFecha[fecha]) carguesPorFecha[fecha] = [];
-            carguesPorFecha[fecha].push({
-                conductor: c.conductor,
-                camion: c.placa,
-                material: c.material,
-                hora: c.fecha_inicio_programada.slice(11, 16)
-            });
-        });
-    
+        
         res.render("pages/admin/calendarioAdmin", {
             layout: "main",
             user: req.user,
             tittle: 'Calendario',
-            carguesCalendario: JSON.stringify(carguesPorFecha),
+            carguesCalendario: JSON.stringify(cargues),
         });
+
     }
 };
-
 module.exports = adminController;
