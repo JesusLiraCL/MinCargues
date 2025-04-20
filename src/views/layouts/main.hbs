@@ -13,13 +13,28 @@
     <link rel="stylesheet" href="/css/components/nav-bar.css">
     <link rel="stylesheet" href="/css/components/tables.css">
     <link rel="stylesheet" href="/css/components/calendario.css">
+    <link rel="stylesheet" href="/css/components/cargue.css">
 </head>
 
 <body>
     {{> header}}
+
+
     <div class="main-container">
         {{> nav-bar}}
         <main class="content">
+            <div class="flash-messages">
+                {{#if success_msg}}
+                <div class="alert alert-success">
+                    {{success_msg}}
+                </div>
+                {{/if}}
+                {{#if error_msg}}
+                    <div class="alert alert-danger">
+                        {{error_msg}}
+                    </div>
+                {{/if}}
+            </div>
             {{{body}}}
         </main>
     </div>

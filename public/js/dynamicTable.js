@@ -86,83 +86,23 @@ document.addEventListener('DOMContentLoaded', function () {
         initializeDblClickEvents();
     }
 
-    // Función para mostrar el popup
-    function showCarguePopup(rowData) {
-        const popup = document.createElement('div');
-        popup.className = 'cargue-popup';
-        popup.innerHTML = `
-            <div class="popup-content">
-                <h3>Detalles del Cargue</h3>
-                <ul>
-                    <li>ID: ${rowData.id}</li>
-                    <li>Placa: ${rowData.placa}</li>
-                    <li>Conductor: ${rowData.conductor}</li>
-                    <li>Material: ${rowData.material}</li>
-                    <li>Cantidad: ${rowData.cantidad} ${rowData.unidad || ''}</li>
-                    <li>Cliente: ${rowData.cliente}</li>
-                    <li>Fecha Inicio Programada: ${rowData.fecha_inicio_programada}</li>
-                </ul>
-                <button class="close-popup">Cerrar</button>
-            </div>
-        `;
-
-        document.body.appendChild(popup);
-
-        popup.querySelector('.close-popup').addEventListener('click', () => {
-            popup.remove();
-        });
-
-        popup.addEventListener('click', (e) => {
-            if (e.target === popup) {
-                popup.remove();
-            }
-        });
-
-        // Estilos CSS para el popup
-        popup.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        `;
-        popup.querySelector('.popup-content').style.cssText = `
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 90%;
-        `;
-        popup.querySelector('.close-popup').style.cssText = `
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        `;
-    }
-
     function initializeDblClickEvents() {
-        console.log("dbClick registrado");
         const tbody = dynamicTable.querySelector('tbody');
+        
+        if (!tbody) {
+            console.error('No se encontró el tbody');
+            return;
+        }
+    
         tbody.querySelectorAll('tr').forEach(row => {
-            row.addEventListener('dblclick', async function (e) {
-                const id = this.cells[0].textContent;
-                // Simplemente muestra un mensaje con el ID
-                await window.popupManager.showPopup(`
-                    <div class="popup-content">
-                        <h3>ID: ${id}</h3>
-                        <p>Detalles del cargue</p>
-                    </div>
-                `);
+            row.addEventListener('dblclick', function(e) {
+                const id = this.cells[1].textContent;
+                if (id) {
+                    // Redirigir a la página de detalles
+                    window.location.href = `/admin/cargue/${id}`;
+                } else {
+                    console.error('No se pudo obtener el ID del cargue');
+                }
             });
         });
     }

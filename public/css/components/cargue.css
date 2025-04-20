@@ -1,0 +1,163 @@
+.cargue-details-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.cargue-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.cargue-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cargue-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.cargue-section {
+    /* Eliminamos el padding y border-radius individual */
+}
+
+.cargue-section h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f48634;
+    border-radius: 5px;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: 15px;
+    font-size: 16px;
+    gap: 10px;
+    padding-left: 10px;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-row label {
+    width: 150px;
+    color: #666;
+    font-weight: bold;
+}
+
+.info-row span {
+    flex: 1;
+    color: #333;
+}
+
+.estado-activo {
+    color: #28a745;
+}
+
+.estado-pendiente {
+    color: #ffc107;
+}
+
+.estado-completado {
+    color: #17a2b8;
+}
+
+.estado-cancelado {
+    color: #dc3545;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-back {
+    background-color: #f48634;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-back:hover {
+    background-color: #c46d2a;
+}
+
+.btn-back i {
+    font-size: 14px;
+}
+
+.btn-edit {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-edit:hover {
+    background-color: #218838;
+}
+
+.btn-edit i {
+    font-size: 14px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-danger i {
+    font-size: 14px;
+}
+
+.editable-input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    cursor: text;
+}
+.editable-input:focus {
+    border: 1px solid #ccc;
+}
+.small-input {
+    width: 30%;
+    margin: 0 5px;
+}
+.material-container {
+    display: flex;
+    gap: 5px;
+}
