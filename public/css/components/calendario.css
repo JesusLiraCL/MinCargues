@@ -8,7 +8,6 @@
 .contenedor-calendario {
     display: flex;
     width: 100%;
-    max-width: 1000px;
     margin: 20px 0;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -20,6 +19,7 @@
     flex: 60%;
     padding: 15px;
     background: #efefef;
+    max-width: 600px;
 }
 
 .actividades-container {

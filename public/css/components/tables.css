@@ -20,7 +20,6 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    max-width: 1000px;
 }
 
 .dynamic-table-search-container {
@@ -73,7 +72,7 @@
     max-height: calc(46px * 8);
 }
 
-.dynamic-cargue-table {
+.cargue-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -81,13 +80,13 @@
     text-align: center;
 }
 
-.dynamic-cargue-table thead {
+.cargue-table thead {
     position: sticky;
     top: 0;
     z-index: 10;
 }
 
-.dynamic-cargue-table th {
+.cargue-table th {
     background-color: #f48634;
     color: white;
     font-weight: bold;
@@ -98,57 +97,57 @@
     cursor: pointer;
 }
 
-.dynamic-cargue-table th:hover {
+.cargue-table th:hover {
     background-color: #c46d2a;
 }
 
-.dynamic-cargue-table td {
+.cargue-table td {
     padding: 0 12px;
     height: 46px;
     white-space: nowrap;
     background-color: white;
 }
 
-.dynamic-cargue-table tbody {
+.cargue-table tbody {
     overflow: auto;
 }
 
-.dynamic-cargue-table tbody tr {
+.cargue-table tbody tr {
     cursor: pointer;
 }
 
-.dynamic-cargue-table tbody tr:last-child td {
+.cargue-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-.dynamic-table-sort-icon {
+.table-sort-icon {
     font-family: "Font Awesome 6 Free";
     margin-left: 5px;
 }
 
-.dynamic-table-sort-icon[data-sort="asc"] {
+.table-sort-icon[data-sort="asc"] {
     content: "\f062";
     /* Flecha hacia arriba */
     opacity: 1;
 }
 
-.dynamic-table-sort-icon[data-sort="desc"] {
+.table-sort-icon[data-sort="desc"] {
     content: "\f063";
     /* Flecha hacia abajo */
     opacity: 1;
 }
 
-.dynamic-cargue-table tbody tr:nth-child(odd) td {
+.cargue-table tbody tr:nth-child(odd) td {
     background-color: #ffffff;
     /* Blanco puro */
 }
 
-.dynamic-cargue-table tbody tr:nth-child(even) td {
+.cargue-table tbody tr:nth-child(even) td {
     background-color: #f1f1f1;
     /* Gris más claro */
 }
 
-.dynamic-cargue-table tbody tr:hover td {
+.cargue-table tbody tr:hover td {
     background-color: #d4d4d4;
     /* Gris para hover */
 }
@@ -178,4 +177,25 @@
 
 .dynamic-table-estado.estado-pendiente {
     border-left-color: transparent;
+}
+
+.cargue-table tbody tr {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.cargue-table {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.cargue-table * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

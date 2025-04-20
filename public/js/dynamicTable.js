@@ -6,23 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let originalData = [];
     let filteredData = [];
 
-    function transformarCarguesCalendarioAArray() {
-        const resultado = [];
-        if (!window.carguesCalendario) return resultado;
-    
-        Object.entries(window.carguesCalendario).forEach(([fecha, cargues]) => {
-            cargues.forEach((cargue, idx) => {
-                resultado.push({
-                    id: `${fecha}-${idx + 1}`,
-                    fecha: fecha,
-                    ...cargue
-                });
-            });
-        });
-        return resultado;
-    }
-
-    // Obtener datos iniciales (simulados)
+    // Obtener datos iniciales
     function fetchData() {
         originalData = window.carguesCalendario || [];
         filteredData = [...originalData];
@@ -58,20 +42,20 @@ document.addEventListener('DOMContentLoaded', function () {
             'cliente',
             'fecha_inicio_programada',
         ];
-    
+
         const tbody = dynamicTable.querySelector('tbody');
         tbody.innerHTML = '';
-    
+
         filteredData.forEach(row => {
             const tr = document.createElement('tr');
             columnas.forEach(key => {
                 const td = document.createElement('td');
                 let valor = row[key];
-            
+
                 if (key === 'estado') {
                     td.className = `dynamic-table-estado ${valor ? 'estado-' + valor.toLowerCase().replace(/\s/g, '-') : ''}`;
-                    td.textContent = ''; // Sin texto
-                    td.title = valor;    // Tooltip con el estado
+                    td.textContent = '';
+                    td.title = valor;
                 } else {
                     if (key === 'cantidad' && row.unidad) {
                         valor = valor + ' ' + row.unidad;
@@ -86,17 +70,100 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Actualizar iconos de ordenamiento
         dynamicHeaders.forEach(header => {
-            const icon = header.querySelector('.dynamic-table-sort-icon') || document.createElement('span');
-            icon.className = 'dynamic-table-sort-icon';
+            const icon = header.querySelector('.table-sort-icon') || document.createElement('span');
+            icon.className = 'table-sort-icon';
             icon.innerHTML = '';
 
             if (header.dataset.sort === currentSort.column) {
                 icon.innerHTML = currentSort.direction === 'asc' ? '↑' : '↓';
             }
 
-            if (!header.querySelector('.dynamic-table-sort-icon')) {
+            if (!header.querySelector('.table-sort-icon')) {
                 header.appendChild(icon);
             }
+        });
+
+        initializeDblClickEvents();
+    }
+
+    // Función para mostrar el popup
+    function showCarguePopup(rowData) {
+        const popup = document.createElement('div');
+        popup.className = 'cargue-popup';
+        popup.innerHTML = `
+            <div class="popup-content">
+                <h3>Detalles del Cargue</h3>
+                <ul>
+                    <li>ID: ${rowData.id}</li>
+                    <li>Placa: ${rowData.placa}</li>
+                    <li>Conductor: ${rowData.conductor}</li>
+                    <li>Material: ${rowData.material}</li>
+                    <li>Cantidad: ${rowData.cantidad} ${rowData.unidad || ''}</li>
+                    <li>Cliente: ${rowData.cliente}</li>
+                    <li>Fecha Inicio Programada: ${rowData.fecha_inicio_programada}</li>
+                </ul>
+                <button class="close-popup">Cerrar</button>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+
+        popup.querySelector('.close-popup').addEventListener('click', () => {
+            popup.remove();
+        });
+
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                popup.remove();
+            }
+        });
+
+        // Estilos CSS para el popup
+        popup.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        `;
+        popup.querySelector('.popup-content').style.cssText = `
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+        `;
+        popup.querySelector('.close-popup').style.cssText = `
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        `;
+    }
+
+    function initializeDblClickEvents() {
+        console.log("dbClick registrado");
+        const tbody = dynamicTable.querySelector('tbody');
+        tbody.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('dblclick', async function (e) {
+                const id = this.cells[0].textContent;
+                // Simplemente muestra un mensaje con el ID
+                await window.popupManager.showPopup(`
+                    <div class="popup-content">
+                        <h3>ID: ${id}</h3>
+                        <p>Detalles del cargue</p>
+                    </div>
+                `);
+            });
         });
     }
 
@@ -145,4 +212,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Inicializar
     fetchData();
-});
+});     

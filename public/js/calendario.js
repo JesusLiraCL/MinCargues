@@ -27,9 +27,6 @@ function agruparPorFecha(cargues) {
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
-
-    console.log(format(new Date(), 'yyyy-MM-dd'));
-
     // Configuración inicial
     const state = {
         currentDate: new Date(),

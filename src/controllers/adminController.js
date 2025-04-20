@@ -87,7 +87,7 @@ const adminController = {
             tittle: 'Calendario',
             carguesCalendario: JSON.stringify(cargues),
         });
-
     }
 };
+
 module.exports = adminController;
