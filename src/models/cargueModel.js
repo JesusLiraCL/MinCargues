@@ -176,12 +176,7 @@ const cargueModel = {
                 cedula, 
                 placa 
             } = data;
-
-            // Validaciones
-            if (new Date(fecha_inicio_programada) < new Date()) {
-                return false;
-            }
-
+            
             const result = await db.query(
                 `UPDATE cargues 
                 SET 

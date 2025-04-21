@@ -21,11 +21,13 @@
                 <h3>Información Básica</h3>
                 <div class="info-row">
                     <label>Inicio Programado:</label>
-                    <input type="datetime-local" class="editable-input" id="fecha_inicio_programada" value="{{cargue.fecha_inicio_programada}}" disabled>
+                    <input type="datetime-local" class="editable-input" id="fecha_inicio_programada"
+                        value="{{cargue.fecha_inicio_programada}}" disabled>
                 </div>
                 <div class="info-row">
                     <label>Fin Programado:</label>
-                    <input type="datetime-local" class="editable-input" id="fecha_fin_programada" value="{{cargue.fecha_fin_programada}}" disabled>
+                    <input type="datetime-local" class="editable-input" id="fecha_fin_programada"
+                        value="{{cargue.fecha_fin_programada}}" disabled>
                 </div>
                 <div class="info-row">
                     <label>Inicio Real:</label>
@@ -38,28 +40,35 @@
                 <div class="info-row">
                     <label>Material:</label>
                     <div class="material-container">
-                        <input type="text" class="editable-input small-input" id="material_nombre" value="{{cargue.material_nombre}}" disabled>
+                        <input type="text" class="editable-input small-input" id="material_nombre"
+                            value="{{cargue.material_nombre}}" disabled>
                     </div>
                 </div>
                 <div class="info-row">
                     <label>Cantidad:</label>
                     <div class="material-container">
-                        <input type="number" class="editable-input small-input" id="cantidad" value="{{cargue.cantidad}}" disabled>
+                        <input type="number" class="editable-input small-input" id="cantidad"
+                            value="{{cargue.cantidad}}" disabled>
                         <span class="small-input">{{cargue.material_unidad}}</span>
                     </div>
                 </div>
                 <div class="info-row">
                     <label>Estado:</label>
                     <select class="editable-input" id="estado" disabled>
-                        <option value="pendiente" {{#if (eq cargue.estado 'pendiente')}}selected{{/if}}>Pendiente</option>
-                        <option value="completado" {{#if (eq cargue.estado 'completado')}}selected{{/if}}>Completado</option>
-                        <option value="cancelado" {{#if (eq cargue.estado 'cancelado')}}selected{{/if}}>Cancelado</option>
-                        <option value="en progreso" {{#if (eq cargue.estado 'en progreso')}}selected{{/if}}>En Progreso</option>
+                        <option value="pendiente" {{#if (eq cargue.estado 'pendiente' )}}selected{{/if}}>Pendiente
+                        </option>
+                        <option value="completado" {{#if (eq cargue.estado 'completado' )}}selected{{/if}}>Completado
+                        </option>
+                        <option value="cancelado" {{#if (eq cargue.estado 'cancelado' )}}selected{{/if}}>Cancelado
+                        </option>
+                        <option value="en progreso" {{#if (eq cargue.estado 'en progreso' )}}selected{{/if}}>En Progreso
+                        </option>
                     </select>
                 </div>
                 <div class="info-row">
                     <label>Observaciones:</label>
-                    <input type="text" class="editable-input" id="observaciones" value="{{cargue.observaciones}}" disabled>
+                    <input type="text" class="editable-input" id="observaciones" value="{{cargue.observaciones}}"
+                        disabled>
                 </div>
             </div>
 
@@ -135,60 +144,12 @@
 </div>
 
 <script>
-let isEditing = false;
+    let isEditing = false;
 
-function confirmDelete() {
-    if (isEditing) {
-        // Si estamos en modo edición, cancelar cambios
-        if (confirm('¿Estás seguro que deseas cancelar los cambios?')) {
-            isEditing = false;
-            const editButton = document.querySelector('.btn-edit-save');
-            editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
-            editButton.classList.remove('btn-save');
-            editButton.classList.add('btn-edit');
-            document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
-            document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
-        }
-    } else {
-        // Si no estamos en modo edición, mostrar confirmación de eliminación
-        if (confirm('¿Estás seguro que deseas eliminar este cargue?')) {
-            window.location.href = '/admin/cargue/{{cargue.id}}/delete';
-        }
-    }
-}
-
-function toggleEditMode() {
-    if (isEditing) {
-        // Guardar cambios
-        const data = {
-            fecha_inicio_programada: document.getElementById('fecha_inicio_programada').value,
-            fecha_fin_programada: document.getElementById('fecha_fin_programada').value,
-            material_nombre: document.getElementById('material_nombre').value,
-            cantidad: document.getElementById('cantidad').value,
-            estado: document.getElementById('estado').value,
-            observaciones: document.getElementById('observaciones').value,
-            documento: document.getElementById('documento').value,
-            cedula: document.getElementById('cedula').value,
-            placa: document.getElementById('placa').value
-        };
-
-        // Validaciones
-        if (new Date(data.fecha_inicio_programada) < new Date()) {
-            alert('No se puede seleccionar una fecha anterior a hoy');
-            return;
-        }
-
-        fetch(`/admin/cargue/{{cargue.id}}/update`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Cambios guardados exitosamente');
+    function confirmDelete() {
+        if (isEditing) {
+            // Si estamos en modo edición, cancelar cambios
+            if (confirm('¿Estás seguro que deseas cancelar los cambios?')) {
                 isEditing = false;
                 const editButton = document.querySelector('.btn-edit-save');
                 editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
@@ -196,39 +157,92 @@ function toggleEditMode() {
                 editButton.classList.add('btn-edit');
                 document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
                 document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
-            } else {
-                alert('Error al guardar los cambios');
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al guardar los cambios');
-        });
-    } else {
-        // Habilitar edición
-        if ('{{cargue.estado}}' === 'en progreso') {
-            alert('No se pueden modificar los datos mientras el cargue está en progreso');
-            return;
+        } else {
+            // Si no estamos en modo edición, mostrar confirmación de eliminación
+            if (confirm('¿Estás seguro que deseas eliminar este cargue?')) {
+                window.location.href = '/admin/cargue/{{cargue.id}}/delete';
+            }
         }
-        
-        document.querySelectorAll('.editable-input').forEach(input => input.disabled = false);
-        isEditing = true;
-        const editButton = document.querySelector('.btn-edit-save');
-        editButton.innerHTML = '<i class="fas fa-save"></i> Guardar';
-        editButton.classList.remove('btn-edit');
-        editButton.classList.add('btn-save');
-        document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-times"></i> Cancelar';
     }
-}
 
-// Actualizar el botón de editar
-const editButton = document.querySelector('.btn-edit-save');
-editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
-editButton.classList.remove('btn-save');
-editButton.classList.add('btn-edit');
+    function toggleEditMode() {
+        if (isEditing) {
+            // Guardar cambios
+            const data = {
+                fecha_inicio_programada: document.getElementById('fecha_inicio_programada').value,
+                fecha_fin_programada: document.getElementById('fecha_fin_programada').value,
+                material_nombre: document.getElementById('material_nombre').value,
+                cantidad: document.getElementById('cantidad').value,
+                estado: document.getElementById('estado').value,
+                observaciones: document.getElementById('observaciones').value,
+                documento: document.getElementById('documento').value,
+                cedula: document.getElementById('cedula').value,
+                placa: document.getElementById('placa').value
+            };
 
-// Establecer el mínimo para las fechas
-const fechaHoy = new Date().toISOString().split('T')[0];
-document.getElementById('fecha_inicio_programada').min = fechaHoy;
-document.getElementById('fecha_fin_programada').min = fechaHoy;
+            // Validaciones
+            if (data.fecha_inicio_programada && data.fecha_fin_programada) {
+                const inicio = new Date(data.fecha_inicio_programada);
+                const fin = new Date(data.fecha_fin_programada);
+
+                if (fin < inicio) {
+                    alert('La fecha de finalización no puede ser menor a la fecha de inicio programada');
+                    return;
+                }
+            }
+
+            fetch(`/admin/cargue/{{cargue.id}}/update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Cambios guardados exitosamente');
+                        isEditing = false;
+                        const editButton = document.querySelector('.btn-edit-save');
+                        editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+                        editButton.classList.remove('btn-save');
+                        editButton.classList.add('btn-edit');
+                        document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
+                        document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
+                    } else {
+                        alert('Error al guardar los cambios 1');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al guardar los cambios 2');
+                });
+        } else {
+            // Habilitar edición
+            if ('{{cargue.estado}}' === 'en progreso') {
+                alert('No se pueden modificar los datos mientras el cargue está en progreso');
+                return;
+            }
+
+            document.querySelectorAll('.editable-input').forEach(input => input.disabled = false);
+            isEditing = true;
+            const editButton = document.querySelector('.btn-edit-save');
+            editButton.innerHTML = '<i class="fas fa-save"></i> Guardar';
+            editButton.classList.remove('btn-edit');
+            editButton.classList.add('btn-save');
+            document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-times"></i> Cancelar';
+        }
+    }
+
+    // Actualizar el botón de editar
+    const editButton = document.querySelector('.btn-edit-save');
+    editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+    editButton.classList.remove('btn-save');
+    editButton.classList.add('btn-edit');
+
+    // Establecer el mínimo para las fechas
+    const fechaHoy = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha_inicio_programada').min = fechaHoy;
+    document.getElementById('fecha_fin_programada').min = fechaHoy;
 </script>
