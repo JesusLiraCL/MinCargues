@@ -40,18 +40,21 @@ document.addEventListener('DOMContentLoaded', function () {
             'material',
             'cantidad',
             'cliente',
-            'fecha_inicio_programada',
+            'fecha_inicio_programada'
         ];
-
+    
         const tbody = dynamicTable.querySelector('tbody');
         tbody.innerHTML = '';
-
+    
         filteredData.forEach(row => {
             const tr = document.createElement('tr');
-            columnas.forEach(key => {
+            
+            // Primero renderizamos las columnas normales
+            columnas.slice(0, 7).forEach(key => {
                 const td = document.createElement('td');
+                td.setAttribute('data-column', key);
                 let valor = row[key];
-
+    
                 if (key === 'estado') {
                     td.className = `dynamic-table-estado ${valor ? 'estado-' + valor.toLowerCase().replace(/\s/g, '-') : ''}`;
                     td.textContent = '';
@@ -65,6 +68,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 tr.appendChild(td);
             });
+    
+            // Luego renderizamos la fecha y hora separadas
+            if (row.fecha_inicio_programada) {
+                const [fecha, hora24] = row.fecha_inicio_programada.split(' ');
+                
+                // Convertir hora de 24 horas a 12 horas con AM/PM
+                const hora = new Date(`2000-01-01T${hora24}`);
+                const hora12 = hora.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }).toLowerCase();
+
+                // Columna de fecha
+                const tdFecha = document.createElement('td');
+                tdFecha.setAttribute('data-column', 'fecha_inicio_programada');
+                tdFecha.textContent = fecha;
+                tdFecha.title = fecha;
+                tr.appendChild(tdFecha);
+    
+                // Columna de hora
+                const tdHora = document.createElement('td');
+                tdHora.textContent = hora12;
+                tdHora.title = hora24;
+                tr.appendChild(tdHora);
+            }
+    
             tbody.appendChild(tr);
         });
 
