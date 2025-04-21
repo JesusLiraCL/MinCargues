@@ -30,6 +30,18 @@ const adminController = {
             ? Math.round((camionesEnUso / totalCamiones) * 100)
             : 0;
 
+        // Función para obtener solo hora de la fecha
+        const formatTime = (dateString) => {
+            if (!dateString) return '';
+            const [fecha, hora24] = dateString.split(' ');
+            const hora = new Date(`2000-01-01T${hora24}`);
+            return hora.toLocaleTimeString('en-US', { 
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            }).toLowerCase();
+        };
+
         // 3. Formatear datos para la vista
         res.render('pages/admin/inicioAdmin', {
             layout: 'main',
@@ -39,7 +51,7 @@ const adminController = {
             // Métricas principales
             progress: porcentajeCompletados,
             truckUsage: porcentajeCamionesEnUso,
-
+            
             // Tabla de cargues en curso
             currentData: {
                 headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Inicio real"],     
@@ -49,22 +61,22 @@ const adminController = {
                     c.conductor,
                     c.material,
                     c.cantidad + (c.unidad ? ` ${c.unidad}` : ''),
-                    c.fecha_inicio_programada,
-                    c.fecha_inicio_real
+                    formatTime(c.fecha_inicio_programada),
+                    formatTime(c.fecha_inicio_real),
                 ]))
             },
-
+            
             // Tabla de cargues pendientes
             nextData: {
-                headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Inicio real"],
+                headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Fin prog."],
                 rows: carguesPendientes.map(c => ([
                     c.id,
                     c.placa,
                     c.conductor,
                     c.material,
                     c.cantidad + (c.unidad ? ` ${c.unidad}` : ''),
-                    c.fecha_inicio_programada,
-                    c.fecha_inicio_real
+                    formatTime(c.fecha_inicio_programada),
+                    formatTime(c.fecha_fin_programada),
                 ]))
             },
 
@@ -94,7 +106,7 @@ const adminController = {
     getCargueData: async (req, res) => {
         try {
             const cargue = await cargueModel.getCargueDetails(req.params.id);
-            
+            console.log('Estado del cargue:', cargue.estado);
             res.render("pages/admin/cargue", {
                 layout: "main",
                 user: req.user,

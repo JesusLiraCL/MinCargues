@@ -61,7 +61,7 @@ const cargueModel = {
                 c.cantidad,
                 m.unidad_medida as unidad,
                 TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') as fecha_inicio_programada,
-                TO_CHAR(c.fecha_inicio_real, 'DD-MM-YYYY HH24:MI') as fecha_inicio_real
+                TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') as fecha_fin_programada
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
             INNER JOIN conductores con ON c.cedula = con.cedula

@@ -175,6 +175,10 @@
     border-left-color: #24c75d; 
 }
 
+.dynamic-table-estado.estado-cancelado {
+    border-left-color: #c53434; 
+}
+
 .dynamic-table-estado.estado-pendiente {
     border-left-color: transparent;
 }
