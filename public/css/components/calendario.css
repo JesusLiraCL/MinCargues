@@ -211,3 +211,24 @@
 .dynamic-table-estado.estado-pendiente {
     border-left-color: transparent;
 }
+
+.tabla-actividades tbody tr {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tabla-actividades {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tabla-actividades * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

@@ -10,6 +10,17 @@ import {
     addDays
 } from 'https://cdn.jsdelivr.net/npm/date-fns@2.29.3/esm/index.js';
 
+const formatTime = (dateString) => {
+    if (!dateString) return '';
+    const [fecha, hora24] = dateString.split(' ');
+    const hora = new Date(`2000-01-01T${hora24}`);
+    return hora.toLocaleTimeString('en-US', { 
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    }).toLowerCase();
+};
+
 function agruparPorFecha(cargues) {
     const agrupado = {};
     cargues.forEach(c => {
@@ -20,7 +31,7 @@ function agruparPorFecha(cargues) {
             conductor: c.conductor,
             material: c.material,
             estado: c.estado,
-            hora: c.fecha_inicio_programada.slice(11, 16)
+            hora: formatTime(c.fecha_inicio_programada),
         });
     });
     return agrupado;
@@ -58,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         state.selectedDate = new Date();
         renderCalendario();
         mostrarActividades(state.selectedDate);
+        initializeDblClickEvents();
         setupEventListeners();
     }
 
@@ -130,11 +142,12 @@ document.addEventListener('DOMContentLoaded', async function () {
             state.selectedDate = date;
             renderCalendario();
             mostrarActividades(date);
+            initializeDblClickEvents();
         });
 
         return diaEl;
     }
-
+    
     // Mostrar actividades
     function mostrarActividades(date) {
         const fechaStr = format(date, 'dd-MM-yyyy');
@@ -167,6 +180,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             tdEstado.title = actividad.estado; // Tooltip con el estado
             tr.appendChild(tdEstado);
 
+            console.log(actividad.hora)
             // Columnas: estado, id, Conductor, Camión, Material, Hora
             const hora = actividad.hora || (actividad.fecha_inicio_programada ? actividad.fecha_inicio_programada.slice(11, 16) : '');
             const columnas = [
@@ -187,6 +201,26 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         tabla.appendChild(tbody);
         contenedor.appendChild(tabla);
+    }
+
+    function initializeDblClickEvents() {
+        const tablaActividades = document.querySelector('.tabla-actividades');
+        if (tablaActividades) {
+            const tbody = tablaActividades.querySelector('tbody');
+            if (tbody) {
+                tbody.querySelectorAll('tr').forEach(row => {
+                    row.addEventListener('dblclick', function(e) {
+                        const id = this.cells[1].textContent; // El ID está en la segunda celda
+                        console.log("ID de la actividad:", id);
+                        if (id) {
+                            window.location.href = `/admin/cargue/${id}?referrer=calendario-admin`;
+                        } else {
+                            console.error('No se pudo obtener el ID de la actividad');
+                        }
+                    });
+                });
+            }
+        }
     }
 
     function setupEventListeners() {

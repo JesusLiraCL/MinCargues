@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const id = this.cells[1].textContent;
                 if (id) {
                     // Redirigir a la página de detalles
-                    window.location.href = `/admin/cargue/${id}`;
+                    window.location.href = `/admin/cargue/${id}?referrer=calendario-admin`;
                 } else {
                     console.error('No se pudo obtener el ID del cargue');
                 }
