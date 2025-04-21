@@ -102,7 +102,7 @@
 }
 
 .btn-edit {
-    background-color: #28a745;
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -115,7 +115,24 @@
 }
 
 .btn-edit:hover {
-    background-color: #218838;
+    background-color: #0056b3; /* Azul más oscuro */
+}
+
+.btn-save {
+    background-color: #218838; /* Verde más oscuro */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-save:hover {
+    background-color: #19692c; /* Verde más oscuro */
 }
 
 .btn-edit i {
@@ -147,17 +164,32 @@
     border: none;
     background: none;
     outline: none;
-    width: 100%;
     cursor: text;
+    font-size: 15px;
+    color: #333;
 }
+
 .editable-input:focus {
     border: 1px solid #ccc;
 }
+
 .small-input {
     width: 30%;
-    margin: 0 5px;
+    margin: 0;
+    padding: 0;
 }
+
 .material-container {
     display: flex;
+    align-items: center;
     gap: 5px;
+    flex: 1;
+}
+
+.info-row .material-container input,
+.info-row .material-container span {
+    border: none;
+    background: none;
+    outline: none;
+    padding: 0;
 }

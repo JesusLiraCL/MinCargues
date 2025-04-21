@@ -5,7 +5,7 @@
             <button class="btn btn-back" onclick="window.location.href='/admin/calendario-admin'">
                 <i class="fas fa-arrow-left"></i> Volver
             </button>
-            <button class="btn btn-edit" onclick="toggleEditMode()">
+            <button class="btn btn-edit-save btn-edit" onclick="toggleEditMode()">
                 <i class="fas fa-edit"></i> Editar
             </button>
             <button class="btn btn-danger" onclick="confirmDelete()">
@@ -39,6 +39,11 @@
                     <label>Material:</label>
                     <div class="material-container">
                         <input type="text" class="editable-input small-input" id="material_nombre" value="{{cargue.material_nombre}}" disabled>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <label>Cantidad:</label>
+                    <div class="material-container">
                         <input type="number" class="editable-input small-input" id="cantidad" value="{{cargue.cantidad}}" disabled>
                         <span class="small-input">{{cargue.material_unidad}}</span>
                     </div>
@@ -129,20 +134,34 @@
 </div>
 
 <script>
+let isEditing = false;
+
 function confirmDelete() {
-    if (confirm('¿Estás seguro que deseas eliminar este cargue?')) {
-        window.location.href = '/admin/cargue/{{cargue.id}}/delete';
+    if (isEditing) {
+        // Si estamos en modo edición, cancelar cambios
+        if (confirm('¿Estás seguro que deseas cancelar los cambios?')) {
+            isEditing = false;
+            const editButton = document.querySelector('.btn-edit-save');
+            editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+            editButton.classList.remove('btn-save');
+            editButton.classList.add('btn-edit');
+            document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
+            document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
+        }
+    } else {
+        // Si no estamos en modo edición, mostrar confirmación de eliminación
+        if (confirm('¿Estás seguro que deseas eliminar este cargue?')) {
+            window.location.href = '/admin/cargue/{{cargue.id}}/delete';
+        }
     }
 }
-
-let isEditing = false;
 
 function toggleEditMode() {
     if (isEditing) {
         // Guardar cambios
         const data = {
-            fecha_inicio_programada: convertToLocalISO(document.getElementById('fecha_inicio_programada').value),
-            fecha_fin_programada: convertToLocalISO(document.getElementById('fecha_fin_programada').value),
+            fecha_inicio_programada: document.getElementById('fecha_inicio_programada').value,
+            fecha_fin_programada: document.getElementById('fecha_fin_programada').value,
             material_nombre: document.getElementById('material_nombre').value,
             cantidad: document.getElementById('cantidad').value,
             estado: document.getElementById('estado').value,
@@ -170,7 +189,11 @@ function toggleEditMode() {
             if (data.success) {
                 alert('Cambios guardados exitosamente');
                 isEditing = false;
-                document.querySelector('.btn-edit').innerHTML = '<i class="fas fa-edit"></i> Editar';
+                const editButton = document.querySelector('.btn-edit-save');
+                editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+                editButton.classList.remove('btn-save');
+                editButton.classList.add('btn-edit');
+                document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
                 document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
             } else {
                 alert('Error al guardar los cambios');
@@ -189,22 +212,19 @@ function toggleEditMode() {
         
         document.querySelectorAll('.editable-input').forEach(input => input.disabled = false);
         isEditing = true;
-        document.querySelector('.btn-edit').innerHTML = '<i class="fas fa-save"></i> Guardar';
+        const editButton = document.querySelector('.btn-edit-save');
+        editButton.innerHTML = '<i class="fas fa-save"></i> Guardar';
+        editButton.classList.remove('btn-edit');
+        editButton.classList.add('btn-save');
+        document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-times"></i> Cancelar';
     }
 }
 
-// Función para convertir datetime-local a ISO
-function convertToLocalISO(dateString) {
-    if (!dateString) return null;
-    const [date, time] = dateString.split('T');
-    const [year, month, day] = date.split('-');
-    const [hours, minutes] = time.split(':');
-    return new Date(year, month - 1, day, hours, minutes).toISOString();
-}
-
 // Actualizar el botón de editar
-const editButton = document.querySelector('.btn-edit');
+const editButton = document.querySelector('.btn-edit-save');
 editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+editButton.classList.remove('btn-save');
+editButton.classList.add('btn-edit');
 
 // Establecer el mínimo para las fechas
 const fechaHoy = new Date().toISOString().split('T')[0];

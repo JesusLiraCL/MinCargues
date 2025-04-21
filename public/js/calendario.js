@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // Nivel de actividad
-        const fechaStr = format(date, 'yyyy-MM-dd');
+        const fechaStr = format(date, 'dd-MM-yyyy');
         const actividades = state.actividades[fechaStr] || [];
         const nivel = Math.min(Math.ceil(actividades.length / 2), 5);
         if (nivel > 0) diaEl.classList.add(`nivel-${nivel}`);
@@ -137,10 +137,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Mostrar actividades
     function mostrarActividades(date) {
-        const fechaStr = format(date, 'yyyy-MM-dd');
+        const fechaStr = format(date, 'dd-MM-yyyy');
         elementos.diaSeleccionado.textContent = isSameDay(date, new Date())
             ? 'Cargues para hoy:'
-            : `Cargues para ${format(date, 'dd/MM/yyyy')}`;
+            : `Cargues para ${format(date, 'dd-MM-yyyy')}`;
 
         const contenedor = document.getElementById('lista-actividades');
         contenedor.innerHTML = '';

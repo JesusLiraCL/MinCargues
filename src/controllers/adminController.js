@@ -85,7 +85,7 @@ const adminController = {
         res.render("pages/admin/calendarioAdmin", {
             layout: "main",
             user: req.user,
-            tittle: 'Calendario',
+            title: 'Calendario',
             carguesCalendario: JSON.stringify(cargues),
             success_msg: req.flash('success_msg')[0],
         });
@@ -94,23 +94,24 @@ const adminController = {
     getCargueData: async (req, res) => {
         try {
             const cargue = await cargueModel.getCargueDetails(req.params.id);
+            
             res.render("pages/admin/cargue", {
                 layout: "main",
                 user: req.user,
-                tittle: 'Cargue',
+                title: "Detalles del Cargue",
                 cargue: cargue
             });
         } catch (error) {
             console.error('Error al obtener detalles del cargue:', error);
+            res.redirect('/admin/calendario-admin');
         }
     },
 
     postCargueUpdate: async (req, res) => {
         try {
-            console.log('Datos recibidos:', req.body);
-            const { 
-                fecha_inicio_programada, 
-                fecha_fin_programada, 
+            const {
+                fecha_inicio_programada,
+                fecha_fin_programada,
                 material_nombre, 
                 cantidad, 
                 estado, 
@@ -120,12 +121,12 @@ const adminController = {
                 placa 
             } = req.body;
 
-            console.log('ID del cargue:', req.params.id); // Agregamos 
+            console.log('ID del cargue:', req.params.id);
             const cargue = await cargueModel.getCargueDetails(req.params.id);
 
             // Validaciones
             if (cargue.estado === 'en progreso') {
-                console.log('Error: Cargue en progreso'); // Agregamos 
+                console.log('Error: Cargue en progreso');
                 return res.json({ success: false, message: 'No se pueden modificar los datos mientras el cargue está en progreso' });
             }
 
@@ -139,8 +140,8 @@ const adminController = {
             console.log('Actualizando cargue con código de material:', codigo_material);
             // Actualizar el cargue
             const result = await cargueModel.updateCargue(req.params.id, {
-                fecha_inicio_programada,
-                fecha_fin_programada,
+                fecha_inicio_programada: fecha_inicio_programada,
+                fecha_fin_programada: fecha_fin_programada,
                 codigo_material,
                 cantidad,
                 estado,
@@ -150,14 +151,12 @@ const adminController = {
                 placa
             });
 
-            console.log('Resultado de la actualización:', result);
             if (result) {
-                res.json({ success: true, message: 'Cargue actualizado exitosamente' });
+                res.json({ success: true });
             } else {
                 res.json({ success: false, message: 'Error al actualizar el cargue' });
             }
         } catch (error) {
-            console.error('Error completo:', error);
             console.error('Error al actualizar el cargue:', error);
             res.json({ success: false, message: 'Error al actualizar el cargue' });
         }

@@ -34,8 +34,8 @@ const cargueModel = {
                 m.nombre as material,
                 c.cantidad,
                 m.unidad_medida as unidad,
-                TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') as fecha_inicio_programada,
-                TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') as fecha_inicio_real
+                TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') as fecha_inicio_programada,
+                TO_CHAR(c.fecha_inicio_real, 'DD-MM-YYYY HH24:MI') as fecha_inicio_real
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
             INNER JOIN conductores con ON c.cedula = con.cedula
@@ -60,8 +60,8 @@ const cargueModel = {
                 m.nombre as material,
                 c.cantidad,
                 m.unidad_medida as unidad,
-                TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') as fecha_inicio_programada,
-                TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') as fecha_inicio_real
+                TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') as fecha_inicio_programada,
+                TO_CHAR(c.fecha_inicio_real, 'DD-MM-YYYY HH24:MI') as fecha_inicio_real
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
             INNER JOIN conductores con ON c.cedula = con.cedula
@@ -88,8 +88,8 @@ const cargueModel = {
                 c.cantidad,
                 con.nombre AS conductor,
                 cli.nombre AS cliente,
-                TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') AS fecha_inicio_programada,
-                TO_CHAR(c.fecha_fin_programada, 'YYYY-MM-DD HH24:MI') AS fecha_fin_programada,
+                TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') AS fecha_inicio_programada,
+                TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') AS fecha_fin_programada,
                 c.estado
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
@@ -108,10 +108,10 @@ const cargueModel = {
             const result = await db.query(
                 `SELECT 
                     c.id,
-                    TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') AS fecha_inicio_programada,
-                    TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') AS fecha_fin_programada,
-                    TO_CHAR(c.fecha_inicio_real, 'DD-MM-YYYY HH24:MI') AS fecha_inicio_real,
-                    TO_CHAR(c.fecha_fin_real, 'DD-MM-YYYY HH24:MI') AS fecha_fin_real,
+                    TO_CHAR(c.fecha_inicio_programada, 'YYYY-MM-DD HH24:MI') AS fecha_inicio_programada,
+                    TO_CHAR(c.fecha_fin_programada, 'YYYY-MM-DD HH24:MI') AS fecha_fin_programada,
+                    TO_CHAR(c.fecha_inicio_real, 'YYYY-MM-DD HH24:MI') AS fecha_inicio_real,
+                    TO_CHAR(c.fecha_fin_real, 'YYYY-MM-DD HH24:MI') AS fecha_fin_real,
                     m.nombre AS material_nombre,
                     m.unidad_medida AS material_unidad,
                     c.estado,
@@ -209,7 +209,7 @@ const cargueModel = {
                     id
                 ]
             );
-
+            console.log(fecha_inicio_programada);
             return result.rows.length > 0;
         } catch (error) {
             console.error('Error al actualizar cargue:', error);
