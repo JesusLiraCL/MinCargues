@@ -15,13 +15,7 @@ function confirmDelete() {
     if (isEditing) {
         // Si estamos en modo edición, cancelar cambios
         if (confirm('¿Estás seguro que deseas cancelar los cambios?')) {
-            isEditing = false;
-            const editButton = document.querySelector('.btn-edit-save');
-            editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
-            editButton.classList.remove('btn-save');
-            editButton.classList.add('btn-edit');
-            document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
-            document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
+            window.location.reload();
         }
     } else {
         // Si no estamos en modo edición, mostrar confirmación de eliminación
@@ -33,10 +27,77 @@ function confirmDelete() {
 
 function toggleEditMode() {
     if (isEditing) {
-        // Guardar cambios
+        // Validations before saving
+        const requiredFields = [
+            { id: 'fecha_inicio_programada', label: 'Inicio Programado' },
+            { id: 'fecha_fin_programada', label: 'Fin Programado' },
+            { id: 'material_nombre', label: 'Material' },
+            { id: 'cantidad', label: 'Cantidad' },
+            { id: 'estado', label: 'Estado' },
+            { id: 'documento', label: 'Documento' },
+            { id: 'cedula', label: 'Cédula' },
+            { id: 'placa', label: 'Placa' }
+        ];
+
+        // Clear previous error messages
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+        let isValid = true;
+
+        // Validate required fields
+        requiredFields.forEach(field => {
+            const input = document.getElementById(field.id);
+            const parentRow = input.closest('.info-row');
+            
+            if (!input.value.trim()) {
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'error-message';
+                errorMessage.textContent = `El campo ${field.label} no puede estar vacío`;
+                
+                // Insert error message after the parent row
+                parentRow.insertAdjacentElement('afterend', errorMessage);
+                isValid = false;
+            }
+        });
+
+        // Date validations
+        const today = new Date();
+        const startDateInput = document.getElementById('fecha_inicio_programada');
+        const endDateInput = document.getElementById('fecha_fin_programada');
+        
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        if (startDate <= today) {
+            const parentRow = startDateInput.closest('.info-row');
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'error-message';
+            errorMessage.textContent = 'La fecha de inicio debe ser mayor a la fecha actual';
+            
+            // Insert error message after the parent row
+            parentRow.insertAdjacentElement('afterend', errorMessage);
+            isValid = false;
+        }
+
+        if (endDate <= startDate) {
+            const parentRow = endDateInput.closest('.info-row');
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'error-message';
+            errorMessage.textContent = 'La fecha de fin debe ser mayor a la fecha de inicio';
+            
+            // Insert error message after the parent row
+            parentRow.insertAdjacentElement('afterend', errorMessage);
+            isValid = false;
+        }
+
+        // Stop if validation fails
+        if (!isValid) {
+            return;
+        }
+
         const data = {
-            fecha_inicio_programada: document.getElementById('fecha_inicio_programada').value,
-            fecha_fin_programada: document.getElementById('fecha_fin_programada').value,
+            fecha_inicio_programada: startDateInput.value,
+            fecha_fin_programada: endDateInput.value,
             material_nombre: document.getElementById('material_nombre').value,
             cantidad: document.getElementById('cantidad').value,
             estado: document.getElementById('estado').value,
@@ -45,17 +106,6 @@ function toggleEditMode() {
             cedula: document.getElementById('cedula').value,
             placa: document.getElementById('placa').value
         };
-
-        // Validaciones
-        if (data.fecha_inicio_programada && data.fecha_fin_programada) {
-            const inicio = new Date(data.fecha_inicio_programada);
-            const fin = new Date(data.fecha_fin_programada);
-
-            if (fin < inicio) {
-                alert('La fecha de finalización no puede ser menor a la fecha de inicio programada');
-                return;
-            }
-        }
 
         fetch(`/admin/cargue/${cargueId}/update`, {
             method: 'POST',

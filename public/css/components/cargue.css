@@ -38,7 +38,7 @@
 
 .info-row {
     display: flex;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 16px;
     gap: 10px;
     padding-left: 10px;
@@ -161,12 +161,11 @@
 }
 
 .editable-input {
-    border: none;
     background: none;
-    outline: none;
     cursor: text;
     font-size: 15px;
     color: #333;
+    padding: 2px;
 }
 
 .editable-input:focus {
@@ -176,7 +175,7 @@
 .small-input {
     width: 30%;
     margin: 0;
-    padding: 0;
+    padding: 2;
 }
 
 .material-container {
@@ -186,10 +185,12 @@
     flex: 1;
 }
 
-.info-row .material-container input,
-.info-row .material-container span {
-    border: none;
-    background: none;
-    outline: none;
-    padding: 0;
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 5px;
+    width: 100%;
+    text-align: left;
+    padding-left: 10px;
+    margin-bottom: 10px;
 }
