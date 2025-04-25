@@ -143,8 +143,26 @@ document.addEventListener('DOMContentLoaded', function() {
                         editButton.classList.add('btn-edit');
                         document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
                         document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
-                    } else {
-                        alert('Error al guardar los cambios 1');
+                    } else {    
+                        console.log(data.errors);
+
+                        const errorMappings = {
+                            messageNoCamion: { selector: '#placa' },
+                            messageCantidad: { selector: '#cantidad' },
+                            messageNoCliente: { selector: '#documento' },
+                            messageNoConductor: { selector: '#cedula' },
+                            messageCamionNoDisponible: { selector: '#fecha_fin_programada' },
+                            messageConductorNoDisponible: { selector: '#fecha_fin_programada' }
+                        };
+                        
+                        Object.entries(errorMappings).forEach(([errorKey, { selector }]) => {
+                            if (data.errors[errorKey]) {
+                                const errorContainer = document.createElement('div');
+                                errorContainer.className = 'error-message server-error';
+                                errorContainer.textContent = data.errors[errorKey];
+                                document.querySelector(selector).closest('.info-row').insertAdjacentElement('afterend', errorContainer);
+                            }
+                        });
                     }
                 })
                 .catch(error => {
