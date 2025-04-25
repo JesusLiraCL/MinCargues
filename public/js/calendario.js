@@ -180,7 +180,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             tdEstado.title = actividad.estado; // Tooltip con el estado
             tr.appendChild(tdEstado);
 
-            console.log(actividad.hora)
             // Columnas: estado, id, Conductor, Camión, Material, Hora
             const hora = actividad.hora || (actividad.fecha_inicio_programada ? actividad.fecha_inicio_programada.slice(11, 16) : '');
             const columnas = [
@@ -211,7 +210,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                 tbody.querySelectorAll('tr').forEach(row => {
                     row.addEventListener('dblclick', function(e) {
                         const id = this.cells[1].textContent; // El ID está en la segunda celda
-                        console.log("ID de la actividad:", id);
                         if (id) {
                             window.location.href = `/admin/cargue/${id}?referrer=calendario-admin`;
                         } else {

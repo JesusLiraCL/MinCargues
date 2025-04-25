@@ -144,7 +144,6 @@ const cargueModel = {
                 throw new Error('Cargue no encontrado');
             }
             
-            console.log(result.rows);
             return result.rows[0];
         } catch (error) {
             throw error;
@@ -204,13 +203,53 @@ const cargueModel = {
                     id
                 ]
             );
-            console.log(fecha_inicio_programada);
+
             return result.rows.length > 0;
         } catch (error) {
             console.error('Error al actualizar cargue:', error);
             return false;
         }
-    }
+    },
+
+    getCarguesByConductor: async ({ cedula, inicioWithBuffer, finWithBuffer }) => {
+        const result = await db.query(
+            `SELECT * FROM cargues 
+            WHERE 
+                (cedula = $1) AND 
+                (
+                    (fecha_inicio_programada BETWEEN $2 AND $3) OR 
+                    (fecha_fin_programada BETWEEN $4 AND $5) OR 
+                    (fecha_inicio_programada <= $6 AND fecha_fin_programada >= $7)
+                )`,
+            [
+                cedula,
+                inicioWithBuffer, finWithBuffer,
+                inicioWithBuffer, finWithBuffer,
+                inicioWithBuffer, finWithBuffer
+            ]
+        );
+        return result.rows;
+    },
+
+    getCarguesByCamion: async ({ placa, inicioWithBuffer, finWithBuffer }) => {
+        const result = await db.query(
+            `SELECT * FROM cargues 
+            WHERE 
+                (placa = $1) AND 
+                (
+                    (fecha_inicio_programada BETWEEN $2 AND $3) OR 
+                    (fecha_fin_programada BETWEEN $4 AND $5) OR 
+                    (fecha_inicio_programada <= $6 AND fecha_fin_programada >= $7)
+                )`,
+            [
+                placa,
+                inicioWithBuffer, finWithBuffer,
+                inicioWithBuffer, finWithBuffer,
+                inicioWithBuffer, finWithBuffer
+            ]
+        );
+        return result.rows;
+    },
 };
 
 module.exports = cargueModel;

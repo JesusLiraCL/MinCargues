@@ -106,7 +106,6 @@ const adminController = {
     getCargueData: async (req, res) => {
         try {
             const cargue = await cargueModel.getCargueDetails(req.params.id);
-            console.log('Estado del cargue:', cargue.estado);
             res.render("pages/admin/cargue", {
                 layout: "main",
                 user: req.user,
@@ -133,23 +132,19 @@ const adminController = {
                 placa 
             } = req.body;
 
-            console.log('ID del cargue:', req.params.id);
             const cargue = await cargueModel.getCargueDetails(req.params.id);
 
             // Validaciones
             if (cargue.estado === 'en progreso') {
-                console.log('Error: Cargue en progreso');
                 return res.json({ success: false, message: 'No se pueden modificar los datos mientras el cargue está en progreso' });
             }
 
             // Obtener el código de material
             const codigo_material = await materialModel.getMaterialCodeByName(material_nombre);
             if (!codigo_material) {
-                console.log('Error: Material no encontrado');
                 return res.json({ success: false, message: 'Material no encontrado' });
             }
 
-            console.log('Actualizando cargue con código de material:', codigo_material);
             // Actualizar el cargue
             const result = await cargueModel.updateCargue(req.params.id, {
                 fecha_inicio_programada: fecha_inicio_programada,
