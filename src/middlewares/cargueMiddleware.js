@@ -1,6 +1,7 @@
 const clienteModel = require('../models/clienteModel');
 const conductorModel = require('../models/conductorModel');
 const camionModel = require('../models/camionModel');
+const materialModel = require('../models/materialModel');
 const cargueModel = require('../models/cargueModel');
 
 const validateCargue = async (req, res, next) => {
@@ -10,6 +11,7 @@ const validateCargue = async (req, res, next) => {
             documento,
             cedula,
             placa,
+            material_nombre,
             fecha_inicio_programada,
             fecha_fin_programada
         } = req.body;
@@ -23,7 +25,12 @@ const validateCargue = async (req, res, next) => {
         } else if (cantidad > camion.capacidad) {
             errors.messageCantidad = 'La cantidad supera la capacidad del camión';
         }
-
+        
+        const material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
+        if (!material) {
+            errors.messageNoMaterial = 'Material no encontrado';
+        }
+        
         const cliente = await clienteModel.getClienteByDocumento(documento);
         if (!cliente) {
             errors.messageNoCliente = 'Cliente no encontrado';
@@ -44,23 +51,27 @@ const validateCargue = async (req, res, next) => {
             const conductorCargues = await cargueModel.getCarguesByConductor({
                 cedula: cedula,
                 inicioWithBuffer,
-                finWithBuffer
+                finWithBuffer,
+                currentId: req.params.id,
             });
 
             if (conductorCargues.length > 0) {
                 console.log('El conductor ya tiene un cargue programado en este periodo');
-                errors.messageConductorNoDisponible = 'El conductor ya tiene un cargue programado en este periodo';
+                errors.messageConductorNoDisponible = 
+                `El conductor ya tiene un cargue programado en este periodo (n° ${conductorCargues[0].id})`;
             }
 
             const camionCargues = await cargueModel.getCarguesByCamion({
                 placa: placa,
                 inicioWithBuffer,
-                finWithBuffer
+                finWithBuffer,
+                currentId: req.params.id,
             });
 
             if (camionCargues.length > 0) {
                 console.log('El camión ya está asignado a otro cargue en este periodo');
-                errors.messageCamionNoDisponible = 'El camión ya está asignado a otro cargue en este periodo';
+                errors.messageCamionNoDisponible = 
+                `El camión ya está asignado a otro cargue en este periodo (n° ${camionCargues[0].id})`;
             }
         }
 

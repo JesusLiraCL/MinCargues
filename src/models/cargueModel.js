@@ -211,11 +211,12 @@ const cargueModel = {
         }
     },
 
-    getCarguesByConductor: async ({ cedula, inicioWithBuffer, finWithBuffer }) => {
+    getCarguesByConductor: async ({ cedula, inicioWithBuffer, finWithBuffer, currentId }) => {
         const result = await db.query(
             `SELECT * FROM cargues 
             WHERE 
                 (cedula = $1) AND 
+                (id != $8) AND 
                 (
                     (fecha_inicio_programada BETWEEN $2 AND $3) OR 
                     (fecha_fin_programada BETWEEN $4 AND $5) OR 
@@ -225,17 +226,19 @@ const cargueModel = {
                 cedula,
                 inicioWithBuffer, finWithBuffer,
                 inicioWithBuffer, finWithBuffer,
-                inicioWithBuffer, finWithBuffer
+                inicioWithBuffer, finWithBuffer,
+                currentId
             ]
         );
         return result.rows;
     },
 
-    getCarguesByCamion: async ({ placa, inicioWithBuffer, finWithBuffer }) => {
+    getCarguesByCamion: async ({ placa, inicioWithBuffer, finWithBuffer, currentId }) => {
         const result = await db.query(
             `SELECT * FROM cargues 
             WHERE 
                 (placa = $1) AND 
+                (id != $8) AND 
                 (
                     (fecha_inicio_programada BETWEEN $2 AND $3) OR 
                     (fecha_fin_programada BETWEEN $4 AND $5) OR 
@@ -245,7 +248,8 @@ const cargueModel = {
                 placa,
                 inicioWithBuffer, finWithBuffer,
                 inicioWithBuffer, finWithBuffer,
-                inicioWithBuffer, finWithBuffer
+                inicioWithBuffer, finWithBuffer,
+                currentId
             ]
         );
         return result.rows;

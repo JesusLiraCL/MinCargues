@@ -151,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             messageCantidad: { selector: '#cantidad' },
                             messageNoCliente: { selector: '#documento' },
                             messageNoConductor: { selector: '#cedula' },
+                            messageNoMaterial: { selector: '#material_nombre' },
                             messageCamionNoDisponible: { selector: '#fecha_fin_programada' },
                             messageConductorNoDisponible: { selector: '#fecha_fin_programada' }
                         };

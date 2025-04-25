@@ -57,6 +57,7 @@
 .info-row span {
     flex: 1;
     color: #333;
+    padding-left: 2px;
 }
 
 .estado-activo {
@@ -166,10 +167,18 @@
     font-size: 15px;
     color: #333;
     padding: 2px;
+    border: 1px solid;
+}
+
+.editable-input:disabled{
+    border:none;
+    padding: 2px;
+    margin: 1px;
 }
 
 .editable-input:focus {
     border: 1px solid #ccc;
+    border-radius: 0px;
 }
 
 .small-input {

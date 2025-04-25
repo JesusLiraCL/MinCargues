@@ -140,7 +140,7 @@ const adminController = {
             }
 
             // Obtener el código de material
-            const codigo_material = await materialModel.getMaterialCodeByName(material_nombre);
+            const codigo_material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
             if (!codigo_material) {
                 return res.json({ success: false, message: 'Material no encontrado' });
             }
