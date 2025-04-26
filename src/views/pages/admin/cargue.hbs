@@ -80,19 +80,19 @@
                 </div>
                 <div class="info-row">
                     <label>Nombre:</label>
-                    <span>{{cargue.cliente_nombre}}</span>
+                    <span id="cliente_nombre">{{cargue.cliente_nombre}}</span>
                 </div>
                 <div class="info-row">
                     <label>Dirección:</label>
-                    <span>{{cargue.direccion}}</span>
+                    <span id="cliente_direccion">{{cargue.direccion}}</span>
                 </div>
                 <div class="info-row">
                     <label>Contacto:</label>
-                    <span>{{cargue.contacto}}</span>
+                    <span id="cliente_contacto">{{cargue.contacto}}</span>
                 </div>
                 <div class="info-row">
                     <label>Correo:</label>
-                    <span>{{cargue.cliente_correo}}</span>
+                    <span id="cliente_correo">{{cargue.cliente_correo}}</span>
                 </div>
             </div>
 
@@ -104,19 +104,19 @@
                 </div>
                 <div class="info-row">
                     <label>Nombre:</label>
-                    <span>{{cargue.conductor_nombre}}</span>
+                    <span id="conductor_nombre">{{cargue.conductor_nombre}}</span>
                 </div>
                 <div class="info-row">
                     <label>Edad:</label>
-                    <span>{{cargue.edad}}</span>
+                    <span id="conductor_edad">{{cargue.edad}}</span>
                 </div>
                 <div class="info-row">
                     <label>Teléfono:</label>
-                    <span>{{cargue.conductor_telefono}}</span>
+                    <span id="conductor_telefono">{{cargue.conductor_telefono}}</span>
                 </div>
                 <div class="info-row">
                     <label>Correo:</label>
-                    <span>{{cargue.conductor_correo}}</span>
+                    <span id="conductor_correo">{{cargue.conductor_correo}}</span>
                 </div>
             </div>
 
@@ -128,15 +128,15 @@
                 </div>
                 <div class="info-row">
                     <label>Capacidad:</label>
-                    <span>{{cargue.capacidad}}</span>
+                    <span id="camion_capacidad">{{cargue.capacidad}}</span>
                 </div>
                 <div class="info-row">
                     <label>Tipo de Camión:</label>
-                    <span>{{cargue.tipo_camion}}</span>
+                    <span id="camion_tipo">{{cargue.tipo_camion}}</span>
                 </div>
                 <div class="info-row">
                     <label>Habilitado:</label>
-                    <span>{{#if cargue.habilitado}}Sí{{else}}No{{/if}}</span>
+                    <span id="camion_habilitado">{{#if cargue.habilitado}}Sí{{else}}No{{/if}}</span>
                 </div>
             </div>
         </div>
@@ -144,3 +144,4 @@
 </div>
 
 <script src="/js/cargueDetails.js" defer></script>
+<script src="/js/entityFetch.js" defer></script>

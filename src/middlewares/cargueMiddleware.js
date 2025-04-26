@@ -25,12 +25,12 @@ const validateCargue = async (req, res, next) => {
         } else if (cantidad > camion.capacidad) {
             errors.messageCantidad = 'La cantidad supera la capacidad del camión';
         }
-        
+
         const material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
         if (!material) {
             errors.messageNoMaterial = 'Material no encontrado';
         }
-        
+
         const cliente = await clienteModel.getClienteByDocumento(documento);
         if (!cliente) {
             errors.messageNoCliente = 'Cliente no encontrado';
@@ -45,8 +45,8 @@ const validateCargue = async (req, res, next) => {
         if (conductor && camion) {
             const inicioDate = new Date(fecha_inicio_programada);
             const finDate = new Date(fecha_fin_programada);
-            const inicioWithBuffer = new Date(inicioDate.getTime() - 10 * 60000);
-            const finWithBuffer = new Date(finDate.getTime() + 10 * 60000);
+            const inicioWithBuffer = new Date(inicioDate.getTime() - 9 * 60000);
+            const finWithBuffer = new Date(finDate.getTime() + 9 * 60000);
 
             const conductorCargues = await cargueModel.getCarguesByConductor({
                 cedula: cedula,
@@ -57,8 +57,8 @@ const validateCargue = async (req, res, next) => {
 
             if (conductorCargues.length > 0) {
                 console.log('El conductor ya tiene un cargue programado en este periodo');
-                errors.messageConductorNoDisponible = 
-                `El conductor ya tiene un cargue programado en este periodo (n° ${conductorCargues[0].id})`;
+                errors.messageConductorNoDisponible =
+                    `El conductor ya tiene un cargue programado en este periodo (n° ${conductorCargues[0].id})`;
             }
 
             const camionCargues = await cargueModel.getCarguesByCamion({
@@ -70,8 +70,8 @@ const validateCargue = async (req, res, next) => {
 
             if (camionCargues.length > 0) {
                 console.log('El camión ya está asignado a otro cargue en este periodo');
-                errors.messageCamionNoDisponible = 
-                `El camión ya está asignado a otro cargue en este periodo (n° ${camionCargues[0].id})`;
+                errors.messageCamionNoDisponible =
+                    `El camión ya está asignado a otro cargue en este periodo (n° ${camionCargues[0].id})`;
             }
         }
 

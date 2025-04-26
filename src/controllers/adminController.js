@@ -1,5 +1,7 @@
 const cargueModel = require('../models/cargueModel');
 const camionModel = require('../models/camionModel');
+const clienteModel = require('../models/clienteModel');
+const conductorModel = require('../models/conductorModel');
 const materialModel = require('../models/materialModel');
 
 const adminController = {
@@ -182,6 +184,51 @@ const adminController = {
             console.error('Error al eliminar cargue:', error);
             req.flash('error_msg', 'Error al eliminar el cargue');
             res.redirect(`/admin/cargue/${req.params.id}`);
+        }
+    },
+    
+    // APIs
+    fetchCliente: async (req, res) => {
+        try {
+            const { documento } = req.query;
+            console.log("documento: ", documento);
+            const cliente = await clienteModel.getClienteByDocumento(documento);
+            console.log("cliente: ", cliente);
+            if (cliente) {
+                res.json(cliente);
+            } else {
+                res.status(404).json({ message: 'Cliente nox encontrado' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al buscar cliente' });
+        }
+    },
+
+    fetchConductor: async (req, res) => {
+        try {
+            const { cedula } = req.query;
+            const conductor = await conductorModel.getConductorByCedula(cedula);
+            if (conductor) {
+                res.json(conductor);
+            } else {
+                res.status(404).json({ message: 'Conductor no encontrado' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al buscar conductor' });
+        }
+    },
+
+    fetchCamion: async (req, res) => {
+        try {
+            const { placa } = req.query;
+            const camion = await camionModel.getCamionByPlaca(placa);
+            if (camion) {
+                res.json(camion);
+            } else {
+                res.status(404).json({ message: 'Camión no encontrado' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Error al buscar camión' });
         }
     },
 };

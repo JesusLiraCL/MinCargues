@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    // listeners
     function goBack() {
         // Obtener el referrer de la URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -7,6 +9,60 @@ document.addEventListener('DOMContentLoaded', function() {
         // Redirigir a la página correspondiente
         window.location.href = `/admin/${referrer}`;
     }
+
+    // Add event listeners for dynamic entity updates
+    document.getElementById('documento').addEventListener('change', async function() {
+        if (isEditing) {
+            const cliente = await fetchClienteByDocumento(this.value);
+            if (cliente) {
+                // Update cliente details in the UI
+                document.getElementById('cliente_nombre').textContent = cliente.nombre || 'Nombre no disponible';
+                document.getElementById('cliente_direccion').textContent = cliente.direccion || 'Dirección no disponible';
+                document.getElementById('cliente_contacto').textContent = cliente.contacto || 'Contacto no disponible';
+                document.getElementById('cliente_correo').textContent = cliente.correo || 'Correo no disponible';
+            } else {
+                document.getElementById('cliente_nombre').textContent = '';
+                document.getElementById('cliente_direccion').textContent = '';
+                document.getElementById('cliente_contacto').textContent = '';
+                document.getElementById('cliente_correo').textContent = '';
+            }
+        }
+    });
+
+    document.getElementById('cedula').addEventListener('change', async function() {
+        if (isEditing) {
+            const conductor = await fetchConductorByCedula(this.value);
+            if (conductor) {
+                // Update conductor details in the UI
+                document.getElementById('conductor_nombre').textContent = conductor.nombre || 'Nombre no disponible';
+                document.getElementById('conductor_edad').textContent = conductor.edad || 'Edad no disponible';
+                document.getElementById('conductor_telefono').textContent = conductor.telefono || 'Teléfono no disponible';
+                document.getElementById('conductor_correo').textContent = conductor.correo || 'Correo no disponible';
+                // Add more fields as needed
+            } else {
+                document.getElementById('conductor_nombre').textContent = '';
+                document.getElementById('conductor_edad').textContent = '';
+                document.getElementById('conductor_telefono').textContent = '';
+                document.getElementById('conductor_correo').textContent = '';
+            }
+        }
+    });
+    
+    document.getElementById('placa').addEventListener('change', async function() {
+        if (isEditing) {
+            const camion = await fetchCamionByPlaca(this.value);
+            if (camion) {
+                // Update camion details in the UI
+                document.getElementById('camion_tipo').textContent = camion.tipo_camion || 'Tipo no disponible';
+                document.getElementById('camion_capacidad').textContent = camion.capacidad || 'Capacidad no disponible';
+                document.getElementById('camion_habilitado').textContent = camion.habilitado ? 'Sí' : 'No';
+            } else {
+                document.getElementById('camion_tipo').textContent = '';
+                document.getElementById('camion_capacidad').textContent = '';
+                document.getElementById('camion_habilitado').textContent = '';
+            }
+        }
+    });
 
     let isEditing = false;
     let cargueId = null;
