@@ -84,88 +84,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function toggleEditMode() {
         if (isEditing) {
-            // Validations before saving
-            const requiredFields = [
-                { id: 'fecha_inicio_programada', label: 'Inicio Programado' },
-                { id: 'fecha_fin_programada', label: 'Fin Programado' },
-                { id: 'material_nombre', label: 'Material' },
-                { id: 'cantidad', label: 'Cantidad' },
-                { id: 'estado', label: 'Estado' },
-                { id: 'documento', label: 'Documento' },
-                { id: 'cedula', label: 'Cédula' },
-                { id: 'placa', label: 'Placa' }
-            ];
-
-            // Clear previous error messages
+            // Clear previous error messages (tanto de cliente como de servidor)
             document.querySelectorAll('.error-message').forEach(el => el.remove());
-
-            let isValid = true;
-
-            // Validate required fields
-            requiredFields.forEach(field => {
-                const input = document.getElementById(field.id);
-                const parentRow = input.closest('.info-row');
-                
-                // Remove any existing error messages
-                const existingError = parentRow.querySelector('.error-message');
-                if (existingError) {
-                    existingError.remove();
-                }
-
-                if (!input.value.trim()) {
-                    const errorMessage = document.createElement('div');
-                    errorMessage.className = 'error-message';
-                    errorMessage.textContent = `El campo ${field.label} no puede estar vacío`;
-                    
-                    // Insert error message after the parent row
-                    parentRow.insertAdjacentElement('afterend', errorMessage);
-                    isValid = false;
-                }
-            });
-
-            // Date validations
+    
+            // Validaciones de fecha (solo para mostrar errores)
             const today = new Date();
             const startDateInput = document.getElementById('fecha_inicio_programada');
             const endDateInput = document.getElementById('fecha_fin_programada');
             
             const startDate = new Date(startDateInput.value);
             const endDate = new Date(endDateInput.value);
-
-            // Remove any existing date error messages
+    
             const startDateParentRow = startDateInput.closest('.info-row');
             const endDateParentRow = endDateInput.closest('.info-row');
-            
-            const existingStartError = startDateParentRow.querySelector('.error-message');
-            const existingEndError = endDateParentRow.querySelector('.error-message');
-            
-            if (existingStartError) existingStartError.remove();
-            if (existingEndError) existingEndError.remove();
-
-            if (startDate <= today) {
+    
+            if (startDateInput.value && startDate <= today) {
                 const errorMessage = document.createElement('div');
                 errorMessage.className = 'error-message';
                 errorMessage.textContent = 'La fecha de inicio debe ser mayor a la fecha actual';
-                
-                // Insert error message after the parent row
                 startDateParentRow.insertAdjacentElement('afterend', errorMessage);
-                isValid = false;
             }
-
-            if (endDate <= startDate) {
+    
+            if (startDateInput.value && endDateInput.value && endDate <= startDate) {
                 const errorMessage = document.createElement('div');
                 errorMessage.className = 'error-message';
                 errorMessage.textContent = 'La fecha de fin debe ser mayor a la fecha de inicio';
-                
-                // Insert error message after the parent row
                 endDateParentRow.insertAdjacentElement('afterend', errorMessage);
-                isValid = false;
             }
-
-            // Stop if validation fails
-            if (!isValid) {
-                return;
-            }
-
+    
+            // Preparar datos para enviar al servidor (sin validación)
             const data = {
                 fecha_inicio_programada: startDateInput.value,
                 fecha_fin_programada: endDateInput.value,
@@ -177,7 +124,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 cedula: document.getElementById('cedula').value,
                 placa: document.getElementById('placa').value
             };
-
+    
+            // Enviar la solicitud al servidor independientemente de los errores de validación
             fetch(`/admin/cargue/${cargueId}/update`, {
                 method: 'POST',
                 headers: {
@@ -187,9 +135,9 @@ document.addEventListener('DOMContentLoaded', function() {
             })
                 .then(response => response.json())
                 .then(data => {
-                    // Clear any previous server-side error messages
-                    document.querySelectorAll('.error-message').forEach(el => el.remove());
-
+                    // Limpiar solo los errores del servidor anteriores
+                    document.querySelectorAll('.server-error').forEach(el => el.remove());
+    
                     if (data.success) {
                         alert('Cambios guardados exitosamente');
                         isEditing = false;
@@ -201,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
                     } else {    
                         console.log(data.errors);
-
+    
                         const errorMappings = {
                             messageNoCamion: { selector: '#placa' },
                             messageCantidad: { selector: '#cantidad' },
@@ -224,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al guardar los cambios 2');
+                    alert('Error al guardar los cambios');
                 });
         } else {
             // Habilitar edición
@@ -232,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('No se pueden modificar los datos mientras el cargue está en progreso');
                 return;
             }
-
+    
             document.querySelectorAll('.editable-input').forEach(input => input.disabled = false);
             isEditing = true;
             const editButton = document.querySelector('.btn-edit-save');

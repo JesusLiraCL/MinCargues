@@ -15,30 +15,45 @@ const validateCargue = async (req, res, next) => {
             fecha_inicio_programada,
             fecha_fin_programada
         } = req.body;
-        console.log("Body: ", req.body);
 
         const errors = {};
 
         const camion = await camionModel.getCamionByPlaca(placa);
-        if (!camion) {
-            errors.messageNoCamion = 'Camión no encontrado';
-        } else if (cantidad > camion.capacidad) {
-            errors.messageCantidad = 'La cantidad supera la capacidad del camión';
+        if(placa != ''){
+            if (!camion) {
+                errors.messageNoCamion = 'Camión no encontrado';
+            } else if (cantidad > camion.capacidad) {
+                errors.messageCantidad = 'La cantidad supera la capacidad del camión';
+            }
+        } else {
+            errors.messageNoCamion = "El campo 'Placa' no puede estar vacío";
         }
 
-        const material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
-        if (!material) {
-            errors.messageNoMaterial = 'Material no encontrado';
+        if(material_nombre){
+            const material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
+            if (!material) {
+                errors.messageNoMaterial = 'Material no encontrado';
+            }
+        } else {
+            errors.messageNoMaterial = "El campo 'Material' no puede estar vacío";
         }
 
-        const cliente = await clienteModel.getClienteByDocumento(documento);
-        if (!cliente) {
-            errors.messageNoCliente = 'Cliente no encontrado';
+        if(documento){
+            const cliente = await clienteModel.getClienteByDocumento(documento);
+            if (!cliente) {
+                errors.messageNoCliente = 'Cliente no encontrado';
+            }
+        } else {
+            errors.messageNoCliente = "El campo 'Documento' no puede estar vacío";
         }
-
+        
         const conductor = await conductorModel.getConductorByCedula(cedula);
-        if (!conductor) {
-            errors.messageNoConductor = 'Conductor no encontrado';
+        if(cedula){
+            if (!conductor) {
+                errors.messageNoConductor = 'Conductor no encontrado';
+            }
+        } else {
+            errors.messageNoConductor = "El campo 'Cédula' no puede estar vacío";
         }
 
         // 3. Check conductor and camion availability (only if they exist)
