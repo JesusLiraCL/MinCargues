@@ -18,6 +18,20 @@ const validateCargue = async (req, res, next) => {
 
         const errors = {};
 
+        const today = new Date();
+        const startDate = new Date(fecha_inicio_programada);
+        const endDate = new Date(fecha_fin_programada);
+
+        // Validar que la fecha de inicio sea mayor a la actual
+        if (fecha_inicio_programada && startDate <= today) {
+            errors.messageInvalidStartDate = 'La fecha de inicio debe ser mayor a la fecha actual';
+        }
+
+        // Validar que la fecha de fin sea mayor a la de inicio
+        if (fecha_inicio_programada && fecha_fin_programada && endDate <= startDate) {
+            errors.messageInvalidEndDate = 'La fecha de fin debe ser mayor a la fecha de inicio';
+        }
+
         const camion = await camionModel.getCamionByPlaca(placa);
         if(placa != ''){
             if (!camion) {
@@ -71,7 +85,6 @@ const validateCargue = async (req, res, next) => {
             });
 
             if (conductorCargues.length > 0) {
-                console.log('El conductor ya tiene un cargue programado en este periodo');
                 errors.messageConductorNoDisponible =
                     `El conductor ya tiene un cargue programado en este periodo (n° ${conductorCargues[0].id})`;
             }
@@ -84,7 +97,6 @@ const validateCargue = async (req, res, next) => {
             });
 
             if (camionCargues.length > 0) {
-                console.log('El camión ya está asignado a otro cargue en este periodo');
                 errors.messageCamionNoDisponible =
                     `El camión ya está asignado a otro cargue en este periodo (n° ${camionCargues[0].id})`;
             }
@@ -101,7 +113,6 @@ const validateCargue = async (req, res, next) => {
         next();
 
     } catch (error) {
-        console.error('Error en validación de cargue:', error);
         return res.status(500).json({
             success: false,
             message: 'Error inesperado al validar el cargue'
