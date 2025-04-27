@@ -108,7 +108,7 @@ const adminController = {
     getCargueData: async (req, res) => {
         try {
             const cargue = await cargueModel.getCargueDetails(req.params.id);
-            res.render("pages/admin/cargue", {
+            res.render("pages/admin/cargueDetails", {
                 layout: "main",
                 user: req.user,
                 title: "Detalles del Cargue",
@@ -183,7 +183,7 @@ const adminController = {
         } catch (error) {
             console.error('Error al eliminar cargue:', error);
             req.flash('error_msg', 'Error al eliminar el cargue');
-            res.redirect(`/admin/cargue/${req.params.id}`);
+            res.redirect(`/admin/cargueDetails/${req.params.id}`);
         }
     },
     
