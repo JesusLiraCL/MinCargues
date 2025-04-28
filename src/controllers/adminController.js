@@ -231,6 +231,14 @@ const adminController = {
             res.status(500).json({ message: 'Error al buscar camión' });
         }
     },
+
+    getAddCargue: async (req, res) => {
+        res.render('pages/admin/addCargue', {
+            layout: 'main',
+            user: req.user,
+            title: 'Agregar Cargue'
+        })
+    },
 };
 
 module.exports = adminController;

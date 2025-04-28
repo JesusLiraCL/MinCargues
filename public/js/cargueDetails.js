@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
     // listeners
     function goBack() {
         // Obtener el referrer de la URL
