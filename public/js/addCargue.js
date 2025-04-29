@@ -169,4 +169,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const addButton = document.getElementById('btn-agregar');
     addButton.addEventListener('click', handleSubmit);
+
+    const fechaHoy = new Date().toISOString().slice(0, 16);
+
+    document.getElementById('fecha_inicio_programada').value = fechaHoy;
+    document.getElementById('fecha_fin_programada').value = fechaHoy;
+
+    document.getElementById('fecha_inicio_programada').min = fechaHoy;
+    document.getElementById('fecha_fin_programada').min = fechaHoy;
 })

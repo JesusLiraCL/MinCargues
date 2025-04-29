@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Establecer el mínimo para las fechas
-    const fechaHoy = new Date().toISOString().split('T')[0];
+    const fechaHoy = new Date().toISOString().slice(0, 16);
     document.getElementById('fecha_inicio_programada').min = fechaHoy;
     document.getElementById('fecha_fin_programada').min = fechaHoy;
 })
