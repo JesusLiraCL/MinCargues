@@ -37,13 +37,13 @@ const adminController = {
             if (!dateString) return '';
             const [fecha, hora24] = dateString.split(' ');
             const hora = new Date(`2000-01-01T${hora24}`);
-            return hora.toLocaleTimeString('en-US', { 
+            return hora.toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',
                 hour12: true
             }).toLowerCase();
         };
-
+        console.log(req.user);
         // 3. Formatear datos para la vista
         res.render('pages/admin/inicioAdmin', {
             layout: 'main',
@@ -53,10 +53,10 @@ const adminController = {
             // Métricas principales
             progress: porcentajeCompletados,
             truckUsage: porcentajeCamionesEnUso,
-            
+
             // Tabla de cargues en curso
             currentData: {
-                headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Inicio real"],     
+                headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Inicio real"],
                 rows: carguesEnCurso.map(c => ([
                     c.id,
                     c.placa,
@@ -67,7 +67,7 @@ const adminController = {
                     formatTime(c.fecha_inicio_real),
                 ]))
             },
-            
+
             // Tabla de cargues pendientes
             nextData: {
                 headers: ["ID", "Placa", "Conductor", "Material", "Cantidad", "Inicio prog.", "Fin prog."],
@@ -95,7 +95,7 @@ const adminController = {
 
     getCalendarData: async (req, res) => {
         const cargues = await cargueModel.getCarguesDesdeHoy();
-        
+
         res.render("pages/admin/calendarioAdmin", {
             layout: "main",
             user: req.user,
@@ -125,13 +125,13 @@ const adminController = {
             const {
                 fecha_inicio_programada,
                 fecha_fin_programada,
-                material_nombre, 
-                cantidad, 
-                estado, 
-                observaciones, 
-                documento, 
-                cedula, 
-                placa 
+                material_nombre,
+                cantidad,
+                estado,
+                observaciones,
+                documento,
+                cedula,
+                placa
             } = req.body;
 
             const cargue = await cargueModel.getCargueDetails(req.params.id);
@@ -141,7 +141,6 @@ const adminController = {
                 return res.json({ success: false, message: 'No se pueden modificar los datos mientras el cargue está en progreso' });
             }
 
-            // Obtener el código de material
             const codigo_material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
             if (!codigo_material) {
                 return res.json({ success: false, message: 'Material no encontrado' });
@@ -160,6 +159,8 @@ const adminController = {
                 placa
             });
 
+
+
             if (result) {
                 res.json({ success: true });
             } else {
@@ -174,7 +175,7 @@ const adminController = {
     deleteCargue: async (req, res) => {
         try {
             const id = req.params.id;
-            
+
             await cargueModel.deleteCargue(id);
 
             // Redirigimos al calendario con un mensaje de éxito
@@ -186,7 +187,7 @@ const adminController = {
             res.redirect(`/admin/cargueDetails/${req.params.id}`);
         }
     },
-    
+
     // APIs
     fetchCliente: async (req, res) => {
         try {
@@ -239,6 +240,47 @@ const adminController = {
             title: 'Agregar Cargue'
         })
     },
+
+    postAddCargue: async (req, res) => {
+        try {
+            const {
+                fecha_inicio_programada,
+                fecha_fin_programada,
+                material_nombre,
+                cantidad,
+                observaciones,
+                documento,
+                cedula,
+                placa,
+                user_id
+            } = req.body;
+
+            const codigo_material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
+
+            const nuevoCargue = await cargueModel.addCargue({
+                fecha_inicio_programada,
+                fecha_fin_programada,
+                codigo_material,
+                cantidad,
+                observaciones,
+                documento,
+                cedula,
+                placa,
+                user_id
+            });
+
+            // Respuesta exitosa en formato JSON
+            return res.json({
+                success: true,
+                message: 'Cargue creado exitosamente',
+                cargueId: nuevoCargue.id
+            });
+
+        } catch (error) {
+            console.error('Error en agregarCargue:', error);
+        }
+    },
 };
 
 module.exports = adminController;
+

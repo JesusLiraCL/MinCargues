@@ -1,16 +1,16 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // listeners
     function goBack() {
         // Obtener el referrer de la URL
         const urlParams = new URLSearchParams(window.location.search);
         const referrer = urlParams.get('referrer') || 'inicio';
-        
+
         // Redirigir a la página correspondiente
         window.location.href = `/admin/${referrer}`;
     }
 
     // Add event listeners for dynamic entity updates
-    document.getElementById('documento').addEventListener('change', async function() {
+    document.getElementById('documento').addEventListener('change', async function () {
         if (isEditing) {
             const cliente = await fetchClienteByDocumento(this.value);
             if (cliente) {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('cedula').addEventListener('change', async function() {
+    document.getElementById('cedula').addEventListener('change', async function () {
         if (isEditing) {
             const conductor = await fetchConductorByCedula(this.value);
             if (conductor) {
@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-    
-    document.getElementById('placa').addEventListener('change', async function() {
+
+    document.getElementById('placa').addEventListener('change', async function () {
         if (isEditing) {
             const camion = await fetchCamionByPlaca(this.value);
             if (camion) {
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cedula: document.getElementById('cedula').value,
                 placa: document.getElementById('placa').value
             };
-    
+
             // Enviar la solicitud al servidor independientemente de los errores de validación
             fetch(`/admin/cargue/${cargueId}/update`, {
                 method: 'POST',
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     // Limpiar solo los errores del servidor anteriores
                     document.querySelectorAll('.server-error').forEach(el => el.remove());
-    
+
                     if (data.success) {
                         alert('Cambios guardados exitosamente');
                         isEditing = false;
@@ -124,10 +124,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         editButton.classList.add('btn-edit');
                         document.querySelector('.btn-danger').innerHTML = '<i class="fas fa-trash"></i> Eliminar';
                         document.querySelectorAll('.editable-input').forEach(input => input.disabled = true);
-                    } else {    
+                        document.querySelectorAll('.error-tooltip').forEach(el => el.remove());
+                        document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+                    } else {
                         const errorMappings = {
                             messageNoCamion: { selector: '#placa' },
                             messageCantidad: { selector: '#cantidad' },
+                            messageNoCantidad: { selector: '#cantidad' },
                             messageNoCliente: { selector: '#documento' },
                             messageNoConductor: { selector: '#cedula' },
                             messageNoMaterial: { selector: '#material_nombre' },
@@ -136,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             messageInvalidStartDate: { selector: '#fecha_inicio_programada' },
                             messageInvalidEndDate: { selector: '#fecha_fin_programada' },
                         };
-                        
+
                         // Primero limpia tooltips anteriores
                         document.querySelectorAll('.error-tooltip').forEach(el => el.remove());
                         // Quita clases de error previas
@@ -146,51 +149,51 @@ document.addEventListener('DOMContentLoaded', function() {
                         const errorsByField = {};
 
                         Object.entries(data.errors).forEach(([errorKey, errorMessage]) => {
-                        if (errorMappings[errorKey]) {
-                            const selector = errorMappings[errorKey].selector;
-                            if (!errorsByField[selector]) {
-                            errorsByField[selector] = [];
+                            if (errorMappings[errorKey]) {
+                                const selector = errorMappings[errorKey].selector;
+                                if (!errorsByField[selector]) {
+                                    errorsByField[selector] = [];
+                                }
+                                errorsByField[selector].push(errorMessage);
                             }
-                            errorsByField[selector].push(errorMessage);
-                        }
                         });
 
                         // Crea un tooltip por campo con todos sus errores
                         Object.entries(errorsByField).forEach(([selector, errorMessages]) => {
-                        const inputElement = document.querySelector(selector);
-                        if (inputElement) {
-                            // Marca el campo con error
-                            inputElement.classList.add('has-error');
-                            
-                            // Crea el contenedor del tooltip
-                            const tooltipContainer = document.createElement('div');
-                            tooltipContainer.className = 'error-tooltip';
-                            
-                            // Ícono de error
-                            const tooltipIcon = document.createElement('span');
-                            tooltipIcon.id = 'error-tooltip-icon';
-                            tooltipIcon.textContent = '!';
-                            
-                            // Contenido del tooltip con lista de errores
-                            const tooltipContent = document.createElement('div');
-                            tooltipContent.className = 'error-tooltip-content';
-                            
-                            const errorList = document.createElement('ul');
-                            errorList.className = 'error-list';
-                            
-                            errorMessages.forEach(message => {
-                            const errorItem = document.createElement('li');
-                            errorItem.textContent = message;
-                            errorList.appendChild(errorItem);
-                            });
-                            
-                            tooltipContent.appendChild(errorList);
-                            tooltipContainer.appendChild(tooltipIcon);
-                            tooltipContainer.appendChild(tooltipContent);
-                            
-                            // Inserta el tooltip después del campo
-                            inputElement.parentNode.insertBefore(tooltipContainer, inputElement.nextSibling);
-                        }
+                            const inputElement = document.querySelector(selector);
+                            if (inputElement) {
+                                // Marca el campo con error
+                                inputElement.classList.add('has-error');
+
+                                // Crea el contenedor del tooltip
+                                const tooltipContainer = document.createElement('div');
+                                tooltipContainer.className = 'error-tooltip';
+
+                                // Ícono de error
+                                const tooltipIcon = document.createElement('span');
+                                tooltipIcon.id = 'error-tooltip-icon';
+                                tooltipIcon.textContent = '!';
+
+                                // Contenido del tooltip con lista de errores
+                                const tooltipContent = document.createElement('div');
+                                tooltipContent.className = 'error-tooltip-content';
+
+                                const errorList = document.createElement('ul');
+                                errorList.className = 'error-list';
+
+                                errorMessages.forEach(message => {
+                                    const errorItem = document.createElement('li');
+                                    errorItem.textContent = message;
+                                    errorList.appendChild(errorItem);
+                                });
+
+                                tooltipContent.appendChild(errorList);
+                                tooltipContainer.appendChild(tooltipIcon);
+                                tooltipContainer.appendChild(tooltipContent);
+
+                                // Inserta el tooltip después del campo
+                                inputElement.parentNode.insertBefore(tooltipContainer, inputElement.nextSibling);
+                            }
                         });
                     }
                 })
@@ -204,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('No se pueden modificar los datos mientras el cargue está en progreso');
                 return;
             }
-    
+
             document.querySelectorAll('.editable-input').forEach(input => input.disabled = false);
             isEditing = true;
             const editButton = document.querySelector('.btn-edit-save');

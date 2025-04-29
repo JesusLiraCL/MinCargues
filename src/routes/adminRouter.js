@@ -11,6 +11,7 @@ adminRouter.get('/cargue/:id', isAdmin, adminController.getCargueData);
 adminRouter.post('/cargue/:id/update', isAdmin, validateCargue, adminController.postCargueUpdate);
 adminRouter.get('/cargue/:id/delete', isAdmin, adminController.deleteCargue);
 adminRouter.get('/agregar-cargue', isAdmin, adminController.getAddCargue);
+adminRouter.post('/agregar-cargue', isAdmin, validateCargue, adminController.postAddCargue);
 
 adminRouter.get('/usuarios', isAdmin, (req, res) => {
     res.render('pages/admin/usuarios', {

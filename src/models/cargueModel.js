@@ -254,6 +254,49 @@ const cargueModel = {
         );
         return result.rows;
     },
+
+    addCargue: async (data) => {
+        const { 
+            fecha_inicio_programada, 
+            fecha_fin_programada, 
+            codigo_material, 
+            cantidad, 
+            observaciones, 
+            documento, 
+            cedula, 
+            placa,
+            user_id 
+        } = data;
+
+        const result = await db.query(
+            `INSERT INTO cargues (
+                fecha_inicio_programada, 
+                fecha_fin_programada, 
+                codigo_material, 
+                cantidad, 
+                observaciones, 
+                documento, 
+                cedula, 
+                placa, 
+                estado,
+                usuario
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING id`,
+            [
+                fecha_inicio_programada,
+                fecha_fin_programada,
+                codigo_material,
+                cantidad,
+                observaciones,
+                documento,
+                cedula,
+                placa,
+                'pendiente',
+                user_id
+            ]
+        );
+        return result.rows[0];
+    },
 };
 
 module.exports = cargueModel;

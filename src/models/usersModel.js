@@ -6,8 +6,8 @@ module.exports = {
         return rows;
     },
 
-    async findByUsername(nombre) {  // Cambiado de username a nombre
-        const query = 'SELECT * FROM usuarios WHERE nombre = $1';  // Cambiado a nombre
+    async findByUsername(nombre) { 
+        const query = 'SELECT * FROM usuarios WHERE nombre = $1';
         const { rows } = await pool.query(query, [nombre]);
 
         return rows[0] || null;

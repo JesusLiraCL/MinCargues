@@ -70,6 +70,10 @@ const validateCargue = async (req, res, next) => {
             errors.messageNoConductor = "El campo 'Cédula' no puede estar vacío";
         }
 
+        if(!cantidad){
+            errors.messageNoCantidad = "El campo 'Cantidad' no puede estar vacío";
+        }
+        
         // 3. Check conductor and camion availability (only if they exist)
         if (conductor && camion) {
             const inicioDate = new Date(fecha_inicio_programada);
