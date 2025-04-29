@@ -23,7 +23,8 @@ const validateCargue = async (req, res, next) => {
         const endDate = new Date(fecha_fin_programada);
 
         // Validar que la fecha de inicio sea mayor a la actual
-        if (fecha_inicio_programada && startDate <= today) {
+        const fecha_inicio_bd = cargueModel.getStartDate(req.params.id);
+        if (fecha_inicio_programada == fecha_inicio_bd && startDate <= today) {
             errors.messageInvalidStartDate = 'La fecha de inicio debe ser mayor a la fecha actual';
         }
 
@@ -33,7 +34,7 @@ const validateCargue = async (req, res, next) => {
         }
 
         const camion = await camionModel.getCamionByPlaca(placa);
-        if(placa != ''){
+        if (placa != '') {
             if (!camion) {
                 errors.messageNoCamion = 'Camión no encontrado';
             } else if (cantidad > camion.capacidad) {
@@ -43,7 +44,7 @@ const validateCargue = async (req, res, next) => {
             errors.messageNoCamion = "El campo 'Placa' no puede estar vacío";
         }
 
-        if(material_nombre){
+        if (material_nombre) {
             const material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
             if (!material) {
                 errors.messageNoMaterial = 'Material no encontrado';
@@ -52,7 +53,7 @@ const validateCargue = async (req, res, next) => {
             errors.messageNoMaterial = "El campo 'Material' no puede estar vacío";
         }
 
-        if(documento){
+        if (documento) {
             const cliente = await clienteModel.getClienteByDocumento(documento);
             if (!cliente) {
                 errors.messageNoCliente = 'Cliente no encontrado';
@@ -60,9 +61,9 @@ const validateCargue = async (req, res, next) => {
         } else {
             errors.messageNoCliente = "El campo 'Documento' no puede estar vacío";
         }
-        
+
         const conductor = await conductorModel.getConductorByCedula(cedula);
-        if(cedula){
+        if (cedula) {
             if (!conductor) {
                 errors.messageNoConductor = 'Conductor no encontrado';
             }
@@ -70,10 +71,10 @@ const validateCargue = async (req, res, next) => {
             errors.messageNoConductor = "El campo 'Cédula' no puede estar vacío";
         }
 
-        if(!cantidad){
+        if (!cantidad) {
             errors.messageNoCantidad = "El campo 'Cantidad' no puede estar vacío";
         }
-        
+
         // 3. Check conductor and camion availability (only if they exist)
         if (conductor && camion) {
             const inicioDate = new Date(fecha_inicio_programada);

@@ -139,6 +139,8 @@ const adminController = {
             // Validaciones
             if (cargue.estado === 'en progreso') {
                 return res.json({ success: false, message: 'No se pueden modificar los datos mientras el cargue está en progreso' });
+            } else if (cargue.estado === 'completado') {
+                return res.json({ success: false, message: 'El cargue ya ha sido realizado' });
             }
 
             const codigo_material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
@@ -158,8 +160,6 @@ const adminController = {
                 cedula,
                 placa
             });
-
-
 
             if (result) {
                 res.json({ success: true });

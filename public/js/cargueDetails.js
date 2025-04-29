@@ -99,10 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 observaciones: document.getElementById('observaciones').value,
                 documento: document.getElementById('documento').value,
                 cedula: document.getElementById('cedula').value,
-                placa: document.getElementById('placa').value
+                placa: document.getElementById('placa').value,
             };
 
-            // Enviar la solicitud al servidor independientemente de los errores de validación
             fetch(`/admin/cargue/${cargueId}/update`, {
                 method: 'POST',
                 headers: {
@@ -134,8 +133,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             messageNoCliente: { selector: '#documento' },
                             messageNoConductor: { selector: '#cedula' },
                             messageNoMaterial: { selector: '#material_nombre' },
-                            messageCamionNoDisponible: { selector: '#fecha_fin_programada' },
-                            messageConductorNoDisponible: { selector: '#fecha_fin_programada' },
+                            messageCamionNoDisponible: { selector: '#fecha_inicio_programada' },
+                            messageConductorNoDisponible: { selector: '#fecha_inicio_programada' },
                             messageInvalidStartDate: { selector: '#fecha_inicio_programada' },
                             messageInvalidEndDate: { selector: '#fecha_fin_programada' },
                         };
@@ -202,9 +201,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert('Error al guardar los cambios');
                 });
         } else {
-            // Habilitar edición
             if (cargueEstado === 'en progreso') {
                 alert('No se pueden modificar los datos mientras el cargue está en progreso');
+                return;
+            } else if (cargueEstado === 'completado') {
+                alert('El cargue ya ha sido realizado');
                 return;
             }
 
@@ -225,10 +226,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // Get the current estado from the select element
     cargueEstado = document.getElementById('estado').value;
 
+    let editSaveButton = document.querySelector('.btn-edit-save');
+    let deleteButton = document.querySelector('.btn-danger');
+    let backButton = document.querySelector('.btn-back');
+
     // Attach event listeners
-    const editSaveButton = document.querySelector('.btn-edit-save');
-    const deleteButton = document.querySelector('.btn-danger');
-    const backButton = document.querySelector('.btn-back');
+    if (cargueEstado === 'completado' || cargueEstado === 'en progreso') {
+        editSaveButton.remove();
+        editSaveButton = null;
+        deleteButton.remove();
+        deleteButton = null;
+    }
 
     if (editSaveButton) {
         editSaveButton.addEventListener('click', toggleEditMode);

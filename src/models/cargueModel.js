@@ -77,7 +77,8 @@ const cargueModel = {
     },
 
     getCarguesDesdeHoy: async () => {
-        const hoy = new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD'
+        const ahora = new Date();
+        const primerDiaDelMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1).toLocaleDateString('en-CA');
         const result = await db.query(
             `SELECT 
                 c.id,
@@ -98,7 +99,7 @@ const cargueModel = {
             INNER JOIN clientes cli ON c.documento = cli.documento
             WHERE c.fecha_inicio_programada >= $1::date
             ORDER BY c.fecha_inicio_programada ASC`,
-            [hoy]
+            [primerDiaDelMes]
         );
         return result.rows;
     },
@@ -139,17 +140,17 @@ const cargueModel = {
                 WHERE c.id = $1::int`,
                 [id]
             );
-    
+
             if (result.rows.length === 0) {
                 throw new Error('Cargue no encontrado');
             }
-            
+
             return result.rows[0];
         } catch (error) {
             throw error;
         }
     },
-    
+
     deleteCargue: async (id) => {
         try {
             const result = await db.query(
@@ -162,20 +163,31 @@ const cargueModel = {
         }
     },
 
+    getStartDate: async (id) => {
+        const result = await db.query(
+            `SELECT fecha_inicio_programada 
+            FROM cargues 
+            WHERE id = $1`,
+            [id]
+        );
+
+        return result.rows[0];
+    },
+
     updateCargue: async (id, data) => {
         try {
-            const { 
-                fecha_inicio_programada, 
-                fecha_fin_programada, 
-                codigo_material, 
-                cantidad, 
-                estado, 
-                observaciones, 
-                documento, 
-                cedula, 
-                placa 
+            const {
+                fecha_inicio_programada,
+                fecha_fin_programada,
+                codigo_material,
+                cantidad,
+                estado,
+                observaciones,
+                documento,
+                cedula,
+                placa
             } = data;
-            
+
             const result = await db.query(
                 `UPDATE cargues 
                 SET 
@@ -221,7 +233,8 @@ const cargueModel = {
                     (fecha_inicio_programada BETWEEN $2 AND $3) OR 
                     (fecha_fin_programada BETWEEN $4 AND $5) OR 
                     (fecha_inicio_programada <= $6 AND fecha_fin_programada >= $7)
-                )`,
+                ) AND
+                (estado = 'pendiente' OR estado = 'en progreso')`,
             [
                 cedula,
                 inicioWithBuffer, finWithBuffer,
@@ -243,7 +256,8 @@ const cargueModel = {
                     (fecha_inicio_programada BETWEEN $2 AND $3) OR 
                     (fecha_fin_programada BETWEEN $4 AND $5) OR 
                     (fecha_inicio_programada <= $6 AND fecha_fin_programada >= $7)
-                )`,
+                ) AND
+                (estado = 'pendiente' OR estado = 'en progreso')`,
             [
                 placa,
                 inicioWithBuffer, finWithBuffer,
@@ -256,16 +270,16 @@ const cargueModel = {
     },
 
     addCargue: async (data) => {
-        const { 
-            fecha_inicio_programada, 
-            fecha_fin_programada, 
-            codigo_material, 
-            cantidad, 
-            observaciones, 
-            documento, 
-            cedula, 
+        const {
+            fecha_inicio_programada,
+            fecha_fin_programada,
+            codigo_material,
+            cantidad,
+            observaciones,
+            documento,
+            cedula,
             placa,
-            user_id 
+            user_id
         } = data;
 
         const result = await db.query(
