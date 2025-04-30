@@ -6,24 +6,25 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </div>
+        {{#if showAddButton}}
         <button id="add-button" class="search-button" onclick="window.location.href = '/admin/agregar-cargue?referrer=calendario-admin'">
             <i class="fa-solid fa-plus"></i> Agregar
         </button>
+        {{/if}}
     </div>
 
     <div class="dynamic-table">
         <table class="cargue-table dynamic-cargue-table">
             <thead>
                 <tr>
-                    <th class="columna-estado"></th>
-                    <th data-sort="id">ID</th>
-                    <th data-sort="placa">Placa</th>
-                    <th data-sort="conductor">Conductor</th>
-                    <th data-sort="material">Material</th>
-                    <th data-sort="cantidad">Cantidad</th>
-                    <th data-sort="cliente">Cliente</th>
-                    <th data-sort="fecha_inicio_programada">Fecha</th>
-                    <th>Inicio Prog.</th>
+                    {{#each headers}}
+                        <th 
+                            {{#if isEstado}}class="columna-estado"{{/if}}
+                            {{#if sortField}}data-sort="{{sortField}}"{{/if}}
+                        >
+                            {{#unless isEstado}}{{title}}{{/unless}}
+                        </th>
+                    {{/each}}
                 </tr>
             </thead>
             <tbody>

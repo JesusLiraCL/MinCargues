@@ -1,185 +1,300 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const dynamicTable = document.querySelector('.dynamic-cargue-table');
-    const dynamicHeaders = dynamicTable.querySelectorAll('th[data-sort]');
-    const dynamicSearchInput = document.getElementById('dynamic-table-search');
-    let currentSort = { column: 'inicio-prog', direction: 'asc' };
-    let originalData = [];
-    let filteredData = [];
-
-    // Obtener datos iniciales
-    function fetchData() {
-        originalData = window.carguesCalendario || [];
-        filteredData = [...originalData];
-        sortData();
-        renderTable();
-    }
-
-    // Función para ordenar datos
-    function sortData() {
-        filteredData.sort((a, b) => {
-            const aValue = a[currentSort.column];
-            const bValue = b[currentSort.column];
-
-            if (aValue < bValue) {
-                return currentSort.direction === 'asc' ? -1 : 1;
-            }
-            if (aValue > bValue) {
-                return currentSort.direction === 'asc' ? 1 : -1;
-            }
-            return 0;
-        });
-    }
-
-    // Función para renderizar la tabla
-    function renderTable() {
-        const columnas = [
-            'estado',
-            'id',
-            'placa',
-            'conductor',
-            'material',
-            'cantidad',
-            'cliente',
-            'fecha_inicio_programada'
-        ];
-    
-        const tbody = dynamicTable.querySelector('tbody');
-        tbody.innerHTML = '';
-    
-        filteredData.forEach(row => {
-            const tr = document.createElement('tr');
+    // Main DynamicTable class
+    class DynamicTable {
+        constructor(tableElement, options = {}) {
+            this.table = tableElement;
+            this.searchInput = options.searchInput || document.getElementById('dynamic-table-search');
+            this.searchButton = options.searchButton || document.getElementById('dynamic-table-search-button');
+            this.initialData = options.initialData || [];
+            this.config = options.config || {};
             
-            // Primero renderizamos las columnas normales
-            columnas.slice(0, 7).forEach(key => {
-                const td = document.createElement('td');
-                td.setAttribute('data-column', key);
-                let valor = row[key];
-    
-                if (key === 'estado') {
-                    td.className = `dynamic-table-estado ${valor ? 'estado-' + valor.toLowerCase().replace(/\s/g, '-') : ''}`;
-                    td.textContent = '';
-                    td.title = valor;
-                } else {
-                    if (key === 'cantidad' && row.unidad) {
-                        valor = valor + ' ' + row.unidad;
-                    }
-                    td.textContent = valor;
-                    td.title = valor;
-                }
-                tr.appendChild(td);
-            });
-    
-            // Luego renderizamos la fecha y hora separadas
-            if (row.fecha_inicio_programada) {
-                const [fecha, hora24] = row.fecha_inicio_programada.split(' ');
-                
-                // Convertir hora de 24 horas a 12 horas con AM/PM
-                const hora = new Date(`2000-01-01T${hora24}`);
-                const hora12 = hora.toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                }).toLowerCase();
-
-                // Columna de fecha
-                const tdFecha = document.createElement('td');
-                tdFecha.setAttribute('data-column', 'fecha_inicio_programada');
-                tdFecha.textContent = fecha;
-                tdFecha.title = fecha;
-                tr.appendChild(tdFecha);
-    
-                // Columna de hora
-                const tdHora = document.createElement('td');
-                tdHora.textContent = hora12;
-                tdHora.title = hora24;
-                tr.appendChild(tdHora);
-            }
-    
-            tbody.appendChild(tr);
-        });
-
-        // Actualizar iconos de ordenamiento
-        dynamicHeaders.forEach(header => {
-            const icon = header.querySelector('.table-sort-icon') || document.createElement('span');
-            icon.className = 'table-sort-icon';
-            icon.innerHTML = '';
-
-            if (header.dataset.sort === currentSort.column) {
-                icon.innerHTML = currentSort.direction === 'asc' ? '↑' : '↓';
-            }
-
-            if (!header.querySelector('.table-sort-icon')) {
-                header.appendChild(icon);
-            }
-        });
-
-        initializeDblClickEvents();
-    }
-
-    function initializeDblClickEvents() {
-        const tbody = dynamicTable.querySelector('tbody');
+            this.currentSort = { column: this.config.defaultSortColumn || '', direction: 'asc' };
+            this.originalData = [];
+            this.filteredData = [];
+            
+            this.initialize();
+        }
         
-        if (!tbody) {
-            console.error('No se encontró el tbody');
-            return;
+        initialize() {
+            // Set up initial data
+            this.originalData = [...this.initialData];
+            this.filteredData = [...this.originalData];
+            
+            // Set default sort if configured
+            if (this.config.defaultSortColumn) {
+                this.currentSort.column = this.config.defaultSortColumn;
+                this.sortData();
+            }
+            
+            // Render the table
+            this.renderTable();
+            
+            // Set up event listeners
+            this.setupEventListeners();
         }
-    
-        tbody.querySelectorAll('tr').forEach(row => {
-            row.addEventListener('dblclick', function(e) {
-                const id = this.cells[1].textContent;
-                if (id) {
-                    // Redirigir a la página de detalles
-                    window.location.href = `/admin/cargue/${id}?referrer=calendario-admin`;
-                } else {
-                    console.error('No se pudo obtener el ID del cargue');
+        
+        setupEventListeners() {
+            // Sortable headers
+            const sortableHeaders = this.table.querySelectorAll('th[data-sort]');
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.sort;
+                    this.handleSort(column);
+                });
+            });
+            
+            // Search functionality
+            if (this.searchButton) {
+                this.searchButton.addEventListener('click', () => this.performSearch());
+            }
+            
+            if (this.searchInput) {
+                this.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performSearch();
+                    }
+                });
+            }
+        }
+        
+        handleSort(column) {
+            if (this.currentSort.column === column) {
+                this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.currentSort.column = column;
+                this.currentSort.direction = 'asc';
+            }
+            
+            this.sortData();
+            this.renderTable();
+        }
+        
+        sortData() {
+            if (!this.currentSort.column) return;
+            
+            this.filteredData.sort((a, b) => {
+                let aValue = a[this.currentSort.column];
+                let bValue = b[this.currentSort.column];
+                
+                // Custom sort handling if configured
+                if (this.config.customSortHandlers && this.config.customSortHandlers[this.currentSort.column]) {
+                    return this.config.customSortHandlers[this.currentSort.column](aValue, bValue, this.currentSort.direction);
+                }
+                
+                // Default date handling (similar to your original)
+                if (this.currentSort.column === 'fecha_inicio_programada') {
+                    const datePartA = aValue ? aValue.split(' ')[0] : '';
+                    const datePartB = bValue ? bValue.split(' ')[0] : '';
+                    
+                    aValue = datePartA ? new Date(datePartA.split('-').reverse().join('-')) : 0;
+                    bValue = datePartB ? new Date(datePartB.split('-').reverse().join('-')) : 0;
+                }
+                
+                if (aValue < bValue) {
+                    return this.currentSort.direction === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return this.currentSort.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        
+        performSearch() {
+            const searchTerm = this.searchInput.value.toLowerCase();
+            
+            if (searchTerm === '') {
+                this.filteredData = [...this.originalData];
+            } else {
+                this.filteredData = this.originalData.filter(row =>
+                    Object.values(row).some(value =>
+                        String(value).toLowerCase().includes(searchTerm)
+                    )
+                );
+            }
+            
+            this.sortData();
+            this.renderTable();
+        }
+        
+        renderTable() {
+            const tbody = this.table.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            // Get all column definitions from the table headers
+            const columnDefinitions = this.getColumnDefinitions();
+            
+            this.filteredData.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                // Add double click handler if configured
+                if (this.config.rowDoubleClick) {
+                    tr.addEventListener('dblclick', () => this.config.rowDoubleClick(row));
+                }
+                
+                // Render each column
+                columnDefinitions.forEach(colDef => {
+                    const td = document.createElement('td');
+                    
+                    // Set data attribute for identification
+                    if (colDef.dataColumn) {
+                        td.setAttribute('data-column', colDef.dataColumn);
+                    }
+                    
+                    // Apply custom renderer if exists
+                    if (colDef.customRenderer) {
+                        colDef.customRenderer(td, row);
+                        tr.appendChild(td);
+                        return;
+                    }
+                    
+                    // Default rendering
+                    let value = colDef.dataColumn ? row[colDef.dataColumn] : '';
+                    
+                    // Special handling for estado column
+                    if (colDef.dataColumn === 'estado') {
+                        td.className = `dynamic-table-estado ${value ? 'estado-' + value.toLowerCase().replace(/\s/g, '-') : ''}`;
+                        td.textContent = '';
+                        td.title = value;
+                    } else {
+                        // Handle combined fields like cantidad + unidad
+                        if (colDef.dataColumn === 'cantidad' && row.unidad) {
+                            value = value + ' ' + row.unidad;
+                        }
+                        
+                        td.textContent = value;
+                        td.title = value;
+                    }
+                    
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+            
+            this.updateSortIcons();
+        }
+        
+        getColumnDefinitions() {
+            const headers = this.table.querySelectorAll('thead th');
+            const columnDefinitions = [];
+            
+            headers.forEach(header => {
+                const colDef = {
+                    headerText: header.textContent.trim(),
+                    dataColumn: header.dataset.sort || null,
+                    isSortable: header.hasAttribute('data-sort')
+                };
+                
+                // Add custom renderers for special columns
+                if (header.classList.contains('columna-estado')) {
+                    colDef.dataColumn = 'estado';
+                } else if (header.textContent.trim() === 'Inicio Prog.' && !header.dataset.sort) {
+                    // Special handling for the time part of fecha_inicio_programada
+                    colDef.customRenderer = (td, row) => {
+                        if (row.fecha_inicio_programada) {
+                            const [, hora24] = row.fecha_inicio_programada.split(' ');
+                            if (hora24) {
+                                const hora = new Date(`2000-01-01T${hora24}`);
+                                const hora12 = hora.toLocaleTimeString('en-US', {
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                    hour12: true
+                                }).toLowerCase();
+                                td.textContent = hora12;
+                                td.title = hora24;
+                            }
+                        }
+                    };
+                } else if (header.dataset.sort === 'fecha_inicio_programada') {
+                    // Special handling for the date part of fecha_inicio_programada
+                    colDef.customRenderer = (td, row) => {
+                        if (row.fecha_inicio_programada) {
+                            const [fecha] = row.fecha_inicio_programada.split(' ');
+                            td.textContent = fecha;
+                            td.title = fecha;
+                        }
+                    };
+                }
+                
+                columnDefinitions.push(colDef);
+            });
+            
+            return columnDefinitions;
+        }
+        
+        updateSortIcons() {
+            const sortableHeaders = this.table.querySelectorAll('th[data-sort]');
+            
+            sortableHeaders.forEach(header => {
+                const icon = header.querySelector('.table-sort-icon') || document.createElement('span');
+                icon.className = 'table-sort-icon';
+                icon.innerHTML = '';
+                
+                if (header.dataset.sort === this.currentSort.column) {
+                    icon.innerHTML = this.currentSort.direction === 'asc' ? '↑' : '↓';
+                }
+                
+                if (!header.querySelector('.table-sort-icon')) {
+                    header.appendChild(icon);
                 }
             });
-        });
+        }
+        
+        // Public method to update data
+        updateData(newData) {
+            this.originalData = [...newData];
+            this.filteredData = [...this.originalData];
+            this.sortData();
+            this.renderTable();
+        }
     }
 
-    // Event listeners para ordenamiento
-    dynamicHeaders.forEach(header => {
-        header.addEventListener('click', () => {
-            const column = header.dataset.sort;
-
-            if (currentSort.column === column) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.column = column;
-                currentSort.direction = 'asc';
+    // Initialize tables based on their configuration
+    function initializeTables() {
+        // Example for your carguesCalendario table
+        if (window.carguesCalendario) {
+            const carguesTable = document.querySelector('.dynamic-cargue-table');
+            if (carguesTable) {
+                new DynamicTable(carguesTable, {
+                    initialData: window.carguesCalendario,
+                    searchInput: document.getElementById('dynamic-table-search'),
+                    searchButton: document.getElementById('dynamic-table-search-button'),
+                    config: {
+                        defaultSortColumn: 'fecha_inicio_programada',
+                        rowDoubleClick: (row) => {
+                            if (row.id) {
+                                window.location.href = `/admin/cargue/${row.id}?referrer=calendario-admin`;
+                            }
+                        },
+                        customSortHandlers: {
+                            // You can add custom sort handlers for specific columns if needed
+                        }
+                    }
+                });
             }
-
-            sortData();
-            renderTable();
-        });
-    });
-
-    function performSearch() {
-        const searchTerm = dynamicSearchInput.value.toLowerCase();
-
-        if (searchTerm === '') {
-            filteredData = [...originalData];
-        } else {
-            filteredData = originalData.filter(row =>
-                Object.values(row).some(value =>
-                    String(value).toLowerCase().includes(searchTerm)
-                )
-            );
         }
-
-        sortData();
-        renderTable();
+        
+        // Add more table initializations here as needed
+        // Example:
+        /*
+        if (window.otherTableData) {
+            const otherTable = document.querySelector('.other-table-class');
+            if (otherTable) {
+                new DynamicTable(otherTable, {
+                    initialData: window.otherTableData,
+                    config: {
+                        defaultSortColumn: 'some_other_column',
+                        rowDoubleClick: (row) => {
+                            // Different handling for this table
+                        }
+                    }
+                });
+            }
+        }
+        */
     }
-    const dynamicSearchButton = document.getElementById('dynamic-table-search-button');
-    dynamicSearchButton.addEventListener('click', performSearch);
 
-    // Búsqueda al presionar Enter en el input
-    dynamicSearchInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            performSearch();
-        }
-    });
-
-    // Inicializar
-    fetchData();
-});     
+    // Initialize all tables on the page
+    initializeTables();
+});

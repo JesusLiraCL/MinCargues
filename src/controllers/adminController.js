@@ -95,6 +95,17 @@ const adminController = {
 
     getCalendarData: async (req, res) => {
         const cargues = await cargueModel.getCarguesDesdeHoy();
+        const tableHeaders = [
+            { isEstado: true },
+            { title: 'ID', sortField: 'id' },
+            { title: 'Placa', sortField: 'placa' },
+            { title: 'Conductor', sortField: 'conductor' },
+            { title: 'Material', sortField: 'material' },
+            { title: 'Cantidad', sortField: 'cantidad' },
+            { title: 'Cliente', sortField: 'cliente' },
+            { title: 'Fecha', sortField: 'fecha_inicio_programada' },
+            { title: 'Inicio Prog.' }
+        ];
 
         res.render("pages/admin/calendarioAdmin", {
             layout: "main",
@@ -102,6 +113,7 @@ const adminController = {
             title: 'Calendario',
             carguesCalendario: JSON.stringify(cargues),
             success_msg: req.flash('success_msg')[0],
+            tableHeaders,
         });
     },
 
