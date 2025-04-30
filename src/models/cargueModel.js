@@ -30,7 +30,7 @@ const cargueModel = {
             `SELECT 
                 c.id,
                 c.placa,
-                con.nombre as conductor,
+                u.nombre as conductor,
                 m.nombre as material,
                 c.cantidad,
                 m.unidad_medida as unidad,
@@ -38,7 +38,7 @@ const cargueModel = {
                 TO_CHAR(c.fecha_inicio_real, 'DD-MM-YYYY HH24:MI') as fecha_inicio_real
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
-            INNER JOIN conductores con ON c.cedula = con.cedula
+            INNER JOIN usuarios u ON c.conductor_id = u.id
             INNER JOIN materiales m ON c.codigo_material = m.codigo
             INNER JOIN clientes cli ON c.documento = cli.documento
             WHERE c.estado = 'en progreso'
@@ -56,7 +56,7 @@ const cargueModel = {
             `SELECT 
                 c.id,
                 c.placa,
-                con.nombre as conductor,
+                u.nombre as conductor,
                 m.nombre as material,
                 c.cantidad,
                 m.unidad_medida as unidad,
@@ -64,7 +64,7 @@ const cargueModel = {
                 TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') as fecha_fin_programada
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
-            INNER JOIN conductores con ON c.cedula = con.cedula
+            INNER JOIN usuarios u ON c.conductor_id = u.id
             INNER JOIN materiales m ON c.codigo_material = m.codigo
             INNER JOIN clientes cli ON c.documento = cli.documento
             WHERE c.estado = 'pendiente'
@@ -87,14 +87,14 @@ const cargueModel = {
                 m.nombre AS material,
                 m.unidad_medida AS unidad,
                 c.cantidad,
-                con.nombre AS conductor,
+                u.nombre AS conductor,
                 cli.nombre AS cliente,
                 TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') AS fecha_inicio_programada,
                 TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') AS fecha_fin_programada,
                 c.estado
             FROM cargues c
             INNER JOIN camiones cam ON c.placa = cam.placa
-            INNER JOIN conductores con ON c.cedula = con.cedula
+            INNER JOIN usuarios u ON c.conductor_id = u.id
             INNER JOIN materiales m ON c.codigo_material = m.codigo
             INNER JOIN clientes cli ON c.documento = cli.documento
             WHERE c.fecha_inicio_programada >= $1::date
@@ -123,18 +123,18 @@ const cargueModel = {
                     cli.direccion,
                     cli.contacto,
                     cli.correo AS cliente_correo,
-                    con.cedula,
-                    con.nombre AS conductor_nombre,
-                    con.edad,
-                    con.telefono AS conductor_telefono,
-                    con.correo AS conductor_correo,
+                    u.id as conductor_id,
+                    u.nombre AS conductor_nombre,
+                    u.edad,
+                    u.telefono AS conductor_telefono,
+                    u.correo AS conductor_correo,
                     cam.placa,
                     cam.capacidad,
                     cam.tipo_camion,
                     cam.habilitado
                 FROM cargues c
                 INNER JOIN camiones cam ON c.placa = cam.placa
-                INNER JOIN conductores con ON c.cedula = con.cedula
+                INNER JOIN usuarios u ON c.conductor_id = u.id
                 INNER JOIN materiales m ON c.codigo_material = m.codigo
                 INNER JOIN clientes cli ON c.documento = cli.documento
                 WHERE c.id = $1::int`,
@@ -184,7 +184,7 @@ const cargueModel = {
                 estado,
                 observaciones,
                 documento,
-                cedula,
+                conductor_id,
                 placa
             } = data;
 
@@ -198,7 +198,7 @@ const cargueModel = {
                     estado = $5,
                     observaciones = $6,
                     documento = $7,
-                    cedula = $8,
+                    conductor_id = $8,
                     placa = $9
                 WHERE id = $10
                 RETURNING id`,
@@ -210,7 +210,7 @@ const cargueModel = {
                     estado,
                     observaciones,
                     documento,
-                    cedula,
+                    conductor_id,
                     placa,
                     id
                 ]
@@ -223,12 +223,12 @@ const cargueModel = {
         }
     },
 
-    getCarguesByConductor: async ({ cedula, inicioWithBuffer, finWithBuffer, currentId }) => {
+    getCarguesByConductor: async ({ conductor_id, inicioWithBuffer, finWithBuffer, currentId }) => {
         const result = await db.query(
             `SELECT * FROM cargues 
             WHERE 
-                (cedula = $1) AND 
-                (id != $8) AND 
+                (conductor_id = $1) AND 
+                (${currentId ? 'id != $8' : 'true'}) AND 
                 (
                     (fecha_inicio_programada BETWEEN $2 AND $3) OR 
                     (fecha_fin_programada BETWEEN $4 AND $5) OR 
@@ -236,13 +236,15 @@ const cargueModel = {
                 ) AND
                 (estado = 'pendiente' OR estado = 'en progreso')`,
             [
-                cedula,
+                conductor_id,
                 inicioWithBuffer, finWithBuffer,
                 inicioWithBuffer, finWithBuffer,
                 inicioWithBuffer, finWithBuffer,
-                currentId
+                ...(currentId ? [currentId] : [])
             ]
         );
+        console.log("conductor_id :", conductor_id);
+        console.log("cargues :", result.rows);
         return result.rows;
     },
 
@@ -251,7 +253,7 @@ const cargueModel = {
             `SELECT * FROM cargues 
             WHERE 
                 (placa = $1) AND 
-                (id != $8) AND 
+                (${currentId ? 'id != $8' : 'true'}) AND 
                 (
                     (fecha_inicio_programada BETWEEN $2 AND $3) OR 
                     (fecha_fin_programada BETWEEN $4 AND $5) OR 
@@ -263,7 +265,7 @@ const cargueModel = {
                 inicioWithBuffer, finWithBuffer,
                 inicioWithBuffer, finWithBuffer,
                 inicioWithBuffer, finWithBuffer,
-                currentId
+                ...(currentId ? [currentId] : [])
             ]
         );
         return result.rows;
@@ -277,7 +279,7 @@ const cargueModel = {
             cantidad,
             observaciones,
             documento,
-            cedula,
+            conductor_id,
             placa,
             user_id
         } = data;
@@ -290,10 +292,10 @@ const cargueModel = {
                 cantidad, 
                 observaciones, 
                 documento, 
-                cedula, 
+                conductor_id, 
                 placa, 
                 estado,
-                usuario
+                usuario_id
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             RETURNING id`,
             [
@@ -303,10 +305,10 @@ const cargueModel = {
                 cantidad,
                 observaciones,
                 documento,
-                cedula,
+                conductor_id,
                 placa,
                 'pendiente',
-                user_id
+                user_id,
             ]
         );
         return result.rows[0];

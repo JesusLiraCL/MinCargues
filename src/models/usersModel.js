@@ -1,21 +1,35 @@
-const pool = require("../config/database");
+const db = require("../config/database");
 
-module.exports = {
-    async getUsers() {
-        const rows = pool.query("SELECT * FROM usuarios");
+usersModel = {
+    getUsers: async () => {
+        const rows = db.query("SELECT * FROM usuarios");
         return rows;
     },
 
-    async findByUsername(nombre) { 
-        const query = 'SELECT * FROM usuarios WHERE nombre = $1';
-        const { rows } = await pool.query(query, [nombre]);
+    findByUsername: async (nombre_usuario) => {
+        const query = 'SELECT * FROM usuarios WHERE nombre_usuario = $1';
+        const { rows } = await db.query(query, [nombre_usuario]);
 
         return rows[0] || null;
     },
 
-    async findById(id) {
-        const query = 'SELECT id, nombre FROM usuarios WHERE id = $1'; // Cambiado a nombre
-        const { rows } = await pool.query(query, [id]);
+    findById: async (id) => {
+        const query = 'SELECT id, cedula, nombre FROM usuarios WHERE id = $1';
+        const { rows } = await db.query(query, [id]);
         return rows[0] || null;
-    }
+    },
+
+    getConductorByCedula: async (cedula) => {
+        const result = await db.query(
+            `SELECT u.*
+             FROM usuarios u
+             JOIN roles r ON u.codigo_rol = r.codigo_rol
+             WHERE u.cedula = $1 AND u.codigo_rol = 'ROL002'`,
+            [cedula]
+        );
+        return result.rows[0] || null;
+    },
+
 };
+
+module.exports = usersModel;

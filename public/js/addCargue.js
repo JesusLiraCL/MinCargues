@@ -170,7 +170,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const addButton = document.getElementById('btn-agregar');
     addButton.addEventListener('click', handleSubmit);
 
-    const fechaHoy = new Date().toISOString().slice(0, 16);
+    function getLocalDatetimeString(date = new Date()) {
+        const offset = date.getTimezoneOffset() * 60000;
+        const localISOTime = new Date(date - offset)
+                              .toISOString()
+                              .slice(0, 16);
+        return localISOTime;
+    }
+    
+    const fechaHoy = getLocalDatetimeString();
 
     document.getElementById('fecha_inicio_programada').value = fechaHoy;
     document.getElementById('fecha_fin_programada').value = fechaHoy;

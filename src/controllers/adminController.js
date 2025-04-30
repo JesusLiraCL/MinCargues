@@ -1,8 +1,8 @@
 const cargueModel = require('../models/cargueModel');
 const camionModel = require('../models/camionModel');
 const clienteModel = require('../models/clienteModel');
-const conductorModel = require('../models/conductorModel');
 const materialModel = require('../models/materialModel');
+const usersModel = require('../models/usersModel');
 
 const adminController = {
     getDashboardData: async (req, res) => {
@@ -43,7 +43,7 @@ const adminController = {
                 hour12: true
             }).toLowerCase();
         };
-        console.log(req.user);
+
         // 3. Formatear datos para la vista
         res.render('pages/admin/inicioAdmin', {
             layout: 'main',
@@ -107,7 +107,10 @@ const adminController = {
 
     getCargueData: async (req, res) => {
         try {
-            const cargue = await cargueModel.getCargueDetails(req.params.id);
+            let cargue = await cargueModel.getCargueDetails(req.params.id);
+            const conductor = await usersModel.findById(cargue.conductor_id);
+            cargue.conductor_id = conductor.cedula;
+
             res.render("pages/admin/cargueDetails", {
                 layout: "main",
                 user: req.user,
@@ -135,6 +138,7 @@ const adminController = {
             } = req.body;
 
             const cargue = await cargueModel.getCargueDetails(req.params.id);
+            const conductor = await usersModel.getConductorByCedula(cedula);
 
             // Validaciones
             if (cargue.estado === 'en progreso') {
@@ -157,8 +161,9 @@ const adminController = {
                 estado,
                 observaciones,
                 documento,
-                cedula,
-                placa
+                conductor_id: conductor.id,
+                placa,
+                user_id: req.user.id
             });
 
             if (result) {
@@ -192,9 +197,7 @@ const adminController = {
     fetchCliente: async (req, res) => {
         try {
             const { documento } = req.query;
-            console.log("documento: ", documento);
             const cliente = await clienteModel.getClienteByDocumento(documento);
-            console.log("cliente: ", cliente);
             if (cliente) {
                 res.json(cliente);
             } else {
@@ -208,11 +211,11 @@ const adminController = {
     fetchConductor: async (req, res) => {
         try {
             const { cedula } = req.query;
-            const conductor = await conductorModel.getConductorByCedula(cedula);
+            const conductor = await usersModel.getConductorByCedula(cedula);
             if (conductor) {
                 res.json(conductor);
             } else {
-                res.status(404).json({ message: 'Conductor no encontrado' });
+                res.status(404).json({ message: 'Conductor no encontrado (desde controller fetch Conductor)' });
             }
         } catch (error) {
             res.status(500).json({ message: 'Error al buscar conductor' });
@@ -256,6 +259,7 @@ const adminController = {
             } = req.body;
 
             const codigo_material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
+            const conductor = await usersModel.getConductorByCedula(cedula);
 
             const nuevoCargue = await cargueModel.addCargue({
                 fecha_inicio_programada,
@@ -264,7 +268,7 @@ const adminController = {
                 cantidad,
                 observaciones,
                 documento,
-                cedula,
+                conductor_id: conductor.id,
                 placa,
                 user_id
             });

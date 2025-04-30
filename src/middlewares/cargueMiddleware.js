@@ -1,8 +1,8 @@
 const clienteModel = require('../models/clienteModel');
-const conductorModel = require('../models/conductorModel');
 const camionModel = require('../models/camionModel');
 const materialModel = require('../models/materialModel');
 const cargueModel = require('../models/cargueModel');
+const usersModel = require('../models/usersModel');
 
 const validateCargue = async (req, res, next) => {
     try {
@@ -19,6 +19,7 @@ const validateCargue = async (req, res, next) => {
         const errors = {};
 
         const today = new Date();
+        console.log(today);
         const startDate = new Date(fecha_inicio_programada);
         const endDate = new Date(fecha_fin_programada);
 
@@ -62,7 +63,7 @@ const validateCargue = async (req, res, next) => {
             errors.messageNoCliente = "El campo 'Documento' no puede estar vacío";
         }
 
-        const conductor = await conductorModel.getConductorByCedula(cedula);
+        const conductor = await usersModel.getConductorByCedula(cedula);
         if (cedula) {
             if (!conductor) {
                 errors.messageNoConductor = 'Conductor no encontrado';
@@ -83,10 +84,10 @@ const validateCargue = async (req, res, next) => {
             const finWithBuffer = new Date(finDate.getTime() + 9 * 60000);
 
             const conductorCargues = await cargueModel.getCarguesByConductor({
-                cedula: cedula,
+                conductor_id: conductor.id,
                 inicioWithBuffer,
                 finWithBuffer,
-                currentId: req.params.id,
+                currentId: req.params.id || null, 
             });
 
             if (conductorCargues.length > 0) {
@@ -98,7 +99,7 @@ const validateCargue = async (req, res, next) => {
                 placa: placa,
                 inicioWithBuffer,
                 finWithBuffer,
-                currentId: req.params.id,
+                currentId: req.params.id || null, 
             });
 
             if (camionCargues.length > 0) {
