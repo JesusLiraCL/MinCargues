@@ -2,8 +2,20 @@ const db = require("../config/database");
 
 usersModel = {
     getUsers: async () => {
-        const rows = db.query("SELECT * FROM usuarios");
-        return rows;
+        const result = await db.query(
+            `SELECT 
+                usuarios.id, 
+                usuarios.nombre_usuario, 
+                roles.nombre AS rol, 
+                usuarios.cedula,
+                usuarios.nombre,
+                usuarios.edad,
+                usuarios.telefono,
+                usuarios.correo
+            FROM usuarios
+            LEFT JOIN roles ON usuarios.codigo_rol = roles.codigo_rol`);
+        console.log(result.rows);
+        return result.rows || null;
     },
 
     findByUsername: async (nombre_usuario) => {

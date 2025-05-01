@@ -114,6 +114,7 @@ const adminController = {
             carguesCalendario: JSON.stringify(cargues),
             success_msg: req.flash('success_msg')[0],
             tableHeaders,
+            addButtonUrl: '/admin/agregar-cargue?referrer=calendario-admin',
         });
     },
 
@@ -295,6 +296,71 @@ const adminController = {
         } catch (error) {
             console.error('Error en agregarCargue:', error);
         }
+    },
+
+    getUsersData: async (req, res) => {
+        const usersData = await usersModel.getUsers();
+        console.log(usersData);
+        const tableHeaders = [
+            { title: 'Usuario', sortField: 'nombre_usuario' },
+            { title: 'Rol', sortField: 'rol' },
+            { title: 'Cedula', sortField: 'cedula' },
+            { title: 'Nombre', sortField: 'nombre' },
+            { title: 'Teléfono', sortField: 'telefono' },
+            { title: 'Correo', sortField: 'correo' },
+            { title: 'Edad', sortField: 'edad' }
+        ];
+
+        res.render("pages/admin/usuarios", {
+            layout: "main",
+            user: req.user,
+            title: 'Usuarios',
+            usersData: JSON.stringify(usersData),
+            success_msg: req.flash('success_msg')[0],
+            tableHeaders,
+            addButtonUrl: '/admin/agregar-usuario?referrer=usuarios'
+        });
+    },
+
+    getTrucksData: async (req, res) => {
+        const trucksData = await camionModel.getCamiones();
+        const tableHeaders = [
+            { title: 'Placa', sortField: 'placa' },
+            { title: 'Tipo', sortField: 'tipo_camion' },
+            { title: 'Capacidad', sortField: 'capacidad' },
+            { title: 'Habilitado', sortField: 'habilitado' },
+        ];
+
+        res.render("pages/admin/camiones", {
+            layout: "main",
+            user: req.user,
+            title: 'Camiones',
+            trucksData: JSON.stringify(trucksData),
+            success_msg: req.flash('success_msg')[0],
+            tableHeaders,
+            addButtonUrl: '/admin/agregar-camion?referrer=camiones'
+        });
+    },
+
+    getClientsData: async (req, res) => {
+        const clientsData = await clienteModel.getClientes();
+        const tableHeaders = [
+            { title: 'Documento', sortField: 'documento' },
+            { title: 'Nombre', sortField: 'nombre' },
+            { title: 'Dirección', sortField: 'direccion' },
+            { title: 'Contacto', sortField: 'contacto' },
+            { title: 'Correo', sortField: 'correo' },
+        ];
+
+        res.render("pages/admin/clientes", {
+            layout: "main",
+            user: req.user,
+            title: 'Clientes',
+            clientsData: JSON.stringify(clientsData),
+            success_msg: req.flash('success_msg')[0],
+            tableHeaders,
+            addButtonUrl: '/admin/agregar-cliente?referrer=clientes'
+        });
     },
 };
 

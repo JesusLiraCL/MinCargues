@@ -275,6 +275,57 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         
+        if(window.usersData){
+            const usersTable = document.querySelector('.dynamic-cargue-table');
+            if (usersTable) {
+                new DynamicTable(usersTable, {
+                    initialData: window.usersData,
+                    searchInput: document.getElementById('dynamic-table-search'),
+                    searchButton: document.getElementById('dynamic-table-search-button'),
+                    config: {
+                        defaultSortColumn: 'rol',
+                        rowDoubleClick: (row) => {
+                            // Different handling for this table
+                        }
+                    }
+                });
+            }
+        }
+        
+        if(window.trucksData){
+            const trucksTable = document.querySelector('.dynamic-cargue-table');
+            if (trucksTable) {
+                new DynamicTable(trucksTable, {
+                    initialData: window.trucksData,
+                    searchInput: document.getElementById('dynamic-table-search'),
+                    searchButton: document.getElementById('dynamic-table-search-button'),
+                    config: {
+                        defaultSortColumn: 'tipo_camion',
+                        rowDoubleClick: (row) => {
+                            // Different handling for this table
+                        }
+                    }
+                });
+            }
+        }
+
+        if(window.clientsData){
+            const clientsTable = document.querySelector('.dynamic-cargue-table');
+            if (clientsTable) {
+                new DynamicTable(clientsTable, {
+                    initialData: window.clientsData,
+                    searchInput: document.getElementById('dynamic-table-search'),
+                    searchButton: document.getElementById('dynamic-table-search-button'),
+                    config: {
+                        defaultSortColumn: 'nombre',
+                        rowDoubleClick: (row) => {
+                            // Different handling for this table
+                        }
+                    }
+                });
+            }
+        }
+
         // Add more table initializations here as needed
         // Example:
         /*

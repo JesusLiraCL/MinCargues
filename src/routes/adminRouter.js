@@ -12,13 +12,17 @@ adminRouter.post('/cargue/:id/update', isAdmin, validateCargue, adminController.
 adminRouter.get('/cargue/:id/delete', isAdmin, adminController.deleteCargue);
 adminRouter.get('/agregar-cargue', isAdmin, adminController.getAddCargue);
 adminRouter.post('/agregar-cargue', isAdmin, validateCargue, adminController.postAddCargue);
+adminRouter.get('/usuarios', isAdmin, adminController.getUsersData);
+adminRouter.get('/camiones', isAdmin, adminController.getTrucksData);
+adminRouter.get('/clientes', isAdmin, adminController.getClientsData);
 
-adminRouter.get('/usuarios', isAdmin, (req, res) => {
-    res.render('pages/admin/usuarios', {
-        layout: 'main',
+adminRouter.get('/agregar-usuario', isAdmin, (req, res) =>{
+    res.render('pages/admin/addUsuario', {
+        layout: "main",
         user: req.user,
+        title: 'Agregar Usuario'
     })
-});
+})
 
 // apis
 adminRouter.get('/api/clientes/buscar', isAdmin, adminController.fetchCliente);

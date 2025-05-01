@@ -8,6 +8,13 @@ const clienteModel = {
         );
         return result.rows[0] || null;
     },
+
+    getClientes: async () => {
+        const result = await db.query(
+            `SELECT * FROM clientes`,
+        )
+        return result.rows || null;
+    }
 };
 
 module.exports = clienteModel;

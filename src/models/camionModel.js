@@ -17,6 +17,13 @@ const camionModel = {
         );
         return result.rows[0] || null;
     },
+
+    getCamiones: async () => {
+            const result = await db.query(
+                `SELECT * FROM camiones`,
+            )
+            return result.rows || null;
+    },
 };
 
 module.exports = camionModel;

@@ -53,7 +53,6 @@ app.use(passport.session());
 
 // Routes required
 const authRouter = require("./routes/authRouter");
-const usersRouter = require("./routes/usersRouter");
 const adminRouter = require('./routes/adminRouter');
 const conductorRouter = require('./routes/conductorRouter');
 
@@ -131,8 +130,5 @@ app.use('/admin', adminRouter);
 app.use('/conductor', conductorRouter);
 
 const bcrypt = require('bcryptjs');
-
-// Test BD connection with users
-app.use("/testbd", usersRouter);
 
 module.exports = app;

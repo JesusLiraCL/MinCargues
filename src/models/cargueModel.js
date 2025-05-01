@@ -243,8 +243,6 @@ const cargueModel = {
                 ...(currentId ? [currentId] : [])
             ]
         );
-        console.log("conductor_id :", conductor_id);
-        console.log("cargues :", result.rows);
         return result.rows;
     },
 
