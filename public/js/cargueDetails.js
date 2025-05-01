@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('conductor_correo').textContent = camion.conductor_correo || 'Correo no disponible';
                 } else {
                     // Limpiar campos si no hay conductor asignado
-                    document.getElementById('conductor_cedula').textContent = 'No tiene conductor';
+                    document.getElementById('conductor_cedula').textContent = 'No posee conductor';
                     document.getElementById('conductor_nombre').textContent = '';
                     document.getElementById('conductor_edad').textContent = '';
                     document.getElementById('conductor_telefono').textContent = '';
@@ -112,11 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => {
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 console.log("[6] Datos de respuesta:", data);
                 // Limpiar solo los errores del servidor anteriores

@@ -34,7 +34,6 @@ const camionModel = {
             WHERE placa = $1`,
             [placa]
         )
-        console.log("getConductorByPlaca", result.rows);
         // Return the first conductor_id or null
         return result.rows.length > 0 ? result.rows[0].conductor_id : null;
     },

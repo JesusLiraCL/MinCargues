@@ -251,13 +251,12 @@ const adminController = {
                 cantidad,
                 observaciones,
                 documento,
-                cedula,
                 placa,
                 user_id
             } = req.body;
 
             const codigo_material = await materialModel.getMaterialCodeByName(material_nombre.toLowerCase());
-            const conductor = await usersModel.getConductorByCedula(cedula);
+            const conductor_id = await camionModel.getConductorByPlaca(placa);
 
             const nuevoCargue = await cargueModel.addCargue({
                 fecha_inicio_programada,
@@ -266,7 +265,7 @@ const adminController = {
                 cantidad,
                 observaciones,
                 documento,
-                conductor_id: conductor.id,
+                conductor_id: conductor_id,
                 placa,
                 user_id
             });
