@@ -4,28 +4,41 @@ const materialModel = require('../models/materialModel');
 const cargueModel = require('../models/cargueModel');
 const usersModel = require('../models/usersModel');
 
+console.log("probando middleware")
+
 const validateCargue = async (req, res, next) => {
+    console.log("probando middleware");
+    console.log("Request body:", req.body);
+    console.log("Request params:", req.params);
+
     try {
         const {
             cantidad,
             documento,
-            cedula,
             placa,
             material_nombre,
             fecha_inicio_programada,
             fecha_fin_programada
         } = req.body;
 
+        console.log("Destructured body:", {
+            cantidad,
+            documento,
+            placa,
+            material_nombre,
+            fecha_inicio_programada,
+            fecha_fin_programada
+        });
+
         const errors = {};
 
         const today = new Date();
-        console.log(today);
         const startDate = new Date(fecha_inicio_programada);
         const endDate = new Date(fecha_fin_programada);
 
         // Validar que la fecha de inicio sea mayor a la actual
-        const fecha_inicio_bd = cargueModel.getStartDate(req.params.id);
-        if (fecha_inicio_programada == fecha_inicio_bd && startDate <= today) {
+        const fecha_inicio_bd = req.params.id ? await cargueModel.getStartDate(req.params.id) : null;
+        if (fecha_inicio_programada && fecha_inicio_bd === fecha_inicio_programada && startDate <= today) {
             errors.messageInvalidStartDate = 'La fecha de inicio debe ser mayor a la fecha actual';
         }
 
@@ -34,15 +47,26 @@ const validateCargue = async (req, res, next) => {
             errors.messageInvalidEndDate = 'La fecha de fin debe ser mayor a la fecha de inicio';
         }
 
+        // Demas validaciones
+        if (!cantidad) errors.messageNoCantidad = "El campo 'Cantidad' no puede estar vacío";
+
+        // Corrected placa validation
         const camion = await camionModel.getCamionByPlaca(placa);
-        if (placa != '') {
+
+        if (!placa) {
+            errors.messageNoCamion = "El campo 'Placa' no puede estar vacío";
+        } else {
             if (!camion) {
                 errors.messageNoCamion = 'Camión no encontrado';
-            } else if (cantidad > camion.capacidad) {
-                errors.messageCantidad = 'La cantidad supera la capacidad del camión';
+            } else {
+                if (!camion.conductor_id) {
+                    errors.messageNoConductor = 'El camión no tiene conductor asignado';
+                }
+
+                if (cantidad && camion.capacidad && cantidad > camion.capacidad) {
+                    errors.messageCantidad = 'La cantidad supera la capacidad del camión';
+                }
             }
-        } else {
-            errors.messageNoCamion = "El campo 'Placa' no puede estar vacío";
         }
 
         if (material_nombre) {
@@ -63,31 +87,18 @@ const validateCargue = async (req, res, next) => {
             errors.messageNoCliente = "El campo 'Documento' no puede estar vacío";
         }
 
-        const conductor = await usersModel.getConductorByCedula(cedula);
-        if (cedula) {
-            if (!conductor) {
-                errors.messageNoConductor = 'Conductor no encontrado';
-            }
-        } else {
-            errors.messageNoConductor = "El campo 'Cédula' no puede estar vacío";
-        }
-
-        if (!cantidad) {
-            errors.messageNoCantidad = "El campo 'Cantidad' no puede estar vacío";
-        }
-
         // 3. Check conductor and camion availability (only if they exist)
-        if (conductor && camion) {
+        if (camion && camion.conductor_id) {
             const inicioDate = new Date(fecha_inicio_programada);
             const finDate = new Date(fecha_fin_programada);
             const inicioWithBuffer = new Date(inicioDate.getTime() - 9 * 60000);
             const finWithBuffer = new Date(finDate.getTime() + 9 * 60000);
 
             const conductorCargues = await cargueModel.getCarguesByConductor({
-                conductor_id: conductor.id,
+                conductor_id: camion.conductor_id,
                 inicioWithBuffer,
                 finWithBuffer,
-                currentId: req.params.id || null, 
+                currentId: req.params.id || null,
             });
 
             if (conductorCargues.length > 0) {
@@ -99,7 +110,7 @@ const validateCargue = async (req, res, next) => {
                 placa: placa,
                 inicioWithBuffer,
                 finWithBuffer,
-                currentId: req.params.id || null, 
+                currentId: req.params.id || null,
             });
 
             if (camionCargues.length > 0) {
@@ -108,8 +119,9 @@ const validateCargue = async (req, res, next) => {
             }
         }
 
-        // If there are errors, redirect with the error messages as query parameters
+        // If there are errors, return with the error messages
         if (Object.keys(errors).length > 0) {
+            console.log("Validation errors:", errors);
             return res.status(400).json({
                 success: false,
                 errors
@@ -119,9 +131,11 @@ const validateCargue = async (req, res, next) => {
         next();
 
     } catch (error) {
+        console.error('Error en validación de cargue:', error);
         return res.status(500).json({
             success: false,
-            message: 'Error inesperado al validar el cargue'
+            message: 'Error inesperado al validar el cargue',
+            errorDetails: error.toString()
         });
     }
 };

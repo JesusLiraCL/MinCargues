@@ -1,16 +1,3 @@
-async function fetchConductorByCedula(cedula) {
-    try {
-        const response = await fetch(`/admin/api/conductores/buscar?cedula=${cedula}`);
-        if (!response.ok) {
-            throw new Error('Conductor no encontrado');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching conductor:', error);
-        return null;
-    }
-}
-
 async function fetchClienteByDocumento(documento) {
     try {
         const response = await fetch(`/admin/api/clientes/buscar?documento=${documento}`);

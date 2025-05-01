@@ -175,6 +175,7 @@ const cargueModel = {
     },
 
     updateCargue: async (id, data) => {
+        console.log("Empezando update");
         try {
             const {
                 fecha_inicio_programada,

@@ -28,17 +28,36 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    document.getElementById('cedula').addEventListener('change', async function () {
+    document.getElementById('placa').addEventListener('change', async function () {
         if (isEditing) {
-            const conductor = await fetchConductorByCedula(this.value);
-            if (conductor) {
-                // Update conductor details in the UI
-                document.getElementById('conductor_nombre').textContent = conductor.nombre || 'Nombre no disponible';
-                document.getElementById('conductor_edad').textContent = conductor.edad || 'Edad no disponible';
-                document.getElementById('conductor_telefono').textContent = conductor.telefono || 'Teléfono no disponible';
-                document.getElementById('conductor_correo').textContent = conductor.correo || 'Correo no disponible';
-                // Add more fields as needed
+            const camion = await fetchCamionByPlaca(this.value);
+            if (camion) {
+                // Actualizar datos del camión
+                document.getElementById('camion_tipo').textContent = camion.tipo_camion || 'Tipo no disponible';
+                document.getElementById('camion_capacidad').textContent = camion.capacidad || 'Capacidad no disponible';
+                document.getElementById('camion_habilitado').textContent = camion.habilitado ? 'Sí' : 'No';
+                
+                // Actualizar datos del conductor asignado (nuevo)
+                if (camion.conductor_id) {
+                    document.getElementById('conductor_cedula').textContent = camion.conductor_cedula || 'Cédula no disponible';
+                    document.getElementById('conductor_nombre').textContent = camion.conductor_nombre || 'Nombre no disponible';
+                    document.getElementById('conductor_edad').textContent = camion.conductor_edad || 'Edad no disponible';
+                    document.getElementById('conductor_telefono').textContent = camion.conductor_telefono || 'Teléfono no disponible';
+                    document.getElementById('conductor_correo').textContent = camion.conductor_correo || 'Correo no disponible';
+                } else {
+                    // Limpiar campos si no hay conductor asignado
+                    document.getElementById('conductor_cedula').textContent = 'No tiene conductor';
+                    document.getElementById('conductor_nombre').textContent = '';
+                    document.getElementById('conductor_edad').textContent = '';
+                    document.getElementById('conductor_telefono').textContent = '';
+                    document.getElementById('conductor_correo').textContent = '';
+                }
             } else {
+                // Limpiar todos los campos si no se encuentra el camión
+                document.getElementById('camion_tipo').textContent = '';
+                document.getElementById('camion_capacidad').textContent = '';
+                document.getElementById('camion_habilitado').textContent = '';
+                document.getElementById('conductor_cedula').textContent = '';
                 document.getElementById('conductor_nombre').textContent = '';
                 document.getElementById('conductor_edad').textContent = '';
                 document.getElementById('conductor_telefono').textContent = '';
@@ -46,22 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
-
-    document.getElementById('placa').addEventListener('change', async function () {
-        if (isEditing) {
-            const camion = await fetchCamionByPlaca(this.value);
-            if (camion) {
-                // Update camion details in the UI
-                document.getElementById('camion_tipo').textContent = camion.tipo_camion || 'Tipo no disponible';
-                document.getElementById('camion_capacidad').textContent = camion.capacidad || 'Capacidad no disponible';
-                document.getElementById('camion_habilitado').textContent = camion.habilitado ? 'Sí' : 'No';
-            } else {
-                document.getElementById('camion_tipo').textContent = '';
-                document.getElementById('camion_capacidad').textContent = '';
-                document.getElementById('camion_habilitado').textContent = '';
-            }
-        }
-    });
+    
 
     let isEditing = false;
     let cargueId = null;
@@ -88,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const startDateInput = document.getElementById('fecha_inicio_programada');
             const endDateInput = document.getElementById('fecha_fin_programada');
-
+            
             // Preparar datos para enviar al servidor
             const data = {
                 fecha_inicio_programada: startDateInput.value,
@@ -98,10 +102,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 estado: document.getElementById('estado').value,
                 observaciones: document.getElementById('observaciones').value,
                 documento: document.getElementById('documento').value,
-                cedula: document.getElementById('cedula').value,
                 placa: document.getElementById('placa').value,
             };
-
+            
             fetch(`/admin/cargue/${cargueId}/update`, {
                 method: 'POST',
                 headers: {
@@ -109,12 +112,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(data)
             })
-                .then(response => response.json())
-                .then(data => {
-                    // Limpiar solo los errores del servidor anteriores
-                    document.querySelectorAll('.server-error').forEach(el => el.remove());
-
-                    if (data.success) {
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                return response.json();
+            })
+            .then(data => {
+                console.log("[6] Datos de respuesta:", data);
+                // Limpiar solo los errores del servidor anteriores
+                document.querySelectorAll('.server-error').forEach(el => el.remove());
+                
+                if (data.success) {
                         alert('Cambios guardados exitosamente');
                         isEditing = false;
                         const editButton = document.querySelector('.btn-edit-save');
@@ -131,8 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             messageCantidad: { selector: '#cantidad' },
                             messageNoCantidad: { selector: '#cantidad' },
                             messageNoCliente: { selector: '#documento' },
-                            messageNoConductor: { selector: '#cedula' },
                             messageNoMaterial: { selector: '#material_nombre' },
+                            messageNoConductor: { selector: '#placa' },
                             messageCamionNoDisponible: { selector: '#fecha_inicio_programada' },
                             messageConductorNoDisponible: { selector: '#fecha_inicio_programada' },
                             messageInvalidStartDate: { selector: '#fecha_inicio_programada' },

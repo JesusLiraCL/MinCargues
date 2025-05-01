@@ -26,7 +26,6 @@ adminRouter.get('/agregar-usuario', isAdmin, (req, res) =>{
 
 // apis
 adminRouter.get('/api/clientes/buscar', isAdmin, adminController.fetchCliente);
-adminRouter.get('/api/conductores/buscar', isAdmin, adminController.fetchConductor);
 adminRouter.get('/api/camiones/buscar', isAdmin, adminController.fetchCamion);
 
 

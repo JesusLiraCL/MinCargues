@@ -146,12 +146,11 @@ const adminController = {
                 estado,
                 observaciones,
                 documento,
-                cedula,
                 placa
             } = req.body;
 
             const cargue = await cargueModel.getCargueDetails(req.params.id);
-            const conductor = await usersModel.getConductorByCedula(cedula);
+            const conductor_id = await camionModel.getConductorByPlaca(placa);
 
             // Validaciones
             if (cargue.estado === 'en progreso') {
@@ -174,7 +173,7 @@ const adminController = {
                 estado,
                 observaciones,
                 documento,
-                conductor_id: conductor.id,
+                conductor_id: conductor_id,
                 placa,
                 user_id: req.user.id
             });
@@ -218,20 +217,6 @@ const adminController = {
             }
         } catch (error) {
             res.status(500).json({ message: 'Error al buscar cliente' });
-        }
-    },
-
-    fetchConductor: async (req, res) => {
-        try {
-            const { cedula } = req.query;
-            const conductor = await usersModel.getConductorByCedula(cedula);
-            if (conductor) {
-                res.json(conductor);
-            } else {
-                res.status(404).json({ message: 'Conductor no encontrado (desde controller fetch Conductor)' });
-            }
-        } catch (error) {
-            res.status(500).json({ message: 'Error al buscar conductor' });
         }
     },
 
@@ -300,7 +285,6 @@ const adminController = {
 
     getUsersData: async (req, res) => {
         const usersData = await usersModel.getUsers();
-        console.log(usersData);
         const tableHeaders = [
             { title: 'Usuario', sortField: 'nombre_usuario' },
             { title: 'Rol', sortField: 'rol' },
