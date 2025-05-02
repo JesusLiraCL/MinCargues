@@ -135,21 +135,28 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Render each column
                 columnDefinitions.forEach(colDef => {
                     const td = document.createElement('td');
+                    const columnName = colDef.dataColumn;
+                    let value = columnName ? row[columnName] : '';
                     
-                    // Set data attribute for identification
-                    if (colDef.dataColumn) {
-                        td.setAttribute('data-column', colDef.dataColumn);
+                    // 1. Primero verifica si hay un columnRenderer específico
+                    if (this.config.columnRenderers && columnName && this.config.columnRenderers[columnName]) {
+                        this.config.columnRenderers[columnName].render(td, value, row);
+                        tr.appendChild(td);
+                        return; // Salimos de esta iteración para evitar sobrescritura
                     }
                     
-                    // Apply custom renderer if exists
+                    // 2. Luego verifica los customRenderers existentes
                     if (colDef.customRenderer) {
                         colDef.customRenderer(td, row);
                         tr.appendChild(td);
                         return;
                     }
                     
-                    // Default rendering
-                    let value = colDef.dataColumn ? row[colDef.dataColumn] : '';
+                    // 3. Finalmente, el renderizado por defecto
+                    // Set data attribute for identification
+                    if (colDef.dataColumn) {
+                        td.setAttribute('data-column', colDef.dataColumn);
+                    }
                     
                     // Special handling for estado column
                     if (colDef.dataColumn === 'estado') {
@@ -301,6 +308,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     searchButton: document.getElementById('dynamic-table-search-button'),
                     config: {
                         defaultSortColumn: 'tipo_camion',
+                        columnRenderers: {
+                            habilitado: {
+                                render: (td, value) => {
+                                    if (value) {
+                                        td.innerHTML = '<i class="fas fa-check-circle" style="color: #007bff; font-size: 1.2em"></i>';
+                                        td.title = 'Habilitado';
+                                    } else {
+                                        td.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 1.2em"></i>';
+                                        td.title = 'No habilitado';
+                                    }
+                                    td.style.textAlign = 'center';
+                                }
+                            }
+                        },
                         rowDoubleClick: (row) => {
                             // Different handling for this table
                         }
@@ -325,25 +346,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         }
-
-        // Add more table initializations here as needed
-        // Example:
-        /*
-        if (window.otherTableData) {
-            const otherTable = document.querySelector('.other-table-class');
-            if (otherTable) {
-                new DynamicTable(otherTable, {
-                    initialData: window.otherTableData,
-                    config: {
-                        defaultSortColumn: 'some_other_column',
-                        rowDoubleClick: (row) => {
-                            // Different handling for this table
-                        }
-                    }
-                });
-            }
-        }
-        */
     }
 
     // Initialize all tables on the page

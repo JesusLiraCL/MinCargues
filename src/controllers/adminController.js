@@ -311,6 +311,8 @@ const adminController = {
             { title: 'Placa', sortField: 'placa' },
             { title: 'Tipo', sortField: 'tipo_camion' },
             { title: 'Capacidad', sortField: 'capacidad' },
+            { title: 'Conductor', sortField: 'conductor_nombre' },
+            { title: 'Cédula', sortField: 'conductor_cedula' },
             { title: 'Habilitado', sortField: 'habilitado' },
         ];
 

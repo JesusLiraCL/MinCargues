@@ -38,11 +38,17 @@ const camionModel = {
         return result.rows.length > 0 ? result.rows[0].conductor_id : null;
     },
 
-    getCamiones: async () => {
-            const result = await db.query(
-                `SELECT * FROM camiones`,
-            )
-            return result.rows || null;
+    async getCamiones() {
+        const result = await db.query(`
+            SELECT 
+                c.*, 
+                u.nombre as conductor_nombre, 
+                u.cedula as conductor_cedula
+            FROM camiones c
+            LEFT JOIN usuarios u ON c.conductor_id = u.id
+            ORDER BY c.placa
+        `);
+        return result.rows;
     },
 };
 
