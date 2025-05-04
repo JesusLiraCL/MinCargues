@@ -347,7 +347,24 @@ const adminController = {
             addButtonUrl: '/admin/agregar-cliente?referrer=clientes'
         });
     },
+
+    getMaterialsData: async (req, res) => {
+        const materials = await materialModel.getAllMaterials();
+        const tableHeaders = [
+            { title: 'Código', sortField: 'codigo' },
+            { title: 'Nombre', sortField: 'nombre' },
+            { title: 'Unidad de medida', sortField: 'unidad_medida' }
+        ];
+
+        res.render('pages/admin/materiales', {
+            layout: 'main',
+            user: req.user,
+            title: 'Materiales',
+            tableHeaders,
+            materialsData: JSON.stringify(materials),
+            addButtonUrl: '/admin/agregar-material'
+        });
+    },
 };
 
 module.exports = adminController;
-

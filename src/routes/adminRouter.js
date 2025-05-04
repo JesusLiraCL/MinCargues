@@ -15,6 +15,7 @@ adminRouter.post('/agregar-cargue', isAdmin, validateCargue, adminController.pos
 adminRouter.get('/usuarios', isAdmin, adminController.getUsersData);
 adminRouter.get('/camiones', isAdmin, adminController.getTrucksData);
 adminRouter.get('/clientes', isAdmin, adminController.getClientsData);
+adminRouter.get('/materiales', isAdmin, adminController.getMaterialsData);
 
 adminRouter.get('/agregar-usuario', isAdmin, (req, res) =>{
     res.render('pages/admin/addUsuario', {

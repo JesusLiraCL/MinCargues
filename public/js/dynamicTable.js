@@ -346,6 +346,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         }
+
+        if(window.materialsData){
+            const materialsTable = document.querySelector('.dynamic-cargue-table');
+            if (materialsTable) {
+                new DynamicTable(materialsTable, {
+                    initialData: window.materialsData,
+                    searchInput: document.getElementById('dynamic-table-search'),
+                    searchButton: document.getElementById('dynamic-table-search-button'),
+                    config: {
+                        defaultSortColumn: 'codigo',
+                        rowDoubleClick: (row) => {
+                            // Different handling for this table
+                        }
+                    }
+                });
+            }
+        }
     }
 
     // Initialize all tables on the page

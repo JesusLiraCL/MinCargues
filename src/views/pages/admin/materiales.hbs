@@ -1,0 +1,10 @@
+<h2>Lista de Materiales</h2>
+
+{{> dynamicTable headers=tableHeaders showAddButton=true addButtonUrl=addButtonUrl}}
+
+<script>
+    window.materialsData = {{{materialsData}}};
+</script>
+
+<link rel="stylesheet" href="/css/components/tables.css">
+<script src="/js/dynamicTable.js"></script>

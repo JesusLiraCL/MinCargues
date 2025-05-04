@@ -12,7 +12,19 @@ const materialModel = {
             console.error('Error al obtener código de material:', error);
             return null;
         }
-    }
+    },
+
+    getAllMaterials: async () => {
+        try {
+            const result = await db.query(
+                `SELECT codigo, nombre, unidad_medida FROM materiales ORDER BY codigo`
+            );
+            return result.rows;
+        } catch (error) {
+            console.error('Error al obtener lista de materiales:', error);
+            return [];
+        }
+    },
 };
 
 module.exports = materialModel;
