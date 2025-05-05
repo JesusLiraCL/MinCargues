@@ -14,6 +14,15 @@ const clienteModel = {
             `SELECT * FROM clientes`,
         )
         return result.rows || null;
+    },
+
+    // En tu clienteModel.js
+    addCliente: async (clienteData) => {
+        const { documento, nombre, direccion, contacto, correo } = clienteData;
+        await db.query(
+            `INSERT INTO clientes (documento, nombre, direccion, contacto, correo) VALUES ($1, $2, $3, $4, $5)`,
+            [documento, nombre, direccion, contacto, correo]
+        );
     }
 };
 

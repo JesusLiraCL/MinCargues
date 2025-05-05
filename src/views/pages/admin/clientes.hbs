@@ -7,4 +7,37 @@
 </script>
 
 <link rel="stylesheet" href="/css/components/tables.css">
+<link rel="stylesheet" href="/css/components/modal.css">
 <script src="/js/dynamicTable.js"></script>
+<script src="/js/clientes.js"></script>
+
+<!-- Modal para agregar cliente -->
+<div id="addClientModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Agregar Nuevo Cliente</h2>
+        <form id="addClientForm">
+            <div class="form-group">
+                <label for="documento">Documento:</label>
+                <input type="text" id="documento" name="documento" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion">
+            </div>
+            <div class="form-group">
+                <label for="contacto">Contacto:</label>
+                <input type="text" id="contacto" name="contacto">
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo">
+            </div>
+            <button type="submit" class="btn-submit">Guardar</button>
+        </form>
+    </div>
+</div>

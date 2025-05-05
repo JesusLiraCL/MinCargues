@@ -344,8 +344,23 @@ const adminController = {
             clientsData: JSON.stringify(clientsData),
             success_msg: req.flash('success_msg')[0],
             tableHeaders,
-            addButtonUrl: '/admin/agregar-cliente?referrer=clientes'
         });
+    },
+
+    postAddclient: async (req, res) => {
+        try {
+            const nuevoCliente = req.body;
+            const resultado = await clienteModel.addCliente(nuevoCliente);
+            
+            if (resultado) {
+                res.json({ success: true, message: 'Cliente agregado exitosamente' });
+            } else {
+                res.status(400).json({ success: false, message: 'Error al agregar cliente' });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ success: false, message: 'Error del servidor' });
+        }
     },
 
     getMaterialsData: async (req, res) => {

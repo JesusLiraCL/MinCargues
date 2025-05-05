@@ -29,5 +29,7 @@ adminRouter.get('/agregar-usuario', isAdmin, (req, res) =>{
 adminRouter.get('/api/clientes/buscar', isAdmin, adminController.fetchCliente);
 adminRouter.get('/api/camiones/buscar', isAdmin, adminController.fetchCamion);
 
+adminRouter.post('/api/clientes/agregar-cliente', isAdmin, adminController.postAddclient);
+
 
 module.exports = adminRouter;
