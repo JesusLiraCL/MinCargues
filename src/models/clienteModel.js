@@ -48,6 +48,19 @@ const clienteModel = {
             throw error; // Propaga el error para manejarlo en el controlador
         }
     },
+
+    deleteCliente: async (documento) => {
+        try {
+            const result = await db.query(
+                `DELETE FROM clientes WHERE documento = $1`,
+                [documento]
+            );
+            return result.rowCount > 0; // Retorna true si se eliminó, false si no se encontró
+        } catch (error) {
+            console.error('Error en modelo al eliminar cliente:', error);
+            throw error; // Propaga el error para manejarlo en el controlador
+        }
+    },
 };
 
 module.exports = clienteModel;

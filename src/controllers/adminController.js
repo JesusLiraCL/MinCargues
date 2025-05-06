@@ -429,6 +429,52 @@ const adminController = {
         }
     },
 
+    deleteCliente: async (req, res) => {
+        console.log("intentando eliminar cliente");
+        try {
+            const { documento } = req.params;
+            
+            // Verificar si el cliente existe antes de eliminarlo
+            const clienteExistente = await clienteModel.getClienteByDocumento(documento);
+            if (!clienteExistente) {
+                return res.status(404).json({ 
+                    success: false, 
+                    message: 'Cliente no encontrado' 
+                });
+            }
+
+            // Intentar eliminar el cliente
+                const eliminado = await clienteModel.deleteCliente(documento);
+                
+                if (eliminado) {
+                    req.flash('success_msg', 'Cliente eliminado exitosamente');
+                    return res.status(200).json({ 
+                        success: true, 
+                        redirect: '/admin/clientes' 
+                    });
+                } else {
+                    return res.status(400).json({ 
+                        success: false, 
+                        message: 'No se pudo eliminar el cliente' 
+                    });
+                }
+        } catch (error) {
+            console.error('Error al eliminar cliente:', error);
+
+            if (error.code === '23503') {
+                return res.status(409).json({ 
+                    success: false, 
+                    message: 'No se puede eliminar el cliente porque está asociado a uno o más cargues existentes' 
+                });
+            }
+
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Error del servidor al eliminar cliente' 
+            });
+        }
+    },
+
     getMaterialsData: async (req, res) => {
         const materials = await materialModel.getAllMaterials();
         const tableHeaders = [

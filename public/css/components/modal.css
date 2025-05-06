@@ -12,11 +12,15 @@
 
 .modal-content {
     background-color: #fefefe;
-    margin: 10% auto;
+    margin: 3% auto;
     padding: 40px;
     border: 1px solid #888;
-    width: 35%;
+    width: 27rem;
     border-radius: 5px;
+}
+
+.modal-title{
+    margin-bottom: 1rem;
 }
 
 .close {
@@ -31,7 +35,7 @@
     color: black;
 }
 
-#addClientForm {
+.modalForm {
     margin-top: 20px;
 }
 
@@ -53,33 +57,80 @@
     border-radius: 4px;
 }
 
-.btn-submit {
-    background-color: #218838;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.modal-actions{
+    margin-top: 1.5rem;
 }
 
-.btn-submit:hover {
+/* Estilos específicos para los botones del modal de clientes */
+.modal-actions .btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+    font-size: 14px;
+    margin: 0 5px;
+}
+
+.modal-actions .btn i {
+    font-size: 14px;
+}
+
+/* Botón Primario (Agregar) */
+.modal-actions .btn-primary {
+    background-color: #218838;
+    color: white;
+}
+
+.modal-actions .btn-primary:hover {
     background-color: #19692c;
 }
 
-.btn-cancel {
+/* Botón Editar */
+.modal-actions .btn-edit {
+    background-color: #007bff;
+    color: white;
+}
+
+.modal-actions .btn-edit:hover {
+    background-color: #0056b3;
+}
+
+/* Estado Guardar (se activa con JavaScript) */
+#modalWindow .modal-actions .btn-save {
+    background-color: #218838 !important;
+    color: white;
+}
+
+#modalWindow .modal-actions .btn-save:hover {
+    background-color: #19692c !important;
+}
+
+/* Botón Eliminar */
+.btn-danger {
     background-color: #dc3545;
     color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
 }
 
-.btn-cancel:hover {
-    background-color: #c82333;
+.btn-danger:hover {
+    background-color: #bb2d3b;
 }
 
-.button-center {
+/* Botón Cancelar */
+.btn-secondary {
+    background-color: #dc3545;
+    color: white;
+}
+
+.modal-actions .btn-secondary:hover {
+    background-color: #bb2d3b;
+}
+
+.modal-actions {
     display: flex;
     justify-content: center;
     width: 100%;
