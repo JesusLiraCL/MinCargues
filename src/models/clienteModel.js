@@ -24,7 +24,30 @@ const clienteModel = {
             [documento, nombre, direccion, contacto, correo]
         );
         return result.rowCount > 0;
-    }
+    },
+
+    updateCliente: async (documentoOriginal, clienteData) => {
+        try {
+            const { documento, nombre, direccion, contacto, correo } = clienteData;
+
+            const result = await db.query(
+                `UPDATE clientes 
+                 SET documento = $1, 
+                     nombre = $2, 
+                     direccion = $3, 
+                     contacto = $4, 
+                     correo = $5
+                 WHERE documento = $6
+                 RETURNING *`,
+                [documento, nombre, direccion, contacto, correo, documentoOriginal]
+            );
+
+            return result.rows[0]; // Devuelve el cliente actualizado
+        } catch (error) {
+            console.error('Error en modelo al actualizar cliente:', error);
+            throw error; // Propaga el error para manejarlo en el controlador
+        }
+    },
 };
 
 module.exports = clienteModel;

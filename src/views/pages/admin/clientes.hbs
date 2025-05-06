@@ -6,16 +6,11 @@
     window.clientsData = {{{clientsData}}};
 </script>
 
-<link rel="stylesheet" href="/css/components/tables.css">
-<link rel="stylesheet" href="/css/components/modal.css">
-<script src="/js/dynamicTable.js"></script>
-<script src="/js/clientes.js"></script>
-
 <!-- Modal para agregar cliente -->
 <div id="addClientModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Agregar Nuevo Cliente</h2>
+        <h2 class="modal-title">Agregar Nuevo Cliente</h2>
         <form id="addClientForm">
             <div class="form-group">
                 <label for="documento">Documento:</label>
@@ -44,3 +39,8 @@
         </form>
     </div>
 </div>
+
+<link rel="stylesheet" href="/css/components/tables.css">
+<link rel="stylesheet" href="/css/components/modal.css">
+<script src="/js/dynamicTable.js"></script>
+<script src="/js/clientes.js"></script>

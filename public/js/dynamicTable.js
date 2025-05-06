@@ -339,11 +339,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     searchButton: document.getElementById('dynamic-table-search-button'),
                     config: {
                         defaultSortColumn: 'nombre',
-                        rowDoubleClick: (row) => {
-                            const clienteData = row.dataset.rowData ? JSON.parse(row.dataset.rowData) : null;
-                            if (clienteData) {
-                                // Abrir modal y cargar datos
-                                openClientModalWithData(clienteData);
+                        rowDoubleClick: (rowData) => {
+                            if (rowData.documento) {
+                                openClientModalWithData({
+                                    documento: rowData.documento,
+                                    nombre: rowData.nombre,
+                                    direccion: rowData.direccion,
+                                    contacto: rowData.contacto,
+                                    correo: rowData.correo
+                                });
+                            } else {
+                                console.error('No se encontró documento en los datos de la fila');
                             }
                         }
                     }

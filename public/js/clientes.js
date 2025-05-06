@@ -4,32 +4,46 @@ document.addEventListener('DOMContentLoaded', function() {
     const span = document.getElementsByClassName("close")[0];
     const form = document.getElementById("addClientForm");
     const cancelButton = document.querySelector('.btn-cancel');
+    let isEditMode = false;
+    let currentDocumento = '';
     
-    if (btn) {
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-    }
-    
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-    
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-    
-    cancelButton.onclick = function() {
-        // Clear all input fields
+    // Función para abrir modal en modo agregar
+    function openAddMode() {
+        isEditMode = false;
         form.reset();
-        
-        // Close the modal
-        modal.style.display = "none";
+        document.querySelector('.modal-title').textContent = 'Agregar Cliente';
+        modal.style.display = "block";
     }
     
-    // Manejo del formulario
+    // Función para abrir modal en modo editar
+    window.openClientModalWithData = function(clienteData) {
+        isEditMode = true;
+        currentDocumento = clienteData.documento;
+        
+        document.getElementById('documento').value = clienteData.documento || '';
+        document.getElementById('nombre').value = clienteData.nombre || '';
+        document.getElementById('direccion').value = clienteData.direccion || '';
+        document.getElementById('contacto').value = clienteData.contacto || '';
+        document.getElementById('correo').value = clienteData.correo || '';
+        
+        document.querySelector('.modal-title').textContent = 'Editar Cliente';
+        modal.style.display = "block";
+    }
+    
+    // Eventos de apertura/cierre
+    if (btn) btn.onclick = openAddMode;
+    span.onclick = closeModal;
+    cancelButton.onclick = closeModal;
+    window.onclick = function(event) {
+        if (event.target == modal) closeModal();
+    }
+    
+    function closeModal() {
+        modal.style.display = "none";
+        form.reset();
+    }
+    
+    // Manejador único del formulario
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -41,53 +55,70 @@ document.addEventListener('DOMContentLoaded', function() {
             correo: document.getElementById('correo').value
         };
         
-        // Aquí puedes hacer una llamada AJAX para guardar el cliente
-        fetch('/admin/api/clientes/agregar-cliente', {
-            method: 'POST',
+        let url, method;
+        
+        if (isEditMode) {
+            url = `/admin/api/clientes/${currentDocumento}/update`;
+            method = 'POST';
+        } else {
+            url = '/admin/api/clientes/agregar-cliente';
+            method = 'POST';
+        }
+        
+        fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(cliente)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+        })
         .then(data => {
-            document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
-            document.querySelectorAll('.error-tooltip').forEach(el => el.remove());
+            clearErrors();
+            
             if (data.success) {
-                // Cerrar modal, resetear formulario y redirigir
                 modal.style.display = "none";
                 form.reset();
-                // Redirigir a la URL proporcionada por el servidor
-                window.location.href = data.redirect;
-            } else {
-                const label = document.querySelector('label[for="documento"]');
-                const input = document.getElementById('documento');
-                if (label && input) {
-                    input.classList.add('has-error');
-                    // Limpia tooltips previos del label
-                    label.querySelectorAll('.error-tooltip').forEach(el => el.remove());
-                    
-                    // Tooltip al lado del label
-                    const tooltipContainer = document.createElement('span');
-                    tooltipContainer.className = 'error-tooltip';
-
-                    const tooltipIcon = document.createElement('span');
-                    tooltipIcon.id = 'error-tooltip-icon';
-                    tooltipIcon.textContent = '!';
-
-                    const tooltipContent = document.createElement('div');
-                    tooltipContent.className = 'error-tooltip-content';
-                    tooltipContent.textContent = data.message;
-
-                    tooltipContainer.appendChild(tooltipIcon);
-                    tooltipContainer.appendChild(tooltipContent);
-                    label.appendChild(tooltipContainer);
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    window.location.reload();
                 }
+            } else {
+                showError(data.field || 'documento', data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al guardar el cliente');
+            alert('Error al procesar la solicitud');
         });
     });
+    
+    // Funciones auxiliares
+    function clearErrors() {
+        document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+        document.querySelectorAll('.error-tooltip').forEach(el => el.remove());
+    }
+    
+    function showError(fieldId, message) {
+        const fieldElement = document.getElementById(fieldId);
+        const label = document.querySelector(`label[for="${fieldId}"]`);
+        
+        if (fieldElement && label) {
+            fieldElement.classList.add('has-error');
+            
+            const tooltipContainer = document.createElement('span');
+            tooltipContainer.className = 'error-tooltip';
+            tooltipContainer.innerHTML = `
+                <span id="error-tooltip-icon">!</span>
+                <div class="error-tooltip-content">${message}</div>
+            `;
+            label.appendChild(tooltipContainer);
+        } else {
+            alert(message);
+        }
+    }
 });

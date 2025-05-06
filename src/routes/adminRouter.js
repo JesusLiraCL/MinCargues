@@ -30,6 +30,6 @@ adminRouter.get('/api/clientes/buscar', isAdmin, adminController.fetchCliente);
 adminRouter.get('/api/camiones/buscar', isAdmin, adminController.fetchCamion);
 
 adminRouter.post('/api/clientes/agregar-cliente', isAdmin, adminController.postAddclient);
-adminRouter.post('/api/clientes/:documento/update', isAdmin);
+adminRouter.post('/api/clientes/:documento/update', isAdmin, adminController.postUpdateClient);
 
 module.exports = adminRouter;

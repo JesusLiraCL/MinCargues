@@ -374,6 +374,61 @@ const adminController = {
         }
     },
 
+    postUpdateClient: async (req, res) => {
+        console.log('Iniciando actualización de cliente...');
+        console.log('Params:', req.params);
+        console.log('Body:', req.body);
+        try {
+            const { documento } = req.params; // Documento original que viene de la URL
+            const clienteData = req.body; // Nuevos datos del cliente
+            
+            // 1. Verificar si el cliente existe
+            const clienteExistente = await clienteModel.getClienteByDocumento(documento);
+            if (!clienteExistente) {
+                console.log('Cliente no encontrado con documento:', documento);
+                return res.status(404).json({ 
+                    success: false, 
+                    message: 'Cliente no encontrado'
+                });
+            }
+            
+            // 2. Si está intentando cambiar el documento, verificar que no exista otro con el nuevo documento
+            if (documento !== clienteData.documento) {
+                const documentoExistente = await clienteModel.getClienteByDocumento(clienteData.documento);
+                if (documentoExistente) {
+                    return res.status(400).json({ 
+                        success: false, 
+                        message: 'Ya existe otro cliente con este nuevo documento',
+                        field: 'documento'
+                    });
+                }
+            }
+            
+            // 3. Actualizar el cliente
+            const resultado = await clienteModel.updateCliente(documento, clienteData);
+            
+            if (resultado) {
+                req.flash('success_msg', 'Cliente actualizado correctamente');
+                return res.status(200).json({ 
+                    success: true, 
+                    redirect: '/admin/clientes' 
+                });
+            } else {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'No se realizaron cambios en el cliente' 
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error al actualizar cliente:', error);
+            return res.status(500).json({ 
+                success: false, 
+                message: 'Error del servidor al actualizar cliente' 
+            });
+        }
+    },
+
     getMaterialsData: async (req, res) => {
         const materials = await materialModel.getAllMaterials();
         const tableHeaders = [
