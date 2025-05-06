@@ -350,16 +350,27 @@ const adminController = {
     postAddclient: async (req, res) => {
         try {
             const nuevoCliente = req.body;
-            const resultado = await clienteModel.addCliente(nuevoCliente);
+            const exist = await clienteModel.getClienteByDocumento(nuevoCliente.documento); 
             
-            if (resultado) {
-                res.json({ success: true, message: 'Cliente agregado exitosamente' });
-            } else {
-                res.status(400).json({ success: false, message: 'Error al agregar cliente' });
+            if(exist){
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Ya existe un cliente con este documento',
+                    field: 'documento'
+                });
+            }else {
+                const resultado = await clienteModel.addCliente(nuevoCliente);
+                if (resultado) {
+                    req.flash('success_msg', 'Cliente añadido correctamente');
+                    return res.status(200).json({ success: true, redirect: '/admin/clientes' });
+                } else {
+                    return res.status(400).json({ success: false, message: 'Error interno al agregar cliente' });
+                }
             }
+
         } catch (error) {
             console.error(error);
-            res.status(500).json({ success: false, message: 'Error del servidor' });
+            return res.status(500).json({ success: false, message: 'Error del servidor' });
         }
     },
 

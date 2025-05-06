@@ -340,7 +340,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     config: {
                         defaultSortColumn: 'nombre',
                         rowDoubleClick: (row) => {
-                            // Different handling for this table
+                            const clienteData = row.dataset.rowData ? JSON.parse(row.dataset.rowData) : null;
+                            if (clienteData) {
+                                // Abrir modal y cargar datos
+                                openClientModalWithData(clienteData);
+                            }
                         }
                     }
                 });

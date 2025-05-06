@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const btn = document.getElementById("add-button");
     const span = document.getElementsByClassName("close")[0];
     const form = document.getElementById("addClientForm");
+    const cancelButton = document.querySelector('.btn-cancel');
     
     if (btn) {
         btn.onclick = function() {
@@ -18,6 +19,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target == modal) {
             modal.style.display = "none";
         }
+    }
+    
+    cancelButton.onclick = function() {
+        // Clear all input fields
+        form.reset();
+        
+        // Close the modal
+        modal.style.display = "none";
     }
     
     // Manejo del formulario
@@ -42,14 +51,38 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+            document.querySelectorAll('.error-tooltip').forEach(el => el.remove());
             if (data.success) {
-                // Cerrar modal y recargar datos
+                // Cerrar modal, resetear formulario y redirigir
                 modal.style.display = "none";
                 form.reset();
-                // Aquí puedes actualizar la tabla o recargar la página
-                window.location.reload();
+                // Redirigir a la URL proporcionada por el servidor
+                window.location.href = data.redirect;
             } else {
-                alert('Error al guardar el cliente: ' + (data.message || ''));
+                const label = document.querySelector('label[for="documento"]');
+                const input = document.getElementById('documento');
+                if (label && input) {
+                    input.classList.add('has-error');
+                    // Limpia tooltips previos del label
+                    label.querySelectorAll('.error-tooltip').forEach(el => el.remove());
+                    
+                    // Tooltip al lado del label
+                    const tooltipContainer = document.createElement('span');
+                    tooltipContainer.className = 'error-tooltip';
+
+                    const tooltipIcon = document.createElement('span');
+                    tooltipIcon.id = 'error-tooltip-icon';
+                    tooltipIcon.textContent = '!';
+
+                    const tooltipContent = document.createElement('div');
+                    tooltipContent.className = 'error-tooltip-content';
+                    tooltipContent.textContent = data.message;
+
+                    tooltipContainer.appendChild(tooltipIcon);
+                    tooltipContainer.appendChild(tooltipContent);
+                    label.appendChild(tooltipContainer);
+                }
             }
         })
         .catch(error => {

@@ -54,7 +54,7 @@
 }
 
 .btn-submit {
-    background-color: #4CAF50;
+    background-color: #218838;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -63,5 +63,89 @@
 }
 
 .btn-submit:hover {
-    background-color: #45a049;
+    background-color: #19692c;
 }
+
+.btn-cancel {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background-color: #c82333;
+}
+
+.button-center {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 1.5rem;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 5px;
+    width: 100%;
+    text-align: left;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+
+.error-tooltip {
+    position: relative;
+    display: inline-block;
+    margin-left: 8px;
+  }
+  
+  #error-tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    color: #f1700f;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    border: 2px solid #f1700f;
+    border-radius: 50%;
+  }
+  
+  .error-tooltip-content {
+    visibility: hidden;
+    min-width: 200px;
+    max-width: 300px;
+    background-color: white;
+    color: #f1700f;
+    text-align: left;
+    border-radius: 4px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1000;
+    top: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 2px solid #f1700f;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    font-weight: normal;
+    font-size: 14px;
+  }
+  
+  .error-tooltip:hover .error-tooltip-content {
+    visibility: visible;
+  }
+  
+  .error-list li {
+    margin: 3px 0;
+    color: #f1700f;
+  }
+  
+  /* Estilo para campos con error */
+  .has-error {
+    border: 2px solid #f1700f !important;
+  }
