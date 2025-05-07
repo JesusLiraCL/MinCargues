@@ -201,6 +201,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeModal() {
         modal.style.display = "none";
         form.reset();
+
+        if (isEditMode) {
+            toggleInputs(true);
+            btnEditSave.innerHTML = '<i class="fas fa-edit"></i> Editar';
+            btnEditSave.classList.remove('btn-save');
+            btnEditSave.classList.add('btn-edit');
+            btnDelete.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
+            btnDelete.classList.remove('btn-secondary');
+            btnDelete.classList.add('btn-danger');
+        }
     }
     
     // Event listeners
