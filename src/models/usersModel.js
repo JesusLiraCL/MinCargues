@@ -45,17 +45,17 @@ const usersModel = {
 
     createUser: async (userData) => {
         const { nombre_usuario, cedula, nombre, edad, telefono, correo, rol, contrasena } = userData;
-        
+
         // Primero obtenemos el código_rol
         const rolResult = await db.query(
             'SELECT codigo_rol FROM roles WHERE nombre = $1',
             [rol]
         );
-        
+
         if (!rolResult.rows[0]) {
             throw new Error('Rol no encontrado');
         }
-        
+
         const codigo_rol = rolResult.rows[0].codigo_rol;
 
         const result = await db.query(
@@ -74,56 +74,35 @@ const usersModel = {
             RETURNING *`,
             [nombre_usuario, cedula, nombre, edad, telefono, correo, codigo_rol, contrasena]
         );
-        
+
         return result.rows[0];
     },
 
-    updateUser: async (nombre_usuario, userData) => {
-        const { cedula, nombre, edad, telefono, correo, rol } = userData;
-        
-        // Obtenemos el código_rol si se proporciona un rol
-        let codigo_rol = null;
-        if (rol) {
-            const rolResult = await db.query(
-                'SELECT codigo_rol FROM roles WHERE nombre = $1',
-                [rol]
-            );
-            
-            if (!rolResult.rows[0]) {
-                throw new Error('Rol no encontrado');
-            }
-            
-            codigo_rol = rolResult.rows[0].codigo_rol;
-        }
+    updateUser: async (nombre_original, userData) => {
+        const { nombre_usuario: nuevo_nombre, cedula, nombre, edad, telefono, correo, rol } = userData;
 
-        // Construimos la consulta de actualización
-        const query = `
-            UPDATE usuarios 
-            SET cedula = $1, 
-                nombre = $2, 
-                edad = $3, 
-                telefono = $4, 
-                correo = $5,
-                ${codigo_rol ? 'codigo_rol = $6,' : ''}
-                nombre_usuario = $${codigo_rol ? '7' : '6'}
-            WHERE nombre_usuario = $${codigo_rol ? '7' : '6'} AND eliminado = false
-            RETURNING *`;
-        
-        const params = [
-            cedula, 
-            nombre, 
-            edad, 
-            telefono, 
-            correo
-        ];
-        
-        if (codigo_rol) {
-            params.push(codigo_rol);
-        }
-        params.push(nombre_usuario);
+        // Obtener código_rol en una línea
+        const codigo_rol = rol ? (await db.query('SELECT codigo_rol FROM roles WHERE nombre = $1', [rol])).rows[0]?.codigo_rol : null;
+        if (rol && !codigo_rol) throw new Error('Rol no encontrado');
 
-        const result = await db.query(query, params);
-        return result.rows[0];
+        const result = await db.query(
+            `UPDATE usuarios 
+             SET nombre_usuario = $1, 
+                 cedula = $2, 
+                 nombre = $3, 
+                 edad = $4, 
+                 telefono = $5, 
+                 correo = $6,
+                 codigo_rol = $7
+             WHERE nombre_usuario = $8
+             RETURNING *`,
+            [
+                nuevo_nombre, cedula, nombre, edad, telefono, correo,
+                codigo_rol, nombre_original
+            ]
+        );
+
+        return result.rows[0] || null;
     },
 
     deleteUser: async (nombre_usuario) => {

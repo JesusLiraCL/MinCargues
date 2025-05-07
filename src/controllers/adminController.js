@@ -332,7 +332,7 @@ const adminController = {
             }
 
             // Verificar si la cédula ya está registrada
-            const cedulaExistente = await usersModel.findById(cedula);
+            const cedulaExistente = await usersModel.findByCedula(cedula);
             if (cedulaExistente) {
                 return res.status(400).json({
                     success: false,
@@ -391,9 +391,21 @@ const adminController = {
                 });
             }
 
+            // Verificar si se está cambiando el nombre de usuario y ya existe
+            if (userData.nombre_usuario && userData.nombre_usuario !== nombre_usuario) {
+                const usuarioExistente = await usersModel.findByUsername(userData.nombre_usuario);
+                if (usuarioExistente) {
+                    return res.status(400).json({
+                        success: false, 
+                        message: 'Ya existe un usuario con ese nombre de usuario',
+                        field: 'nombre_usuario'
+                    })
+                }
+            }
+
             // Verificar si se está cambiando la cédula y si ya existe
             if (userData.cedula && userData.cedula !== usuarioExistente.cedula) {
-                const cedulaExistente = await usersModel.findById(userData.cedula);
+                const cedulaExistente = await usersModel.findByCedula(userData.cedula);
                 if (cedulaExistente) {
                     return res.status(400).json({
                         success: false,

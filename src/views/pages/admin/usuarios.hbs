@@ -13,11 +13,15 @@
         <h2 class="modal-title">Agregar Nuevo Usuario</h2>
         <form id="modalForm">
             <div class="form-group">
-                <label for="nombre_usuario">Nombre de Usuario:</label>
+                <div class="label-tooltip">
+                    <label for="nombre_usuario">Nombre de Usuario:</label>
+                </div>
                 <input type="text" id="nombre_usuario" name="nombre_usuario" required>
             </div>
             <div class="form-group" id="password-group" style="display: none;">
-                <label for="contrasena">Contraseña:</label>
+                <div class="label-tooltip">
+                    <label for="contrasena">Contraseña:</label>
+                </div>
                 <input type="password" id="contrasena" name="contrasena" minlength="6">
             </div>
             <div class="form-group">
@@ -29,7 +33,9 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="cedula">Cédula:</label>
+                <div class="label-tooltip">
+                    <label for="cedula">Cédula:</label>
+                </div>
                 <input type="text" id="cedula" name="cedula" required>
             </div>
             <div class="form-group">
