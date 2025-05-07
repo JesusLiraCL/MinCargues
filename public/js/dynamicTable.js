@@ -291,8 +291,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     searchButton: document.getElementById('dynamic-table-search-button'),
                     config: {
                         defaultSortColumn: 'rol',
-                        rowDoubleClick: (row) => {
-                            // Different handling for this table
+                        rowDoubleClick: (rowData) => {
+                            if (rowData.cedula) {
+                                openUserModalWithData({
+                                    nombre_usuario: rowData.nombre_usuario,
+                                    rol: rowData.rol,
+                                    cedula: rowData.cedula,
+                                    nombre: rowData.nombre,
+                                    telefono: rowData.telefono,
+                                    edad: rowData.edad,
+                                    correo: rowData.correo
+                                });
+                            } else {
+                                console.error('No se encontró cédula en los datos de la fila');
+                            }
                         }
                     }
                 });

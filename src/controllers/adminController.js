@@ -3,6 +3,8 @@ const camionModel = require('../models/camionModel');
 const clienteModel = require('../models/clienteModel');
 const materialModel = require('../models/materialModel');
 const usersModel = require('../models/usersModel');
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
 
 const adminController = {
     getDashboardData: async (req, res) => {
@@ -284,6 +286,7 @@ const adminController = {
 
     getUsersData: async (req, res) => {
         const usersData = await usersModel.getUsers();
+        console.log(usersData);
         const tableHeaders = [
             { title: 'Usuario', sortField: 'nombre_usuario' },
             { title: 'Rol', sortField: 'rol' },
@@ -301,8 +304,172 @@ const adminController = {
             usersData: JSON.stringify(usersData),
             success_msg: req.flash('success_msg')[0],
             tableHeaders,
-            addButtonUrl: '/admin/agregar-usuario?referrer=usuarios'
         });
+    },
+
+    postAddUser: async (req, res) => {
+        try {
+            const {
+                nombre_usuario,
+                cedula,
+                nombre,
+                edad,
+                telefono,
+                correo,
+                rol,
+                contrasena
+            } = req.body;
+
+            console.log(contrasena);
+            // Verificar si el usuario ya existe
+            const usuarioExistente = await usersModel.findByUsername(nombre_usuario);
+            if (usuarioExistente) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Ya existe un usuario con este nombre de usuario',
+                    field: 'nombre_usuario'
+                });
+            }
+
+            // Verificar si la cédula ya está registrada
+            const cedulaExistente = await usersModel.findById(cedula);
+            if (cedulaExistente) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Ya existe un usuario con esta cédula',
+                    field: 'cedula'
+                });
+            }
+
+            // Encriptar la contraseña
+            const hashedPassword = await bcrypt.hash(contrasena, saltRounds);
+
+            // Crear el nuevo usuario
+            const nuevoUsuario = await usersModel.createUser({
+                nombre_usuario,
+                cedula,
+                nombre,
+                edad,
+                telefono,
+                correo,
+                rol,
+                contrasena: hashedPassword
+            });
+
+            if (nuevoUsuario) {
+                req.flash('success_msg', 'Usuario creado exitosamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/usuarios'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error al crear el usuario'
+                });
+            }
+        } catch (error) {
+            console.error('Error al agregar usuario:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al agregar usuario'
+            });
+        }
+    },
+
+    postUpdateUser: async (req, res) => {
+        try {
+            const { nombre_usuario } = req.params;
+            const userData = req.body;
+
+            // Verificar si el usuario existe
+            const usuarioExistente = await usersModel.findByUsername(nombre_usuario);
+            if (!usuarioExistente) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Usuario no encontrado'
+                });
+            }
+
+            // Verificar si se está cambiando la cédula y si ya existe
+            if (userData.cedula && userData.cedula !== usuarioExistente.cedula) {
+                const cedulaExistente = await usersModel.findById(userData.cedula);
+                if (cedulaExistente) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Ya existe un usuario con esta cédula',
+                        field: 'cedula'
+                    });
+                }
+            }
+
+            // Actualizar el usuario
+            const resultado = await usersModel.updateUser(nombre_usuario, userData);
+
+            if (resultado) {
+                req.flash('success_msg', 'Usuario actualizado exitosamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/usuarios'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se realizaron cambios en el usuario'
+                });
+            }
+        } catch (error) {
+            console.error('Error al actualizar usuario:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al actualizar usuario'
+            });
+        }
+    },
+
+    deleteUser: async (req, res) => {
+        try {
+            const { nombre_usuario } = req.params;
+
+            // Verificar si el usuario existe
+            const usuarioExistente = await usersModel.findByUsername(nombre_usuario);
+            if (!usuarioExistente) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Usuario no encontrado'
+                });
+            }
+
+            // Intentar eliminar el usuario
+            const eliminado = await usersModel.deleteUser(nombre_usuario);
+
+            if (eliminado) {
+                req.flash('success_msg', 'Usuario eliminado exitosamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/usuarios'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se pudo eliminar el usuario'
+                });
+            }
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+
+            if (error.code === '23503') {
+                return res.status(409).json({
+                    success: false,
+                    message: 'No se puede eliminar el usuario porque está asociado a uno o más registros existentes'
+                });
+            }
+
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al eliminar usuario'
+            });
+        }
     },
 
     getTrucksData: async (req, res) => {
@@ -323,7 +490,6 @@ const adminController = {
             trucksData: JSON.stringify(trucksData),
             success_msg: req.flash('success_msg')[0],
             tableHeaders,
-            addButtonUrl: '/admin/agregar-camion?referrer=camiones'
         });
     },
 
@@ -350,15 +516,15 @@ const adminController = {
     postAddclient: async (req, res) => {
         try {
             const nuevoCliente = req.body;
-            const exist = await clienteModel.getClienteByDocumento(nuevoCliente.documento); 
-            
-            if(exist){
-                return res.status(400).json({ 
-                    success: false, 
+            const exist = await clienteModel.getClienteByDocumento(nuevoCliente.documento);
+
+            if (exist) {
+                return res.status(400).json({
+                    success: false,
                     message: 'Ya existe un cliente con este documento',
                     field: 'documento'
                 });
-            }else {
+            } else {
                 const resultado = await clienteModel.addCliente(nuevoCliente);
                 if (resultado) {
                     req.flash('success_msg', 'Cliente añadido correctamente');
@@ -381,50 +547,50 @@ const adminController = {
         try {
             const { documento } = req.params; // Documento original que viene de la URL
             const clienteData = req.body; // Nuevos datos del cliente
-            
+
             // 1. Verificar si el cliente existe
             const clienteExistente = await clienteModel.getClienteByDocumento(documento);
             if (!clienteExistente) {
                 console.log('Cliente no encontrado con documento:', documento);
-                return res.status(404).json({ 
-                    success: false, 
+                return res.status(404).json({
+                    success: false,
                     message: 'Cliente no encontrado'
                 });
             }
-            
+
             // 2. Si está intentando cambiar el documento, verificar que no exista otro con el nuevo documento
             if (documento !== clienteData.documento) {
                 const documentoExistente = await clienteModel.getClienteByDocumento(clienteData.documento);
                 if (documentoExistente) {
-                    return res.status(400).json({ 
-                        success: false, 
+                    return res.status(400).json({
+                        success: false,
                         message: 'Ya existe otro cliente con este nuevo documento',
                         field: 'documento'
                     });
                 }
             }
-            
+
             // 3. Actualizar el cliente
             const resultado = await clienteModel.updateCliente(documento, clienteData);
-            
+
             if (resultado) {
                 req.flash('success_msg', 'Cliente actualizado correctamente');
-                return res.status(200).json({ 
-                    success: true, 
-                    redirect: '/admin/clientes' 
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/clientes'
                 });
             } else {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: 'No se realizaron cambios en el cliente' 
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se realizaron cambios en el cliente'
                 });
             }
-            
+
         } catch (error) {
             console.error('Error al actualizar cliente:', error);
-            return res.status(500).json({ 
-                success: false, 
-                message: 'Error del servidor al actualizar cliente' 
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al actualizar cliente'
             });
         }
     },
@@ -433,44 +599,44 @@ const adminController = {
         console.log("intentando eliminar cliente");
         try {
             const { documento } = req.params;
-            
+
             // Verificar si el cliente existe antes de eliminarlo
             const clienteExistente = await clienteModel.getClienteByDocumento(documento);
             if (!clienteExistente) {
-                return res.status(404).json({ 
-                    success: false, 
-                    message: 'Cliente no encontrado' 
+                return res.status(404).json({
+                    success: false,
+                    message: 'Cliente no encontrado'
                 });
             }
 
             // Intentar eliminar el cliente
-                const eliminado = await clienteModel.deleteCliente(documento);
-                
-                if (eliminado) {
-                    req.flash('success_msg', 'Cliente eliminado exitosamente');
-                    return res.status(200).json({ 
-                        success: true, 
-                        redirect: '/admin/clientes' 
-                    });
-                } else {
-                    return res.status(400).json({ 
-                        success: false, 
-                        message: 'No se pudo eliminar el cliente' 
-                    });
-                }
+            const eliminado = await clienteModel.deleteCliente(documento);
+
+            if (eliminado) {
+                req.flash('success_msg', 'Cliente eliminado exitosamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/clientes'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se pudo eliminar el cliente'
+                });
+            }
         } catch (error) {
             console.error('Error al eliminar cliente:', error);
 
             if (error.code === '23503') {
-                return res.status(409).json({ 
-                    success: false, 
-                    message: 'No se puede eliminar el cliente porque está asociado a uno o más cargues existentes' 
+                return res.status(409).json({
+                    success: false,
+                    message: 'No se puede eliminar el cliente porque está asociado a uno o más cargues existentes'
                 });
             }
 
-            return res.status(500).json({ 
-                success: false, 
-                message: 'Error del servidor al eliminar cliente' 
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al eliminar cliente'
             });
         }
     },
@@ -489,7 +655,6 @@ const adminController = {
             title: 'Materiales',
             tableHeaders,
             materialsData: JSON.stringify(materials),
-            addButtonUrl: '/admin/agregar-material'
         });
     },
 };
