@@ -396,7 +396,7 @@ const adminController = {
                 const usuarioExistente = await usersModel.findByUsername(userData.nombre_usuario);
                 if (usuarioExistente) {
                     return res.status(400).json({
-                        success: false, 
+                        success: false,
                         message: 'Ya existe un usuario con ese nombre de usuario',
                         field: 'nombre_usuario'
                     })
@@ -506,15 +506,166 @@ const adminController = {
     },
 
     postAddTruck: async (req, res) => {
-        
+        try {
+            const nuevoCamion = req.body;
+
+            // Verificar si ya existe un camión activo con esa placa
+            const existente = await camionModel.getCamionByPlaca(nuevoCamion.placa);
+
+            if (existente) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Ya existe un camión activo con esta placa',
+                    field: 'placa'
+                });
+            }
+
+            // Obtener ID del conductor si se proporcionó cédula
+            let conductorId = null;
+            if (nuevoCamion.conductor_cedula) {
+                const conductor = await usersModel.findByCedula(nuevoCamion.conductor_cedula);
+                if (!conductor) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Conductor no encontrado',
+                        field: 'conductor_cedula'
+                    });
+                }
+                conductorId = conductor.id;
+            }
+
+            const resultado = await camionModel.addCamion({
+                ...nuevoCamion,
+                conductor_id: conductorId
+            });
+
+            if (resultado) {
+                req.flash('success_msg', 'Camión añadido correctamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/camiones'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error interno al agregar camión'
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor'
+            });
+        }
     },
 
     postUpdateTruck: async (req, res) => {
-        
+        try {
+            const { placa } = req.params;
+            const camionData = req.body;
+
+            // 1. Verificar si el camión existe
+            const camionExistente = await camionModel.getCamionByPlaca(placa);
+            if (!camionExistente) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Camión no encontrado'
+                });
+            }
+
+            // 2. Si está intentando cambiar la placa, verificar que no exista otro con la nueva placa
+            if (placa !== camionData.placa) {
+                const placaExistente = await camionModel.getCamionByPlaca(camionData.placa);
+                if (placaExistente) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Ya existe otro camión con esta nueva placa',
+                        field: 'placa'
+                    });
+                }
+            }
+
+            // Obtener ID del conductor si se proporcionó cédula
+            let conductorId = camionExistente.conductor_id; // Mantener el actual por defecto
+            if (camionData.conductor_cedula) {
+                const conductor = await usersModel.findByCedula(camionData.conductor_cedula);
+                if (!conductor) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Conductor no encontrado',
+                        field: 'conductor_cedula'
+                    });
+                }
+                conductorId = conductor.id;
+            } else if ('conductor_cedula' in camionData && !camionData.conductor_cedula) {
+                // Si se envía explícitamente vacío, quitar conductor
+                conductorId = null;
+            }
+
+            // 3. Actualizar el camión
+            const resultado = await camionModel.updateCamion(placa, {
+                ...camionData,
+                conductor_id: conductorId
+            });
+
+            if (resultado) {
+                req.flash('success_msg', 'Camión actualizado correctamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/camiones'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se realizaron cambios en el camión'
+                });
+            }
+        } catch (error) {
+            console.error('Error al actualizar camión:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al actualizar camión'
+            });
+        }
     },
 
     deleteTruck: async (req, res) => {
-        
+        try {
+            const { placa } = req.params;
+
+            // Verificar si el camión existe antes de eliminarlo
+            const camionExistente = await camionModel.getCamionByPlaca(placa);
+            if (!camionExistente) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Camión no encontrado'
+                });
+            }
+
+            // Intentar eliminar el camión (soft delete)
+            const eliminado = await camionModel.deleteCamion(placa);
+
+            if (eliminado) {
+                req.flash('success_msg', 'Camión eliminado exitosamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/camiones'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se pudo eliminar el camión'
+                });
+            }
+        } catch (error) {
+            console.error('Error al eliminar camión:', error);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al eliminar camión'
+            });
+        }
     },
 
     getClientsData: async (req, res) => {
@@ -682,16 +833,151 @@ const adminController = {
         });
     },
 
-    postAddMaterials: async (req, res) => {
-        
+    postAddMaterial: async (req, res) => {
+        try {
+            const nuevoMaterial = req.body;
+            const codigoExistente = await materialModel.getMaterialCodeByName(nuevoMaterial.nombre.toLowerCase());
+
+            if (codigoExistente) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Ya existe un material activo con este nombre',
+                    field: 'nombre'
+                });
+            }
+
+            // Verificar si existe pero está eliminado
+            const materialEliminado = await materialModel.getEliminadoByNombre(nuevoMaterial.nombre);
+
+            if (materialEliminado.rows.length > 0) {
+                // Reactivar el material existente
+                const resultado = await materialModel.updateMaterial(
+                    materialEliminado.rows[0].codigo,
+                    {
+                        nombre: nuevoMaterial.nombre,
+                        unidad_medida: nuevoMaterial.unidad_medida,
+                        eliminado: false
+                    }
+                );
+
+                if (resultado) {
+                    req.flash('success_msg', 'Material reactivado correctamente');
+                    return res.status(200).json({
+                        success: true,
+                        redirect: '/admin/materiales'
+                    });
+                }
+            }
+
+            // Crear nuevo material
+            const resultado = await materialModel.addMaterial(nuevoMaterial);
+
+            if (resultado) {
+                req.flash('success_msg', 'Material añadido correctamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/materiales'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error interno al agregar material'
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor'
+            });
+        }
     },
 
-    postUpdateMaterials: async (req, res) => {
-        
+    postUpdateMaterial: async (req, res) => {
+        try {
+            const { codigoOriginal } = req.params;
+            const materialData = req.body;
+
+            // 1. Verificar si el material existe
+            const materialExistente = await materialModel.getMaterialByCodigo(codigoOriginal);
+            if (!materialExistente) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Material no encontrado'
+                });
+            }
+
+            // 2. Si está intentando cambiar el nombre, verificar que no exista otro con el nuevo nombre
+            if (materialExistente.nombre !== materialData.nombre) {
+                const nombreExistente = await materialModel.getMaterialCodeByName(materialData.nombre.toLowerCase());
+                if (nombreExistente) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Ya existe otro material con este nuevo nombre',
+                        field: 'nombre'
+                    });
+                }
+            }
+
+            // 3. Actualizar el material
+            const resultado = await materialModel.updateMaterial(codigoOriginal, materialData);
+
+            if (resultado) {
+                req.flash('success_msg', 'Material actualizado correctamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/materiales'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se realizaron cambios en el material'
+                });
+            }
+        } catch (error) {
+            console.error('Error al actualizar material:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al actualizar material'
+            });
+        }
     },
 
-    deleteMaterials: async (req, res) => {
-        
+    deleteMaterial: async (req, res) => {
+        try {
+            const { codigo } = req.params;
+
+            // Verificar si el material existe antes de eliminarlo
+            const materialExistente = await materialModel.getMaterialByCodigo(codigo);
+            if (!materialExistente) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Material no encontrado'
+                });
+            }
+
+            // Intentar eliminar el material (soft delete)
+            const eliminado = await materialModel.deleteMaterial(codigo);
+
+            if (eliminado) {
+                req.flash('success_msg', 'Material eliminado exitosamente');
+                return res.status(200).json({
+                    success: true,
+                    redirect: '/admin/materiales'
+                });
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No se pudo eliminar el material'
+                });
+            }
+        } catch (error) {
+            console.error('Error al eliminar material:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error del servidor al eliminar material'
+            });
+        }
     },
 };
 

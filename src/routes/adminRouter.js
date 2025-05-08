@@ -34,13 +34,13 @@ adminRouter.get('/api/usuarios/:nombre_usuario/delete', isAdmin, adminController
 
 // Camiones
 adminRouter.get('/api/camiones/buscar', isAdmin, adminController.fetchCamion);
-adminRouter.post('/api/camiones/agregar-camion', isAdmin, adminController.postAddUser);
-adminRouter.post('/api/camiones/:placa/update', isAdmin, adminController.postUpdateUser);
-adminRouter.get('/api/camiones/:placa/delete', isAdmin, adminController.deleteUser);
+adminRouter.post('/api/camiones/agregar-camion', isAdmin, adminController.postAddTruck);
+adminRouter.post('/api/camiones/:placa/update', isAdmin, adminController.postUpdateTruck);
+adminRouter.get('/api/camiones/:placa/delete', isAdmin, adminController.deleteTruck);
 
 // Materiales
-adminRouter.post('/api/materiales/agregar-material', isAdmin, adminController.postAddUser);
-adminRouter.post('/api/materiales/:placa/update', isAdmin, adminController.postUpdateUser);
-adminRouter.get('/api/materiales/:placa/delete', isAdmin, adminController.deleteUser);
+adminRouter.post('/api/materiales/agregar-material', isAdmin, adminController.postAddMaterial);
+adminRouter.post('/api/materiales/:codigo/update', isAdmin, adminController.postUpdateMaterial);
+adminRouter.get('/api/materiales/:codigo/delete', isAdmin, adminController.deleteMaterial);
 
 module.exports = adminRouter;
