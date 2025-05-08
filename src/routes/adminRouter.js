@@ -8,16 +8,18 @@ const { validateCargue } = require('../middlewares/cargueMiddleware');
 adminRouter.get('/inicio', isAdmin, adminController.getDashboardData);
 adminRouter.get('/calendario-admin', isAdmin, adminController.getCalendarData);
 adminRouter.get('/cargue/:id', isAdmin, adminController.getCargueData);
-adminRouter.post('/cargue/:id/update', isAdmin, validateCargue, adminController.postCargueUpdate);
-adminRouter.get('/cargue/:id/delete', isAdmin, adminController.deleteCargue);
 adminRouter.get('/agregar-cargue', isAdmin, adminController.getAddCargue);
-adminRouter.post('/agregar-cargue', isAdmin, validateCargue, adminController.postAddCargue);
 adminRouter.get('/usuarios', isAdmin, adminController.getUsersData);
 adminRouter.get('/camiones', isAdmin, adminController.getTrucksData);
 adminRouter.get('/clientes', isAdmin, adminController.getClientsData);
 adminRouter.get('/materiales', isAdmin, adminController.getMaterialsData);
 
-// Apis
+// Api Routes
+
+// Cargues
+adminRouter.post('/agregar-cargue', isAdmin, validateCargue, adminController.postAddCargue);
+adminRouter.post('/cargue/:id/update', isAdmin, validateCargue, adminController.postCargueUpdate);
+adminRouter.get('/cargue/:id/delete', isAdmin, adminController.deleteCargue);
 
 // Clientes
 adminRouter.get('/api/clientes/buscar', isAdmin, adminController.fetchCliente);
@@ -32,5 +34,13 @@ adminRouter.get('/api/usuarios/:nombre_usuario/delete', isAdmin, adminController
 
 // Camiones
 adminRouter.get('/api/camiones/buscar', isAdmin, adminController.fetchCamion);
+adminRouter.post('/api/camiones/agregar-camion', isAdmin, adminController.postAddUser);
+adminRouter.post('/api/camiones/:placa/update', isAdmin, adminController.postUpdateUser);
+adminRouter.get('/api/camiones/:placa/delete', isAdmin, adminController.deleteUser);
+
+// Materiales
+adminRouter.post('/api/materiales/agregar-material', isAdmin, adminController.postAddUser);
+adminRouter.post('/api/materiales/:placa/update', isAdmin, adminController.postUpdateUser);
+adminRouter.get('/api/materiales/:placa/delete', isAdmin, adminController.deleteUser);
 
 module.exports = adminRouter;

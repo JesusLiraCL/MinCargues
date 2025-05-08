@@ -334,8 +334,16 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                             }
                         },
-                        rowDoubleClick: (row) => {
-                            // Different handling for this table
+                        rowDoubleClick: (rowData) => {
+                            if (rowData.placa) {
+                                openTruckModalWithData({
+                                    placa: rowData.placa,
+                                    tipo_camion: rowData.tipo_camion,
+                                    capacidad: rowData.capacidad,
+                                    conductor_cedula: rowData.conductor_cedula,
+                                    habilitado: rowData.habilitado
+                                });
+                            }
                         }
                     }
                 });
@@ -378,8 +386,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     searchButton: document.getElementById('dynamic-table-search-button'),
                     config: {
                         defaultSortColumn: 'codigo',
-                        rowDoubleClick: (row) => {
-                            // Different handling for this table
+                        rowDoubleClick: (rowData) => {
+                            if (rowData.codigo) {
+                                openMaterialModalWithData({
+                                    codigo: rowData.codigo,
+                                    nombre: rowData.nombre,
+                                    unidad_medida: rowData.unidad_medida
+                                });
+                            }
                         }
                     }
                 });

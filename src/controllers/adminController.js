@@ -505,6 +505,18 @@ const adminController = {
         });
     },
 
+    postAddTruck: async (req, res) => {
+        
+    },
+
+    postUpdateTruck: async (req, res) => {
+        
+    },
+
+    deleteTruck: async (req, res) => {
+        
+    },
+
     getClientsData: async (req, res) => {
         const clientsData = await clienteModel.getClientes();
         const tableHeaders = [
@@ -668,6 +680,18 @@ const adminController = {
             tableHeaders,
             materialsData: JSON.stringify(materials),
         });
+    },
+
+    postAddMaterials: async (req, res) => {
+        
+    },
+
+    postUpdateMaterials: async (req, res) => {
+        
+    },
+
+    deleteMaterials: async (req, res) => {
+        
     },
 };
 

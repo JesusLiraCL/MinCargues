@@ -6,5 +6,59 @@
     window.trucksData = {{{trucksData}}};
 </script>
 
+<div id="modalWindow" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 class="modal-title">Agregar Nuevo Camión</h2>
+        <form id="modalForm">
+            <div class="form-group">
+                <div class="label-tooltip">
+                    <label for="placa">Placa:</label>
+                </div>
+                <input type="text" id="placa" name="placa" required>
+            </div>
+            <div class="form-group">
+                <label for="tipo_camion">Tipo de Camión:</label>
+                <input type="text" id="tipo_camion" name="tipo_camion" required>
+            </div>
+            <div class="form-group">
+                <label for="capacidad">Capacidad:</label>
+                <input type="text" id="capacidad" name="capacidad" required>
+            </div>
+            <div class="form-group">
+                <label for="conductor_cedula">Cédula del Conductor:</label>
+                <input type="text" id="conductor_cedula" name="conductor_cedula">
+            </div>
+            <div class="form-group">
+                <label for="habilitado">Habilitado:</label>
+                <select id="habilitado" name="habilitado">
+                    <option value="true">Sí</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" id="submit-button" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Agregar
+                </button>
+                
+                <button id="edit-save-button" class="btn btn-edit" style="display: none;">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                
+                <button id="delete-button" class="btn btn-danger" style="display: none;">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+                
+                <button type="button" class="btn btn-cancel btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>   
+            </div>
+        </form>
+    </div>
+</div>
+
 <link rel="stylesheet" href="/css/components/tables.css">
+<link rel="stylesheet" href="/css/components/modal.css">
 <script src="/js/dynamicTable.js"></script>
+<script src="/js/camiones.js"></script>
