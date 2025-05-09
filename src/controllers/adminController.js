@@ -836,8 +836,20 @@ const adminController = {
     postAddMaterial: async (req, res) => {
         try {
             const nuevoMaterial = req.body;
-            const codigoExistente = await materialModel.getMaterialCodeByName(nuevoMaterial.nombre.toLowerCase());
 
+            // Validar que los datos requeridos estén presentes
+            if (!nuevoMaterial.nombre || !nuevoMaterial.unidad_medida) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'El nombre y la unidad de medida son obligatorios'
+                });
+            }
+
+            // Normalizar el nombre del material
+            const nombreNormalizado = nuevoMaterial.nombre.toLowerCase().trim();
+
+            // Verificar si ya existe un material activo con el mismo nombre
+            const codigoExistente = await materialModel.getMaterialCodeByName(nombreNormalizado);
             if (codigoExistente) {
                 return res.status(400).json({
                     success: false,
@@ -846,31 +858,41 @@ const adminController = {
                 });
             }
 
-            // Verificar si existe pero está eliminado
-            const materialEliminado = await materialModel.getEliminadoByNombre(nuevoMaterial.nombre);
+            // Verificar si existe un material eliminado con el mismo nombre
+            const materialEliminado = await materialModel.getEliminadoByNombre(nombreNormalizado);
+            if (materialEliminado) {
+                console.log('Material eliminado encontrado:', materialEliminado);
 
-            if (materialEliminado.rows.length > 0) {
-                // Reactivar el material existente
+                // Restaurar el material eliminado
                 const resultado = await materialModel.updateMaterial(
-                    materialEliminado.rows[0].codigo,
+                    materialEliminado.codigo,
                     {
-                        nombre: nuevoMaterial.nombre,
+                        nombre: nombreNormalizado, // Asegúrate de pasar el nombre normalizado
                         unidad_medida: nuevoMaterial.unidad_medida,
-                        eliminado: false
+                        eliminado: false // Reactivar el material
                     }
                 );
 
                 if (resultado) {
-                    req.flash('success_msg', 'Material reactivado correctamente');
+                    console.log('Material restaurado:', resultado);
+                    req.flash('success_msg', 'Material restaurado correctamente');
                     return res.status(200).json({
                         success: true,
                         redirect: '/admin/materiales'
                     });
+                } else {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Error al restaurar el material'
+                    });
                 }
             }
 
-            // Crear nuevo material
-            const resultado = await materialModel.addMaterial(nuevoMaterial);
+            // Crear un nuevo material
+            const resultado = await materialModel.addMaterial({
+                nombre: nombreNormalizado,
+                unidad_medida: nuevoMaterial.unidad_medida
+            });
 
             if (resultado) {
                 req.flash('success_msg', 'Material añadido correctamente');
@@ -885,7 +907,7 @@ const adminController = {
                 });
             }
         } catch (error) {
-            console.error(error);
+            console.error('Error en postAddMaterial:', error);
             return res.status(500).json({
                 success: false,
                 message: 'Error del servidor'
@@ -895,11 +917,22 @@ const adminController = {
 
     postUpdateMaterial: async (req, res) => {
         try {
-            const { codigoOriginal } = req.params;
+            const nombreMaterial = req.params.codigo; // Aquí realmente llega el nombre del material
             const materialData = req.body;
 
-            // 1. Verificar si el material existe
-            const materialExistente = await materialModel.getMaterialByCodigo(codigoOriginal);
+            // Validar que los datos requeridos estén presentes
+            if (!materialData.nombre || !materialData.unidad_medida) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'El nombre y la unidad de medida son obligatorios'
+                });
+            }
+
+            // Normalizar el nombre del material
+            const nombreNormalizado = materialData.nombre.toLowerCase().trim();
+
+            // Obtener el material existente por su nombre
+            const materialExistente = await materialModel.getMaterialCodeByName(nombreMaterial.toLowerCase().trim());
             if (!materialExistente) {
                 return res.status(404).json({
                     success: false,
@@ -907,20 +940,24 @@ const adminController = {
                 });
             }
 
-            // 2. Si está intentando cambiar el nombre, verificar que no exista otro con el nuevo nombre
-            if (materialExistente.nombre !== materialData.nombre) {
-                const nombreExistente = await materialModel.getMaterialCodeByName(materialData.nombre.toLowerCase());
+            // Verificar si se está intentando cambiar el nombre
+            if (nombreMaterial.toLowerCase().trim() !== nombreNormalizado) {
+                // Verificar si ya existe otro material activo con el nuevo nombre
+                const nombreExistente = await materialModel.getMaterialCodeByName(nombreNormalizado);
                 if (nombreExistente) {
                     return res.status(400).json({
                         success: false,
-                        message: 'Ya existe otro material con este nuevo nombre',
+                        message: 'Ya existe otro material con este nombre',
                         field: 'nombre'
                     });
                 }
             }
 
-            // 3. Actualizar el material
-            const resultado = await materialModel.updateMaterial(codigoOriginal, materialData);
+            // Actualizar el material
+            const resultado = await materialModel.updateMaterial(materialExistente, {
+                nombre: nombreNormalizado,
+                unidad_medida: materialData.unidad_medida
+            });
 
             if (resultado) {
                 req.flash('success_msg', 'Material actualizado correctamente');
@@ -945,10 +982,10 @@ const adminController = {
 
     deleteMaterial: async (req, res) => {
         try {
-            const { codigo } = req.params;
+            const nombreMaterial = req.params.codigo; // Aquí realmente llega el nombre del material
 
-            // Verificar si el material existe antes de eliminarlo
-            const materialExistente = await materialModel.getMaterialByCodigo(codigo);
+            // Obtener el código del material a partir del nombre
+            const materialExistente = await materialModel.getMaterialCodeByName(nombreMaterial.toLowerCase().trim());
             if (!materialExistente) {
                 return res.status(404).json({
                     success: false,
@@ -957,7 +994,7 @@ const adminController = {
             }
 
             // Intentar eliminar el material (soft delete)
-            const eliminado = await materialModel.deleteMaterial(codigo);
+            const eliminado = await materialModel.deleteMaterial(materialExistente);
 
             if (eliminado) {
                 req.flash('success_msg', 'Material eliminado exitosamente');
