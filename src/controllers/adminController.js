@@ -1016,6 +1016,14 @@ const adminController = {
             });
         }
     },
+
+    getReportsData: async (req, res) => {
+        res.render("pages/admin/reportes", {
+            layout: "main",
+            user: req.user,
+            title: 'Reportes',
+        });
+    },
 };
 
 module.exports = adminController;

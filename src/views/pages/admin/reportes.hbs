@@ -1,0 +1,86 @@
+<div class="reportes-container">
+    <!-- Encabezado del reporte -->
+    <div class="report-header">
+        <h3>Reporte del Día</h3>
+        <button class="btn btn-download">
+            <i class="fas fa-download"></i> Descargar
+        </button>
+    </div>
+
+    <!-- Formulario para generar reportes -->
+    <div class="report-form-container">
+        <h2>Generar Nuevo Reporte</h2>
+        <form id="report-form">
+            <div id="form-fields">
+                <div class="required-fields">
+                    <div class="form-group">
+                        <label>Desde:</label>
+                        <div class="date-group">
+                            <select class="date-selector" id="desde-opcion" required>
+                                <option value="always">Siempre</option>
+                                <option value="today">Hoy</option>
+                                <option value="custom">Seleccionar fecha</option>
+                            </select>
+                            <input type="date" id="fecha-inicio" name="fecha_inicio" disabled class="date-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Hasta:</label>
+                        <div class="date-group">
+                            <select class="date-selector" id="hasta-opcion" required>
+                                <option value="always">Siempre</option>
+                                <option value="today">Hoy</option>
+                                <option value="custom">Seleccionar fecha</option>
+                            </select>
+                            <input type="date" id="fecha-fin" name="fecha_fin" disabled class="date-input">
+                        </div>
+                    </div>
+                <div class="form-group">
+                    <label for="ordenado">Ordenar Por:</label>
+                    <select id="ordenado" name="ordenado" required>
+                        <option value="fecha">Fecha de inicio</option>
+                        <option value="id">Id</option>
+                        <option value="camion">Camión</option>
+                        <option value="cliente">Cliente</option>
+                    </select>
+                </div>
+                </div>
+                <div class="optional-fields">
+                    <div class="form-group">
+                        <label for="cliente">Cliente:</label>
+                        <input type="text" id="cliente" name="cliente" placeholder="Documento del cliente (todos por defecto)">
+                    </div>
+                    <div class="form-group">
+                        <label for="camion">Camión:</label>
+                        <input type="text" id="camion" name="camion" placeholder="Placa del camión (todos por defecto)">
+                    </div>
+                    <div class="form-group">
+                        <label for="conductor">Conductor:</label>
+                        <input type="text" id="conductor" name="conductor" placeholder="Cédula del conductor (todos por defecto)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-end">
+                <div class="form-group check">
+                    <label id="checkbox-label">
+                        Incluir cargues programados y cancelados
+                        <input class="checkbox-box" type="checkbox" checked id="incluir-cargues" name="incluir_cargues">
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-preview">
+                        <i class="fas fa-eye"></i> Previsualizar
+                    </button>
+                    <button type="submit" class="btn btn-download">
+                        <i class="fas fa-download"></i> Descargar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<link rel="stylesheet" href="/css/components/reportes.css">
