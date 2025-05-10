@@ -61,13 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     }
 
-    // 4. Obtener parámetros del formulario
+    // En la función obtenerParametros(), asegúrate de que las fechas estén en formato YYYY-MM-DD
     function obtenerParametros() {
         return {
             desde_opcion: desdeOpcion.value,
             hasta_opcion: hastaOpcion.value,
-            fecha_inicio: fechaInicio.value,
-            fecha_fin: fechaFin.value,
+            fecha_inicio: fechaInicio.value, // Formato YYYY-MM-DD
+            fecha_fin: fechaFin.value,     // Formato YYYY-MM-DD
             ordenado: document.getElementById('ordenado').value,
             cliente: document.getElementById('cliente').value,
             camion: document.getElementById('camion').value,

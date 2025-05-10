@@ -6,9 +6,9 @@ class Reporte {
             fechaDesde,
             fechaHasta,
             ordenado,
-            cliente, // Ahora sería el documento del cliente
-            camion,  // Sería la placa del camión
-            conductor, // Sería la cédula del conductor
+            cliente,
+            camion,
+            conductor,
             incluir_cargues
         } = filtros;
 
@@ -33,14 +33,14 @@ class Reporte {
 
         const params = [];
 
-        // Filtros de fecha - ahora usando fecha_inicio_real como referencia
+        // Filtros de fecha - ahora usando fecha_inicio_programada
         if (fechaDesde) {
-            query += ` AND fecha_inicio_real >= $${params.length + 1}`;
+            query += ` AND fecha_inicio_programada::timestamp >= $${params.length + 1}::timestamp`;
             params.push(fechaDesde);
         }
 
         if (fechaHasta) {
-            query += ` AND fecha_inicio_real <= $${params.length + 1}`;
+            query += ` AND fecha_inicio_programada::timestamp <= $${params.length + 1}::timestamp`;
             params.push(fechaHasta);
         }
 
@@ -77,11 +77,15 @@ class Reporte {
                 query += ` ORDER BY documento`;
                 break;
             default: // 'fecha'
-                query += ` ORDER BY fecha_inicio_real`;
+                query += ` ORDER BY fecha_inicio_programada`;
         }
+
+        console.log('Consulta SQL ejecutada:', query);
+        console.log('Parámetros:', params);
 
         try {
             const { rows } = await db.query(query, params);
+            console.log(`Cargues encontrados: ${rows.length}`);
             return rows;
         } catch (error) {
             console.error('Error al obtener cargues:', error);

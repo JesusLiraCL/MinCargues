@@ -16,26 +16,53 @@ const reportesController = {
                 incluir_cargues
             } = req.body;
 
+            // Función para convertir fecha local a formato BD (YYYY-MM-DD HH:MM:SS)
+            const formatToDBDateTime = (dateString, startOfDay = true) => {
+                if (!dateString) return null;
+
+                const [day, month, year] = dateString.split('-');
+                const date = new Date(`${year}-${month}-${day}`);
+
+                if (startOfDay) {
+                    return `${year}-${month}-${day} 00:00:00`;
+                } else {
+                    return `${year}-${month}-${day} 23:59:59`;
+                }
+            };
+
             // Procesar fechas según las opciones seleccionadas
             let fechaDesde, fechaHasta;
 
             // Procesar fecha "Desde"
             if (desde_opcion === 'today') {
-                fechaDesde = new Date().toISOString().split('T')[0];
+                const hoy = new Date();
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                fechaDesde = `${hoy.getFullYear()}-${mes}-${dia} 00:00:00`;
             } else if (desde_opcion === 'custom' && fecha_inicio) {
-                fechaDesde = fecha_inicio;
+                fechaDesde = formatToDBDateTime(fecha_inicio, true);
             } else {
                 fechaDesde = null; // "Siempre"
             }
 
             // Procesar fecha "Hasta"
             if (hasta_opcion === 'today') {
-                fechaHasta = new Date().toISOString().split('T')[0];
+                const hoy = new Date();
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                fechaHasta = `${hoy.getFullYear()}-${mes}-${dia} 23:59:59`;
             } else if (hasta_opcion === 'custom' && fecha_fin) {
-                fechaHasta = fecha_fin;
+                fechaHasta = formatToDBDateTime(fecha_fin, false);
             } else {
                 fechaHasta = null; // "Siempre"
             }
+
+            console.log('Fechas procesadas para BD:', {
+                fechaDesde,
+                fechaHasta,
+                desde_opcion,
+                hasta_opcion
+            });
 
             // Obtener los cargues de la base de datos
             const cargues = await reporteModel.obtenerCargues({
@@ -48,7 +75,6 @@ const reportesController = {
                 incluir_cargues
             });
 
-            // Enviar los datos directamente al frontend
             res.json(cargues);
         } catch (error) {
             console.error('Error al generar el reporte:', error);
