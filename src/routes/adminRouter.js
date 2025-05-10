@@ -3,6 +3,7 @@ const adminRouter = express.Router();
 const { isAdmin } = require('../middlewares/authMiddleware');
 const adminController = require('../controllers/adminController');
 const { validateCargue } = require('../middlewares/cargueMiddleware');
+const reportesController = require('../controllers/reportesController');
 
 // Views Routes
 adminRouter.get('/inicio', isAdmin, adminController.getDashboardData);
@@ -43,5 +44,8 @@ adminRouter.get('/api/camiones/:placa/delete', isAdmin, adminController.deleteTr
 adminRouter.post('/api/materiales/agregar-material', isAdmin, adminController.postAddMaterial);
 adminRouter.post('/api/materiales/:codigo/update', isAdmin, adminController.postUpdateMaterial);
 adminRouter.get('/api/materiales/:codigo/delete', isAdmin, adminController.deleteMaterial);
+
+// Reportes
+adminRouter.post('/api/reportes/generar', reportesController.generarPDF);
 
 module.exports = adminRouter;
