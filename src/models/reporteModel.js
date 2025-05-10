@@ -14,70 +14,80 @@ class Reporte {
 
         let query = `
             SELECT 
-                id, 
-                placa,
-                documento,
-                codigo_material,
-                cantidad,
-                fecha_inicio_programada,
-                fecha_fin_programada,
-                fecha_inicio_real,
-                fecha_fin_real,
-                estado,
-                observaciones,
-                usuario_id,
-                conductor_id
-            FROM cargues
+                c.id, 
+                c.placa,
+                c.documento,
+                cl.nombre as nombre_cliente,
+                u.cedula as cedula_conductor,
+                u.nombre as nombre_conductor,
+                m.nombre as nombre_material,
+                c.codigo_material,
+                c.cantidad,
+                c.fecha_inicio_programada,
+                c.fecha_fin_programada,
+                c.fecha_inicio_real,
+                c.fecha_fin_real,
+                c.estado,
+                c.observaciones,
+                c.usuario_id,
+                c.conductor_id
+            FROM cargues c
+            LEFT JOIN clientes cl ON c.documento = cl.documento
+            LEFT JOIN usuarios u ON c.conductor_id = u.id
+            LEFT JOIN materiales m ON c.codigo_material = m.codigo
             WHERE 1=1
         `;
 
         const params = [];
 
-        // Filtros de fecha - ahora usando fecha_inicio_programada
+        // Filtros de fecha
         if (fechaDesde) {
-            query += ` AND fecha_inicio_programada::timestamp >= $${params.length + 1}::timestamp`;
+            query += ` AND c.fecha_inicio_programada::timestamp >= $${params.length + 1}::timestamp`;
             params.push(fechaDesde);
         }
 
         if (fechaHasta) {
-            query += ` AND fecha_inicio_programada::timestamp <= $${params.length + 1}::timestamp`;
+            query += ` AND c.fecha_inicio_programada::timestamp <= $${params.length + 1}::timestamp`;
             params.push(fechaHasta);
         }
 
         // Filtros opcionales
         if (cliente) {
-            query += ` AND documento = $${params.length + 1}`;
+            query += ` AND c.documento = $${params.length + 1}`;
             params.push(cliente);
         }
 
         if (camion) {
-            query += ` AND placa = $${params.length + 1}`;
+            query += ` AND c.placa = $${params.length + 1}`;
             params.push(camion);
         }
 
         if (conductor) {
-            query += ` AND conductor_id = $${params.length + 1}`;
+            query += ` AND c.conductor_id = $${params.length + 1}`;
             params.push(conductor);
         }
 
         // Incluir o no cargues programados y cancelados
         if (!incluir_cargues) {
-            query += ` AND estado = 'completado'`;
+            query += ` AND c.estado = 'completado'`;
         }
 
         // Ordenamiento
         switch (ordenado) {
             case 'id':
-                query += ` ORDER BY id`;
+                query += ` ORDER BY c.id`;
                 break;
             case 'camion':
-                query += ` ORDER BY placa`;
+                query += ` ORDER BY c.placa`;
                 break;
             case 'cliente':
-                query += ` ORDER BY documento`;
+                query += ` ORDER BY cl.nombre`;
+                break;
+            case 'conductor':
+                query += ` ORDER BY u.nombre`;
                 break;
             default: // 'fecha'
-                query += ` ORDER BY fecha_inicio_programada`;
+                query += ` ORDER BY c.fecha_inicio_programada`;
         }
 
         console.log('Consulta SQL ejecutada:', query);

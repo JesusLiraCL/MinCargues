@@ -76,6 +76,19 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
+    function formatFecha(fechaString) {
+        if (!fechaString) return 'N/A';
+        const fecha = new Date(fechaString);
+        return fecha.toLocaleString('es-CO', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        }).replace(',', '');
+    }
+
     // 5. Generar PDF en el cliente
     async function generarPDFenCliente(cargues, accion) {
         try {
@@ -87,67 +100,72 @@ document.addEventListener('DOMContentLoaded', function () {
             doc.setFontSize(18);
             doc.text('Reporte de Cargues', 105, 20, { align: 'center' });
             doc.setFontSize(10);
-            doc.text(`Generado el: ${new Date().toLocaleDateString()}`, 105, 30, { align: 'center' });
+            doc.text(`Generado el: ${formatFecha(new Date())}`, 105, 30, { align: 'center' });
 
-            // Encabezados de la tabla
+            // Encabezados actualizados
             const headers = [
+                'N°',
                 'ID',
                 'Placa',
+                'Cliente',
                 'Documento',
+                'Conductor',
+                'Cédula',
                 'Material',
                 'Cantidad',
-                'Inicio Real',
-                'Fin Real',
-                'Estado'
+                'Inicio Prog.'
             ];
 
-            // Datos de la tabla
-            const data = cargues.map(c => [
+            // Datos actualizados con fecha formateada
+            const data = cargues.map((c, index) => [
+                index + 1,
                 c.id,
                 c.placa,
-                c.documento,
-                c.codigo_material,
+                c.nombre_cliente || 'N/A',
+                c.documento || 'N/A',
+                c.nombre_conductor || 'N/A',
+                c.cedula_conductor || 'N/A',
+                c.nombre_material || c.codigo_material || 'N/A',
                 c.cantidad,
-                c.fecha_inicio_real || 'N/A',
-                c.fecha_fin_real || 'N/A',
-                c.estado
+                formatFecha(c.fecha_inicio_programada)
             ]);
 
-            // Generar tabla
+            // Generar tabla centrada
             doc.autoTable({
+                startY: 40,
                 head: [headers],
                 body: data,
-                startY: 40,
-                margin: { top: 40 },
+                margin: { left: 15, right: 15 },
+                tableWidth: 'auto',
                 styles: {
                     fontSize: 8,
                     cellPadding: 2,
                     overflow: 'linebreak'
                 },
                 headStyles: {
-                    fillColor: [22, 160, 133], // Verde
-                    textColor: 255, // Blanco
+                    fillColor: [244, 134, 52],
+                    textColor: 255,
                     fontStyle: 'bold'
                 },
                 columnStyles: {
-                    0: { cellWidth: 10 }, // ID
-                    1: { cellWidth: 15 }, // Placa
-                    2: { cellWidth: 20 }, // Documento
-                    3: { cellWidth: 20 }, // Material
-                    4: { cellWidth: 15 }, // Cantidad
-                    5: { cellWidth: 20 }, // Inicio Real
-                    6: { cellWidth: 20 }, // Fin Real
-                    7: { cellWidth: 15 }  // Estado
+                    0: { cellWidth: 8 },   // N°
+                    1: { cellWidth: 10 },  // ID
+                    2: { cellWidth: 18 },  // Placa (aumentada)
+                    3: { cellWidth: 18 },  // Cliente
+                    4: { cellWidth: 20 },  // Documento
+                    5: { cellWidth: 25 },  // Conductor
+                    6: { cellWidth: 20 },  // Cédula
+                    7: { cellWidth: 20 },  // Material
+                    8: { cellWidth: 18 },  // Cantidad
+                    9: { cellWidth: 25 }   // Inicio Prog. (aumentada para fecha)
                 }
             });
 
             // Acción según botón presionado
             if (accion === 'preview') {
-                // Previsualizar en nueva pestaña
                 const pdfUrl = doc.output('bloburl');
                 window.open(pdfUrl, '_blank');
             } else {
-                // Descargar directamente
                 doc.save(`reporte_${new Date().toISOString().slice(0, 10)}.pdf`);
             }
 
@@ -205,3 +223,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Inicializar los selectores de fecha
     manejarSelectoresFecha();
 });
+
+
+// test 1 funcional (entre comillas)

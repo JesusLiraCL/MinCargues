@@ -1,88 +1,101 @@
 const fs = require('fs');
 const path = require('path');
 const { jsPDF } = require('jspdf');
-
-// Importación CORRECTA de autoTable
 const autoTable = require('jspdf-autotable');
 
-// Directorio para almacenar los PDFs generados
 const pdfDir = path.join(__dirname, '../public/reportes');
 if (!fs.existsSync(pdfDir)) {
     fs.mkdirSync(pdfDir, { recursive: true });
 }
 
+// Función para formatear fecha
+function formatFecha(fechaString) {
+    if (!fechaString) return 'N/A';
+    const fecha = new Date(fechaString);
+    return fecha.toLocaleString('es-CO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    }).replace(',', '');
+}
+
 async function generarPDF(cargues, isPreview) {
     return new Promise((resolve, reject) => {
         try {
-            // Crear un nuevo documento PDF
             const doc = new jsPDF();
 
-            // Agregar título
+            // Configuración del documento
             doc.setFontSize(18);
             doc.text('Reporte de Cargues', 105, 20, { align: 'center' });
-
-            // Agregar fecha de generación
             doc.setFontSize(10);
-            doc.text(`Generado el: ${new Date().toLocaleString()}`, 105, 30, { align: 'center' });
+            doc.text(`Generado el: ${formatFecha(new Date())}`, 105, 30, { align: 'center' });
 
-            // Definir columnas para la tabla (versión simplificada para mejor visualización)
+            // Encabezados actualizados
             const headers = [
+                'N°',
                 'ID',
                 'Placa',
+                'Cliente',
                 'Documento',
+                'Conductor',
+                'Cédula',
                 'Material',
                 'Cantidad',
-                'Inicio Real',
-                'Fin Real',
-                'Estado'
+                'Inicio Prog.'
             ];
 
-            // Preparar los datos
-            const data = cargues.map(c => [
+            // Datos actualizados con fecha formateada
+            const data = cargues.map((c, index) => [
+                index + 1,
                 c.id,
                 c.placa,
-                c.documento,
-                c.codigo_material,
+                c.nombre_cliente || 'N/A',
+                c.documento || 'N/A',
+                c.nombre_conductor || 'N/A',
+                c.cedula_conductor || 'N/A',
+                c.nombre_material || c.codigo_material || 'N/A',
                 c.cantidad,
-                c.fecha_inicio_real || 'N/A',
-                c.fecha_fin_real || 'N/A',
-                c.estado
+                formatFecha(c.fecha_inicio_programada)
             ]);
 
-            // Configuración de la tabla usando autoTable directamente
+            // Generar tabla centrada
             autoTable(doc, {
                 startY: 40,
                 head: [headers],
                 body: data,
-                margin: { top: 40 },
+                margin: { left: 15, right: 15 },
+                tableWidth: 'auto',
                 styles: {
                     fontSize: 8,
                     cellPadding: 2,
                     overflow: 'linebreak'
                 },
                 headStyles: {
-                    fillColor: [22, 160, 133],
+                    fillColor: [244, 134, 52],
                     textColor: 255,
                     fontStyle: 'bold'
                 },
                 columnStyles: {
-                    0: { cellWidth: 10 }, // ID
-                    1: { cellWidth: 15 }, // Placa
-                    2: { cellWidth: 20 }, // Documento
-                    3: { cellWidth: 20 }, // Material
-                    4: { cellWidth: 15 }, // Cantidad
-                    5: { cellWidth: 20 }, // Inicio Real
-                    6: { cellWidth: 20 }, // Fin Real
-                    7: { cellWidth: 15 }  // Estado
+                    0: { cellWidth: 8 },   // N°
+                    1: { cellWidth: 10 },  // ID
+                    2: { cellWidth: 18 },  // Placa (aumentada)
+                    3: { cellWidth: 18 },  // Cliente
+                    4: { cellWidth: 20 },  // Documento
+                    5: { cellWidth: 25 },  // Conductor
+                    6: { cellWidth: 20 },  // Cédula
+                    7: { cellWidth: 20 },  // Material
+                    8: { cellWidth: 18 },  // Cantidad
+                    9: { cellWidth: 25 }   // Inicio Prog. (aumentada para fecha)
                 }
             });
 
-            // Generar nombre único para el archivo
             const filename = `reporte_${Date.now()}.pdf`;
             const filePath = path.join(pdfDir, filename);
             const pdfUrl = `/reportes/${filename}`;
 
-            // Guardar el PDF
             const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
             fs.writeFileSync(filePath, pdfBuffer);
 
