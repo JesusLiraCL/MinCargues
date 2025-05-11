@@ -63,7 +63,7 @@ class Reporte {
         }
 
         if (conductor) {
-            query += ` AND c.conductor_id = $${params.length + 1}`;
+            query += ` AND u.cedula = $${params.length + 1}`;
             params.push(conductor);
         }
 
