@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { jsPDF } = require('jspdf');
-const autoTable = require('jspdf-autotable');
+const { default: autoTable } = require('jspdf-autotable');
+const nodemailer = require('nodemailer');
 
 const pdfDir = path.join(__dirname, '../../public/reportes');
 if (!fs.existsSync(pdfDir)) {
@@ -151,14 +152,18 @@ async function generarPDF(cargues, isPreview, filtros = {}) {
                 }
             });
 
-            const filename = `reporte_${Date.now()}.pdf`;
-            const filePath = path.join(pdfDir, filename);
-            const pdfUrl = `/reportes/${filename}`;
-
-            const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
-            fs.writeFileSync(filePath, pdfBuffer);
-
-            resolve(pdfUrl);
+            if (isPreview) {
+                // Si es vista previa, guardar en archivo y devolver URL
+                const filename = `reporte_${Date.now()}.pdf`;
+                const filePath = path.join(pdfDir, filename);
+                const pdfUrl = `/reportes/${filename}`;
+                
+                fs.writeFileSync(filePath, doc.output('arraybuffer'));
+                resolve(pdfUrl);
+            } else {
+                // Si no es vista previa, devolver el buffer directamente
+                resolve(doc.output('arraybuffer'));
+            }
         } catch (error) {
             console.error('Error al generar PDF:', error);
             reject(error);
@@ -166,4 +171,61 @@ async function generarPDF(cargues, isPreview, filtros = {}) {
     });
 }
 
-module.exports = { generarPDF };
+async function enviarReportePorCorreo(destinatario) {
+    try {
+        // Obtener fecha de hoy formateada para la BD (YYYY-MM-DD)
+        const hoy = new Date();
+        const fechaHoy = hoy.toISOString().split('T')[0];
+        
+        // Generar el reporte del día actual
+        const cargues = await require('../models/reporteModel').obtenerCargues({
+            fechaDesde: `${fechaHoy} 00:00:00`,
+            fechaHasta: `${fechaHoy} 23:59:59`,
+            incluir_cargues: true,
+            ordenado: 'fecha'
+        });
+
+        // Generar el PDF
+        const pdfBuffer = await generarPDF(cargues, false, {
+            desdeOpcion: 'today',
+            hastaOpcion: 'today'
+        });
+
+        // Configurar el transporte de correo
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+            port: process.env.SMTP_PORT || 587,
+            secure: false,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS
+            }
+        });
+
+        // Obtener la fecha actual formateada
+        const fecha = new Date().toLocaleDateString('es-CO');
+
+        // Enviar el correo
+        await transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to: destinatario,
+            subject: `Reporte diario de cargues - ${fecha}`,
+            text: `Adjunto encontrará el reporte diario de cargues generado el ${fecha}`,
+            attachments: [{
+                filename: `reporte_cargues_${fecha.replace(/\//g, '-')}.pdf`,
+                content: Buffer.from(pdfBuffer)
+            }]
+        });
+
+        console.log('Reporte enviado exitosamente por correo');
+        return true;
+    } catch (error) {
+        console.error('Error al enviar el reporte por correo:', error);
+        return false;
+    }
+}
+
+module.exports = { 
+    generarPDF,
+    enviarReportePorCorreo
+};

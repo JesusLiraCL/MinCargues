@@ -5,6 +5,8 @@ const { create } = require('express-handlebars');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const flash = require('express-flash');
+const { iniciarScheduler } = require('./config/scheduler');
+iniciarScheduler(process.env.EMAIL_DESTINO);
 
 const app = express();
 
@@ -21,7 +23,7 @@ const hbs = create({
     helpers: {
         eq: function (a, b) {
             return a === b;
-        }, 
+        },
     }
 });
 

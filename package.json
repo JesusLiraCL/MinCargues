@@ -27,6 +27,8 @@
     "express-session": "^1.18.1",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
+    "node-schedule": "^2.1.1",
+    "nodemailer": "^7.0.3",
     "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
