@@ -10,6 +10,7 @@ adminRouter.get('/inicio', isAdmin, adminController.getDashboardData);
 adminRouter.get('/calendario-admin', isAdmin, adminController.getCalendarData);
 adminRouter.get('/cargue/:id', isAdmin, adminController.getCargueData);
 adminRouter.get('/agregar-cargue', isAdmin, adminController.getAddCargue);
+adminRouter.get('/registro', isAdmin, adminController.getRegisterData);
 adminRouter.get('/reportes', isAdmin, adminController.getReportsData);
 adminRouter.get('/usuarios', isAdmin, adminController.getUsersData);
 adminRouter.get('/camiones', isAdmin, adminController.getTrucksData);

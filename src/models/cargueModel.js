@@ -76,7 +76,7 @@ const cargueModel = {
         return result.rows;
     },
 
-    getCarguesDesdeHoy: async () => {
+    getCarguesDesdeEsteMes: async () => {
         const ahora = new Date();
         const primerDiaDelMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1).toLocaleDateString('en-CA');
         const result = await db.query(
@@ -100,6 +100,37 @@ const cargueModel = {
             WHERE c.fecha_inicio_programada >= $1::date
             ORDER BY c.fecha_inicio_programada ASC`,
             [primerDiaDelMes]
+        );
+        return result.rows;
+    },
+
+    getCarguesHastaAyer: async () => {
+        const ahora = new Date();
+        const ayer = new Date(ahora);
+        ayer.setDate(ahora.getDate() - 1);
+        const ayerStr = ayer.toLocaleDateString('en-CA');
+        
+        const result = await db.query(
+            `SELECT 
+                c.id,
+                c.placa,
+                cam.tipo_camion AS tipo_camion,
+                m.nombre AS material,
+                m.unidad_medida AS unidad,
+                c.cantidad,
+                u.nombre AS conductor,
+                cli.nombre AS cliente,
+                TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') AS fecha_inicio_programada,
+                TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') AS fecha_fin_programada,
+                c.estado
+            FROM cargues c
+            INNER JOIN camiones cam ON c.placa = cam.placa
+            INNER JOIN usuarios u ON c.conductor_id = u.id
+            INNER JOIN materiales m ON c.codigo_material = m.codigo
+            INNER JOIN clientes cli ON c.documento = cli.documento
+            WHERE c.fecha_inicio_programada <= ($1::date + INTERVAL '1 day')
+            ORDER BY c.fecha_inicio_programada DESC`,
+            [ayerStr]
         );
         return result.rows;
     },

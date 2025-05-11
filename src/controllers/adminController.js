@@ -96,7 +96,7 @@ const adminController = {
     },
 
     getCalendarData: async (req, res) => {
-        const cargues = await cargueModel.getCarguesDesdeHoy();
+        const cargues = await cargueModel.getCarguesDesdeEsteMes();
         const tableHeaders = [
             { isEstado: true },
             { title: 'ID', sortField: 'id' },
@@ -282,6 +282,30 @@ const adminController = {
         } catch (error) {
             console.error('Error en agregarCargue:', error);
         }
+    },
+
+    getRegisterData: async (req, res) => {
+        const cargues = await cargueModel.getCarguesHastaAyer();
+        const tableHeaders = [
+            { isEstado: true },
+            { title: 'ID', sortField: 'id' },
+            { title: 'Placa', sortField: 'placa' },
+            { title: 'Conductor', sortField: 'conductor' },
+            { title: 'Material', sortField: 'material' },
+            { title: 'Cantidad', sortField: 'cantidad' },
+            { title: 'Cliente', sortField: 'cliente' },
+            { title: 'Fecha', sortField: 'fecha_inicio_programada' },
+            { title: 'Inicio Prog.' }
+        ];
+
+        res.render("pages/admin/registro", {
+            layout: "main",
+            user: req.user,
+            title: 'Registro',
+            registerData: JSON.stringify(cargues),
+            success_msg: req.flash('success_msg')[0],
+            tableHeaders,
+        });
     },
 
     getUsersData: async (req, res) => {

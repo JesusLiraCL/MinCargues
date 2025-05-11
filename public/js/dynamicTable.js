@@ -282,6 +282,25 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         
+        if (window.registerData) {
+            const carguesTable = document.querySelector('.dynamic-cargue-table');
+            if (carguesTable) {
+                new DynamicTable(carguesTable, {
+                    initialData: window.registerData,
+                    searchInput: document.getElementById('dynamic-table-search'),
+                    searchButton: document.getElementById('dynamic-table-search-button'),
+                    config: {
+                        defaultSortColumn: 'fecha_inicio_programada',
+                        rowDoubleClick: (row) => {
+                            if (row.id) {
+                                window.location.href = `/admin/cargue/${row.id}?referrer=registro`;
+                            }
+                        },
+                    }
+                });
+            }
+        }
+        
         if(window.usersData){
             const usersTable = document.querySelector('.dynamic-cargue-table');
             if (usersTable) {
