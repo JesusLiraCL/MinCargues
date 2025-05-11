@@ -79,30 +79,69 @@ document.addEventListener('DOMContentLoaded', function () {
     function formatFecha(fechaString) {
         if (!fechaString) return 'N/A';
         const fecha = new Date(fechaString);
-        return fecha.toLocaleString('es-CO', {
+        const options = {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
             hour12: true
-        }).replace(',', '');
+        };
+        return fecha.toLocaleString('es-CO', options)
+            .replace(',', '')
+            .replace('a. m.', 'a.m.')
+            .replace('p. m.', 'p.m.');
     }
 
-    // 5. Generar PDF en el cliente
     async function generarPDFenCliente(cargues, accion) {
         try {
             await cargarLibreriasPDF();
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+            const params = obtenerParametros();
 
-            // Configuración del documento
-            doc.setFontSize(18);
-            doc.text('Reporte de Cargues', 105, 20, { align: 'center' });
+            // Obtener fechas del filtro
+            const fechaDesde = params.fecha_inicio ? formatFecha(params.fecha_inicio + 'T00:00:00') : 'inicio de registros';
+            const fechaHasta = params.fecha_fin ? formatFecha(params.fecha_fin + 'T23:59:59') : 'sin fecha límite';
+
+            // Cargar logo
+            const logoImg = new Image();
+            logoImg.src = '/img/logo_no_fondo.png';
+
+            await new Promise((resolve) => {
+                logoImg.onload = resolve;
+                logoImg.onerror = resolve;
+            });
+
+            // Agregar logo
+            if (logoImg.width > 0) {
+                doc.addImage(logoImg, 'PNG', 15, 10, 20, 20);
+            }
+
+            // Texto de la empresa
+            doc.setFont("times", "bold");
+            doc.setFontSize(25); // Aumentado de 16 a 18
+            doc.setTextColor(44, 62, 80); // Color #2c3e50
+            doc.text('MinMetal', 35, 20);
+
             doc.setFontSize(10);
-            doc.text(`Generado el: ${formatFecha(new Date())}`, 105, 30, { align: 'center' });
+            doc.setFont("times", "normal");
+            doc.setTextColor(0, 0, 0); // Negro normal
+            doc.text('MINERAL & METAL RESOURCES', 35, 25);
 
-            // Encabezados actualizados
+            // Fecha de emisión
+            doc.setFontSize(10).setFont("times", "bold");
+            doc.text(`Fecha de emisión: ${formatFecha(new Date())}`, 195, 20, { align: 'right' });
+
+            // Título del reporte
+            doc.setFontSize(14).setFont("times", "bold");
+            doc.text('Reporte de Cargues', 105, 40, { align: 'center' });
+
+            // Rango de fechas con espacio adicional
+            doc.setFontSize(10).setFont("times", "normal");
+            doc.text(`Desde: ${fechaDesde} - Hasta: ${fechaHasta}`, 105, 45, { align: 'center' });
+
+            // Encabezados de la tabla
             const headers = [
                 'N°',
                 'ID',
@@ -116,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Inicio Prog.'
             ];
 
-            // Datos actualizados con fecha formateada
+            // Datos de la tabla
             const data = cargues.map((c, index) => [
                 index + 1,
                 c.id,
@@ -130,9 +169,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 formatFecha(c.fecha_inicio_programada)
             ]);
 
-            // Generar tabla centrada
+            // Generar tabla con espacio adicional después del rango de fechas
             doc.autoTable({
-                startY: 40,
+                startY: 55, // Aumentado de 50 a 55 para más espacio
                 head: [headers],
                 body: data,
                 margin: { left: 15, right: 15 },
@@ -148,16 +187,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     fontStyle: 'bold'
                 },
                 columnStyles: {
-                    0: { cellWidth: 8 },   // N°
-                    1: { cellWidth: 10 },  // ID
-                    2: { cellWidth: 18 },  // Placa (aumentada)
-                    3: { cellWidth: 18 },  // Cliente
-                    4: { cellWidth: 20 },  // Documento
-                    5: { cellWidth: 25 },  // Conductor
-                    6: { cellWidth: 20 },  // Cédula
-                    7: { cellWidth: 20 },  // Material
-                    8: { cellWidth: 18 },  // Cantidad
-                    9: { cellWidth: 25 }   // Inicio Prog. (aumentada para fecha)
+                    0: { cellWidth: 8 },
+                    1: { cellWidth: 10 },
+                    2: { cellWidth: 18 },
+                    3: { cellWidth: 18 },
+                    4: { cellWidth: 20 },
+                    5: { cellWidth: 25 },
+                    6: { cellWidth: 20 },
+                    7: { cellWidth: 20 },
+                    8: { cellWidth: 18 },
+                    9: { cellWidth: 25 }
                 }
             });
 
