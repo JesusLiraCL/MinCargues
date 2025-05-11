@@ -1,4 +1,5 @@
 <div class="reportes-container">
+    <h2>Generar Nuevo Reporte</h2>
     <!-- Encabezado del reporte -->
     <div class="report-header">
         <h3>Reporte del Día</h3>
@@ -9,10 +10,12 @@
 
     <!-- Formulario para generar reportes -->
     <div class="report-form-container">
-        <h2>Generar Nuevo Reporte</h2>
         <form id="report-form">
             <div id="form-fields">
                 <div class="required-fields">
+                    <div class="subtitle">
+                        <h3>Información Básica</h3>
+                    </div>
                     <div class="form-group">
                         <label>Desde:</label>
                         <div class="date-group">
@@ -46,6 +49,9 @@
                 </div>
                 </div>
                 <div class="optional-fields">
+                   <div class="subtitle">
+                        <h3>Filtros</h3>
+                    </div>
                     <div class="form-group">
                         <label for="cliente">Cliente:</label>
                         <input type="text" id="cliente" name="cliente" placeholder="Documento del cliente (todos por defecto)">
@@ -81,5 +87,5 @@
     </div>
 </div>
 
-<link rel="stylesheet" href="/css/components/reportes.css">
+<link rel="stylesheet" href="/css/pages/reportes.css">
 <script src="/js/reportes.js"></script>
