@@ -9,9 +9,141 @@
             label="Completados"
         }}
     </div>
+
+    {{#if carguesEnCurso.length}}
+    <section class="current-task">
+        <h3 class="section-title">Cargues en Curso</h3>
+        <div class="task-grid">
+            {{#each carguesEnCurso}}
+            <div class="task-item task-item--current">
+                <div class="task-header">
+                    <span class="task-id">Cargue #{{this.id}}</span>
+                    <span class="task-time"><strong>{{this.fecha_inicio_real}}</strong></span>
+                </div>
+                <div class="task-details">
+                    <div class="task-detail">
+                        <strong>Placa</strong>
+                        <span>{{this.placa}}</span>
+                    </div>
+                    <div class="task-detail">
+                        <strong>Material</strong>
+                        <span>{{this.material}}</span>
+                    </div>
+                    <div class="task-detail">
+                        <strong>Cantidad</strong>
+                        <span>{{this.cantidad}} {{this.unidad}}</span>
+                    </div>
+                    <div class="task-detail">
+                        <strong>Fin Programado</strong>
+                        <span>{{this.fecha_fin_programada}}</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="btn-completar" onclick="completarCargue({{this.id}})">
+                        <i class="fas fa-check"></i> Completar Cargue
+                    </button>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </section>
+    {{/if}}
+
+    <section class="upcoming-tasks">
+        <h3 class="section-title">Cargues Próximos</h3>
+        
+        {{#if carguesProximos.length}}
+        <div class="task-grid">
+            {{#each carguesProximos}}
+            <div class="task-item">
+                <div class="task-header">
+                    <span class="task-id">Cargue #{{this.id}}</span>
+                    <span class="task-time"><strong>{{this.fecha_inicio_programada}}</strong></span>
+                </div>
+                <div class="task-details">
+                    <div class="task-detail">
+                        <strong>Placa</strong>
+                        <span>{{this.placa}}</span>
+                    </div>
+                    <div class="task-detail">
+                        <strong>Material</strong>
+                        <span>{{this.material}}</span>
+                    </div>
+                    <div class="task-detail">
+                        <strong>Cantidad</strong>
+                        <span>{{this.cantidad}} {{this.unidad}}</span>
+                    </div>
+                    <div class="task-detail">
+                        <strong>Fin Programado</strong>
+                        <span>{{this.fecha_fin_programada}}</span>
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <button class="btn-iniciar" onclick="iniciarCargue({{this.id}})">
+                        <i class="fas fa-play"></i> Iniciar Cargue
+                    </button>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{else}}
+        <p class="no-tasks">No hay cargues pendientes para hoy</p>
+        {{/if}}
+    </section>
 </div>
 
 <link rel="stylesheet" href="/css/components/progressChart.css">
+<link rel="stylesheet" href="/css/pages/inicioConductor.css">
 
 <script src="/js/progressChart.js"></script>
 <script src="/js/easypiechart.js"></script>
+
+<script>
+async function iniciarCargue(id) {
+    if (confirm('¿Deseas iniciar este cargue?')) {
+        try {
+            const response = await fetch(`/conductor/iniciar-cargue/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Error al iniciar el cargue');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al iniciar el cargue');
+        }
+    }
+}
+
+async function completarCargue(id) {
+    if (confirm('¿Deseas marcar este cargue como completado?')) {
+        try {
+            const response = await fetch(`/conductor/completar-cargue/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Error al completar el cargue');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al completar el cargue');
+        }
+    }
+}
+</script>

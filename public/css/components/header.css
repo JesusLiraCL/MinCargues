@@ -134,4 +134,8 @@ body {
     .header__company {
         display: none;
     }
+
+    .header {
+        padding: 8px;
+    }
 }

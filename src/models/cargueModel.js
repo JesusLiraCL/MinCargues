@@ -109,7 +109,7 @@ const cargueModel = {
         const ayer = new Date(ahora);
         ayer.setDate(ahora.getDate() - 1);
         const ayerStr = ayer.toLocaleDateString('en-CA');
-        
+
         const result = await db.query(
             `SELECT 
                 c.id,
@@ -368,6 +368,99 @@ const cargueModel = {
             asignados: parseInt(totalAsignados.rows[0]?.total) || 0,
             completados: parseInt(completados.rows[0]?.total) || 0
         };
+    },
+
+    getCarguesPendientesConductorHoy: async (conductorId) => {
+        const hoy = new Date().toLocaleDateString('en-CA');
+        const result = await db.query(
+            `SELECT 
+                c.id,
+                c.placa,
+                m.nombre AS material,
+                m.unidad_medida AS unidad,
+                c.cantidad,
+                cli.nombre AS cliente,
+                TO_CHAR(c.fecha_inicio_programada, 'DD-MM-YYYY HH24:MI') AS fecha_inicio_programada,
+                TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') AS fecha_fin_programada,
+                c.estado
+            FROM cargues c
+            INNER JOIN materiales m ON c.codigo_material = m.codigo
+            INNER JOIN clientes cli ON c.documento = cli.documento
+            WHERE c.conductor_id = $1 
+            AND DATE_TRUNC('day', c.fecha_inicio_programada) = $2
+            AND c.estado = 'pendiente'
+            ORDER BY c.fecha_inicio_programada ASC`,
+            [conductorId, hoy]
+        );
+        return result.rows;
+    },
+
+    iniciarCargue: async (id, conductorId) => {
+        try {
+            const result = await db.query(
+                `UPDATE cargues 
+                SET 
+                    estado = 'en progreso',
+                    fecha_inicio_real = date_trunc('second', CURRENT_TIMESTAMP)
+                WHERE id = $1 
+                AND conductor_id = $2 
+                AND estado = 'pendiente'
+                RETURNING id, estado, fecha_inicio_real`,
+                [id, conductorId]
+            );
+            return result.rows[0] || null;
+        } catch (error) {
+            console.error('Error al iniciar cargue:', error);
+            throw error;
+        }
+    },
+
+    getCarguesEnCursoConductor: async (conductorId) => {
+        const hoy = new Date().toLocaleDateString('en-CA');
+        try {
+            const result = await db.query(
+                `SELECT 
+                    c.id,
+                    c.placa,
+                    m.nombre AS material,
+                    m.unidad_medida AS unidad,
+                    c.cantidad,
+                    TO_CHAR(c.fecha_inicio_real, 'DD-MM-YYYY HH24:MI') AS fecha_inicio_real,
+                    TO_CHAR(c.fecha_fin_programada, 'DD-MM-YYYY HH24:MI') AS fecha_fin_programada,
+                    c.estado
+                FROM cargues c
+                INNER JOIN materiales m ON c.codigo_material = m.codigo
+                WHERE c.conductor_id = $1 
+                AND DATE_TRUNC('day', c.fecha_inicio_programada) = $2
+                AND c.estado = 'en progreso'
+                ORDER BY c.fecha_inicio_real ASC`,
+                [conductorId, hoy]
+            );
+            return result.rows;
+        } catch (error) {
+            console.error('Error al obtener cargues en curso:', error);
+            throw error;
+        }
+    },
+
+    completarCargue: async (id, conductorId) => {
+        try {
+            const result = await db.query(
+                `UPDATE cargues 
+                SET 
+                    estado = 'completado',
+                    fecha_fin_real = date_trunc('second', CURRENT_TIMESTAMP)
+                WHERE id = $1 
+                AND conductor_id = $2 
+                AND estado = 'en progreso'
+                RETURNING id, estado, fecha_fin_real`,
+                [id, conductorId]
+            );
+            return result.rows[0] || null;
+        } catch (error) {
+            console.error('Error al completar cargue:', error);
+            throw error;
+        }
     },
 };
 
