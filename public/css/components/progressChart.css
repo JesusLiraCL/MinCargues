@@ -7,21 +7,21 @@
 
 .chart-layout {
     display: flex;
-    justify-content: space-between;
-    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
+    align-items: stretch; /* Asegura que los hijos se estiren (misma altura) */
+    gap: 20px;
     background-color: #efefef;
     border: 3px solid #848688;
     border-radius: 5px;
     padding: 30px 20px;
-    width: 400px;
-    min-width: 300px;
     margin: 10px auto;
 }
 
-.chart-info {
-    width: 55%;
-    padding-right: 15px;
+.chart-layout > * {
+    flex: 1; /* Distribuye el espacio equitativamente */
+    min-width: 200px; /* Evita que se hagan demasiado pequeños */
 }
 
 .chart-panel {
@@ -30,8 +30,30 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    width: 40%;
     flex-shrink: 0;
+}
+
+.chart-info {
+    text-align: left;
+    align-self: center;
+}
+
+/* Cuando el contenido se apila (por el wrap), centramos el texto */
+@media (max-width: 545px) { /* Ajusta el breakpoint según tu necesidad */
+    .chart-info {
+        text-align: center;
+    }
+}
+
+@media (max-width: 325px) {
+    .chart-layout {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .content {
+        padding: 10px;
+    }
 }
 
 .chart-title {

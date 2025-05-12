@@ -15,9 +15,10 @@
 <body>
     {{> header}}
 
-
     <div class="main-container">
-        {{> nav-bar}}
+        {{#if (eq user.codigo_rol "ROL001")}}
+            {{> nav-bar}}
+        {{/if}}
         <main class="content">
             <div class="flash-messages">
                 {{#if success_msg}}

@@ -343,6 +343,32 @@ const cargueModel = {
         );
         return result.rows[0];
     },
+
+    getCarguesConductorHoy: async (conductorId) => {
+        const hoy = new Date().toLocaleDateString('en-CA');
+        const [totalAsignados, completados] = await Promise.all([
+            db.query(
+                `SELECT COUNT(*) as total 
+                FROM cargues 
+                WHERE conductor_id = $1 
+                AND DATE_TRUNC('day', fecha_inicio_programada) = $2`,
+                [conductorId, hoy]
+            ),
+            db.query(
+                `SELECT COUNT(*) as total 
+                FROM cargues 
+                WHERE conductor_id = $1 
+                AND estado = 'completado' 
+                AND DATE_TRUNC('day', fecha_inicio_programada) = $2`,
+                [conductorId, hoy]
+            )
+        ]);
+
+        return {
+            asignados: parseInt(totalAsignados.rows[0]?.total) || 0,
+            completados: parseInt(completados.rows[0]?.total) || 0
+        };
+    },
 };
 
 module.exports = cargueModel;

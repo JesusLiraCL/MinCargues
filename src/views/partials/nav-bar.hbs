@@ -1,6 +1,5 @@
 <nav class="sidebar">
     <ul class="sidebar-menu">
-        {{#if (eq user.codigo_rol "ROL001")}}
         <li class="sidebar-item">
             <a href="/admin/inicio" class="sidebar-link">
                 <i class="fa-solid fa-house sidebar-icon"></i>
@@ -49,28 +48,5 @@
                 <span class="sidebar-text">Usuarios</span>
             </a>
         </li>
-        {{/if}}
-
-        {{#if (eq user.codigo_rol "ROL002")}}
-        {{!-- Opciones para CONDUCTOR --}}
-        <li class="sidebar-item">
-            <a href="/conductor/calendario" class="sidebar-link">
-                <i class="fas fa-calendar-alt sidebar-icon"></i>
-                <span class="sidebar-text">Calendario</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="/conductor/historial" class="sidebar-link">
-                <i class="fas fa-history sidebar-icon"></i>
-                <span class="sidebar-text">Historial</span>
-            </a>
-        </li>
-        <li class="sidebar-item">
-            <a href="/conductor/incidentes" class="sidebar-link">
-                <i class="fas fa-exclamation-triangle sidebar-icon"></i>
-                <span class="sidebar-text">Incidentes</span>
-            </a>
-        </li>
-        {{/if}}
     </ul>
 </nav>

@@ -1,0 +1,17 @@
+<div class="container mt-4">
+    <h2>Panel de Conductor</h2>
+
+    <div class="charts-container">
+        {{> progressChart
+            title="MIS CARGUES"
+            subtitle="Cargues del Día"
+            percent=progress
+            label="Completados"
+        }}
+    </div>
+</div>
+
+<link rel="stylesheet" href="/css/components/progressChart.css">
+
+<script src="/js/progressChart.js"></script>
+<script src="/js/easypiechart.js"></script>
