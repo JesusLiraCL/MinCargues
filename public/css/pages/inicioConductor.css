@@ -12,7 +12,6 @@
 .upcoming-tasks {
     background: white;
     padding: 20px;
-    border-radius: 8px;
     box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
 }
@@ -38,13 +37,12 @@
 
 .task-item {
     background: #f8f9fa;
-    border-radius: 8px;
     padding: 20px;
     border-left: 4px solid #f48634;
     transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     width: 100%;
 }
 
@@ -55,7 +53,7 @@
 
 .task-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .task-header {
@@ -121,7 +119,6 @@
 .btn-completar {
     border: none;
     padding: 10px 24px;
-    border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
     transition: all 0.2s;
@@ -166,14 +163,13 @@
     color: #666;
     font-style: italic;
     background: #f8f9fa;
-    border-radius: 8px;
 }
 
 @media (max-width: 445px) {
     .task-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .task-details {
         grid-template-columns: 1fr;
         text-align: center;

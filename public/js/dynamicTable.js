@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             habilitado: {
                                 render: (td, value) => {
                                     if (value) {
-                                        td.innerHTML = '<i class="fas fa-check-circle" style="color: #007bff; font-size: 1.2em"></i>';
+                                        td.innerHTML = '<i class="fas fa-check-circle" style="color: #356adc; font-size: 1.2em"></i>';
                                         td.title = 'Habilitado';
                                     } else {
                                         td.innerHTML = '<i class="fas fa-times-circle" style="color: #dc3545; font-size: 1.2em"></i>';

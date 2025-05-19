@@ -10,18 +10,20 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    align-items: stretch; /* Asegura que los hijos se estiren (misma altura) */
+    align-items: stretch;
+    /* Asegura que los hijos se estiren (misma altura) */
     gap: 20px;
     background-color: #efefef;
-    border: 3px solid #848688;
-    border-radius: 5px;
+    border: 3px solid #2c3e50;
     padding: 30px 20px;
     margin: 10px auto;
 }
 
-.chart-layout > * {
-    flex: 1; /* Distribuye el espacio equitativamente */
-    min-width: 200px; /* Evita que se hagan demasiado pequeños */
+.chart-layout>* {
+    flex: 1;
+    /* Distribuye el espacio equitativamente */
+    min-width: 200px;
+    /* Evita que se hagan demasiado pequeños */
 }
 
 .chart-panel {
@@ -39,7 +41,9 @@
 }
 
 /* Cuando el contenido se apila (por el wrap), centramos el texto */
-@media (max-width: 545px) { /* Ajusta el breakpoint según tu necesidad */
+@media (max-width: 545px) {
+
+    /* Ajusta el breakpoint según tu necesidad */
     .chart-info {
         text-align: center;
     }
@@ -63,7 +67,7 @@
 }
 
 .chart-subtitle {
-    color: #666;
+    color: #2c3e50;
     font-size: 22px;
     font-weight: bold;
     margin: 0;

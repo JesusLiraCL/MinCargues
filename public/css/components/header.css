@@ -54,7 +54,6 @@ body {
 .header__profile-img-container {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -80,7 +79,6 @@ body {
     min-width: 180px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     z-index: 100;
-    border-radius: 4px;
     padding: 0.5rem 0;
 }
 
@@ -128,6 +126,16 @@ body {
 .header__logo-img {
     height: 70px;
     width: auto;
+}
+
+.header__user-menu a {
+    color: #2c3e50;
+    transition: none;
+}
+
+.header__user-menu a:hover,
+.header__user-menu a:active {
+    color: #2c3e50;
 }
 
 @media (max-width: 500px) {

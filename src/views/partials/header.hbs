@@ -16,13 +16,7 @@
     <div class="header__user">
         <span class="header__user-name">{{user.nombre}}</span>
         <div class="header__user-menu">
-            <div class="header__profile-img-container">
-                <img src="/img/generic-profile.png" class="header__profile-img">
-            </div>
-            <div class="header__dropdown-content">
-                <a href="/perfil"><i class="fas fa-user"></i> Ver Perfil</a>
-                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-            </div>
+            <a href="#" onclick="if(confirm('¿Estás seguro que deseas cerrar sesión?')) { window.location.href='/logout'; }"><i class="fa-solid fa-right-from-bracket fa-xl"></i></a>
         </div>
     </div>
 </header>

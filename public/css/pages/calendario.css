@@ -3,7 +3,6 @@
     width: 100%;
     margin: 20px 0;
     border: 1px solid #ddd;
-    border-radius: 8px;
     overflow: hidden;
     flex-wrap: wrap;
 }
@@ -34,7 +33,6 @@
     color: white;
     border: none;
     padding: 8px 12px;
-    border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     display: flex;
@@ -65,7 +63,6 @@
     padding: 8px;
     text-align: center;
     cursor: pointer;
-    border-radius: 4px;
     background: #e5e5e5;
     transition: all 0.2s;
     font-family: 'haveltica';
@@ -194,15 +191,19 @@
 }
 
 .dynamic-table-estado.estado-en-progreso {
-    border-left-color: #f48634;
+    border-left-color: #356adc;
 }
 
 .dynamic-table-estado.estado-completado {
-    border-left-color: #24c75d; 
+    border-left-color: #29994a;
+}
+
+.dynamic-table-estado.estado-cancelado {
+    border-left-color: #dc3545;
 }
 
 .dynamic-table-estado.estado-pendiente {
-    border-left-color: transparent;
+    border-left-color: #f48634;
 }
 
 .tabla-actividades tbody tr {
