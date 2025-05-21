@@ -171,6 +171,7 @@ select:disabled {
     cursor: pointer;
     font-size: 14px;
     border: 2px solid #f1700f;
+    border-radius: 50%;
 }
 
 .error-tooltip-content {

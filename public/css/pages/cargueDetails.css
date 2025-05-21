@@ -23,8 +23,6 @@
     gap: 40px;
 }
 
-.cargue-section {}
-
 .cargue-section h3 {
     color: #ffffff;
     margin-bottom: 15px;
@@ -199,6 +197,7 @@
     cursor: pointer;
     font-size: 14px;
     border: 2px solid #f1700f;
+    border-radius: 50%;
 }
 
 .error-tooltip-content {

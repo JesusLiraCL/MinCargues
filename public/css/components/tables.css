@@ -160,7 +160,7 @@
 }
 
 .dynamic-table-estado.estado-en-progreso {
-    border-left-color: #356adc;
+    border-left-color: transparent;
 }
 
 .dynamic-table-estado.estado-completado {

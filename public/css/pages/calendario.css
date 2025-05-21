@@ -191,7 +191,7 @@
 }
 
 .dynamic-table-estado.estado-en-progreso {
-    border-left-color: #356adc;
+    border-left-color: #f48634;
 }
 
 .dynamic-table-estado.estado-completado {
@@ -203,7 +203,7 @@
 }
 
 .dynamic-table-estado.estado-pendiente {
-    border-left-color: #f48634;
+    border-left-color: transparent;
 }
 
 .tabla-actividades tbody tr {
