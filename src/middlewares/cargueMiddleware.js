@@ -4,13 +4,8 @@ const materialModel = require('../models/materialModel');
 const cargueModel = require('../models/cargueModel');
 const usersModel = require('../models/usersModel');
 
-console.log("probando middleware")
 
 const validateCargue = async (req, res, next) => {
-    console.log("probando middleware");
-    console.log("Request body:", req.body);
-    console.log("Request params:", req.params);
-
     try {
         const {
             cantidad,
@@ -20,15 +15,6 @@ const validateCargue = async (req, res, next) => {
             fecha_inicio_programada,
             fecha_fin_programada
         } = req.body;
-
-        console.log("Destructured body:", {
-            cantidad,
-            documento,
-            placa,
-            material_nombre,
-            fecha_inicio_programada,
-            fecha_fin_programada
-        });
 
         const errors = {};
 
@@ -121,7 +107,6 @@ const validateCargue = async (req, res, next) => {
 
         // If there are errors, return with the error messages
         if (Object.keys(errors).length > 0) {
-            console.log("Validation errors:", errors);
             return res.status(400).json({
                 success: false,
                 errors

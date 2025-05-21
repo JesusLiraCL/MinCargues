@@ -26,14 +26,12 @@ const materialModel = {
     },
 
     getEliminadoByNombre: async (nombre) => {
-        console.log("nombre en model", nombre);
         const result = await db.query(
             `SELECT * 
             FROM materiales 
             WHERE nombre = $1 AND eliminado = true`,
             [nombre]
         )
-        console.log("result en model", result.rows);
         return result.rows[0];
     },
 
@@ -59,8 +57,6 @@ const materialModel = {
 
     updateMaterial: async (codigoOriginal, materialData) => {
         try {
-            console.log("codigoOriginal en model", codigoOriginal);
-            console.log("materialData en model", materialData);
             const { nombre, unidad_medida } = materialData;
 
             const result = await db.query(
@@ -72,7 +68,6 @@ const materialModel = {
                  RETURNING *`,
                 [nombre, unidad_medida, codigoOriginal]
             );
-            console.log("2 ", result.rows[0]);
             return result.rows[0];
         } catch (error) {
             console.error('Error en modelo al actualizar material:', error);

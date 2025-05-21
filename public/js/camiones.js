@@ -184,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function () {
             habilitado: document.getElementById('habilitado').value === 'true'
         };
 
-        console.log(currentPlaca);
         fetch(`/admin/api/camiones/${currentPlaca}/update`, {
             method: 'POST',
             headers: {

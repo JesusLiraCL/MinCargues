@@ -157,7 +157,7 @@ async function generarPDF(cargues, isPreview, filtros = {}) {
                 const filename = `reporte_${Date.now()}.pdf`;
                 const filePath = path.join(pdfDir, filename);
                 const pdfUrl = `/reportes/${filename}`;
-                
+
                 fs.writeFileSync(filePath, doc.output('arraybuffer'));
                 resolve(pdfUrl);
             } else {
@@ -176,7 +176,7 @@ async function enviarReportePorCorreo(destinatario) {
         // Obtener fecha de hoy formateada para la BD (YYYY-MM-DD)
         const hoy = new Date();
         const fechaHoy = hoy.toISOString().split('T')[0];
-        
+
         // Generar el reporte del día actual
         const cargues = await require('../models/reporteModel').obtenerCargues({
             fechaDesde: `${fechaHoy} 00:00:00`,
@@ -225,7 +225,7 @@ async function enviarReportePorCorreo(destinatario) {
     }
 }
 
-module.exports = { 
+module.exports = {
     generarPDF,
     enviarReportePorCorreo
 };

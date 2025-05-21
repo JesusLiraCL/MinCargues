@@ -9,7 +9,7 @@ const reportesController = {
                 hasta_opcion,
                 fecha_inicio,
                 fecha_fin,
-                ordenado,
+                ordenado = 'fecha_desc',
                 cliente,
                 camion,
                 conductor,
@@ -57,13 +57,6 @@ const reportesController = {
                 fechaHasta = null; // "Siempre"
             }
 
-            console.log('Fechas procesadas para BD:', {
-                fechaDesde,
-                fechaHasta,
-                desde_opcion,
-                hasta_opcion
-            });
-
             // Obtener los cargues de la base de datos
             const cargues = await reporteModel.obtenerCargues({
                 fechaDesde,
@@ -75,12 +68,35 @@ const reportesController = {
                 incluir_cargues
             });
 
-            res.json(cargues);
+            // Generar el PDF con los datos obtenidos
+            const pdfBuffer = await generarPDF(
+                {
+                    desde_opcion,
+                    hasta_opcion,
+                    fecha_inicio: fechaDesde,
+                    fecha_fin: fechaHasta,
+                    cliente,
+                    camion,
+                    conductor,
+                    incluir_cargues
+                },
+                ordenado,
+                false
+            );
+
+            // Configurar los encabezados de la respuesta
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=reporte_cargues.pdf');
+            
+            // Enviar el PDF como respuesta
+            res.send(pdfBuffer);
+
         } catch (error) {
             console.error('Error al generar el reporte:', error);
             res.status(500).json({
                 success: false,
-                message: 'Error al generar el reporte'
+                message: 'Error al generar el reporte',
+                error: error.message
             });
         }
     },

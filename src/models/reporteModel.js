@@ -90,12 +90,8 @@ class Reporte {
                 query += ` ORDER BY c.fecha_inicio_programada`;
         }
 
-        console.log('Consulta SQL ejecutada:', query);
-        console.log('Parámetros:', params);
-
         try {
             const { rows } = await db.query(query, params);
-            console.log(`Cargues encontrados: ${rows.length}`);
             return rows;
         } catch (error) {
             console.error('Error al obtener cargues:', error);

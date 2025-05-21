@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const params = { ...obtenerParametros(), ...parametros };
-            console.log(params);
             // Cargar logo
             const logoImg = new Image();
             logoImg.src = '/img/logo_no_fondo.png';
@@ -267,10 +266,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // 6. Función principal para generar el reporte
     async function generarReporte(accion, parametros = {}) {
         if (!validarFechas()) return;
-    
+
         // Combinar parámetros del formulario con los parámetros proporcionados
-        const params = {...obtenerParametros(), ...parametros};
-    
+        const params = { ...obtenerParametros(), ...parametros };
+
         try {
             const response = await fetch('/admin/api/reportes/generar', {
                 method: 'POST',
@@ -279,14 +278,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(params)
             });
-    
+
             if (!response.ok) {
                 throw new Error(response.statusText || 'Error al generar reporte');
             }
-    
+
             const cargues = await response.json();
             await generarPDFenCliente(cargues, accion, params); // Pasar los params usados
-    
+
         } catch (error) {
             console.error('Error:', error);
             alert('Error al generar el reporte: ' + error.message);

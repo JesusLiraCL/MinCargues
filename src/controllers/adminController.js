@@ -310,7 +310,6 @@ const adminController = {
 
     getUsersData: async (req, res) => {
         const usersData = await usersModel.getUsers();
-        console.log(usersData);
         const tableHeaders = [
             { title: 'Usuario', sortField: 'nombre_usuario' },
             { title: 'Rol', sortField: 'rol' },
@@ -344,7 +343,6 @@ const adminController = {
                 contrasena
             } = req.body;
 
-            console.log(contrasena);
             // Verificar si el usuario ya existe
             const usuarioExistente = await usersModel.findByUsername(nombre_usuario);
             if (usuarioExistente) {
@@ -740,9 +738,7 @@ const adminController = {
     },
 
     postUpdateClient: async (req, res) => {
-        console.log('Iniciando actualización de cliente...');
-        console.log('Params:', req.params);
-        console.log('Body:', req.body);
+
         try {
             const { documento } = req.params; // Documento original que viene de la URL
             const clienteData = req.body; // Nuevos datos del cliente
@@ -750,7 +746,6 @@ const adminController = {
             // 1. Verificar si el cliente existe
             const clienteExistente = await clienteModel.getClienteByDocumento(documento);
             if (!clienteExistente) {
-                console.log('Cliente no encontrado con documento:', documento);
                 return res.status(404).json({
                     success: false,
                     message: 'Cliente no encontrado'
@@ -795,7 +790,6 @@ const adminController = {
     },
 
     deleteCliente: async (req, res) => {
-        console.log("intentando eliminar cliente");
         try {
             const { documento } = req.params;
 
@@ -885,8 +879,6 @@ const adminController = {
             // Verificar si existe un material eliminado con el mismo nombre
             const materialEliminado = await materialModel.getEliminadoByNombre(nombreNormalizado);
             if (materialEliminado) {
-                console.log('Material eliminado encontrado:', materialEliminado);
-
                 // Restaurar el material eliminado
                 const resultado = await materialModel.updateMaterial(
                     materialEliminado.codigo,
@@ -898,7 +890,6 @@ const adminController = {
                 );
 
                 if (resultado) {
-                    console.log('Material restaurado:', resultado);
                     req.flash('success_msg', 'Material restaurado correctamente');
                     return res.status(200).json({
                         success: true,

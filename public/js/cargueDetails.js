@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('camion_tipo').textContent = camion.tipo_camion || 'Tipo no disponible';
                 document.getElementById('camion_capacidad').textContent = camion.capacidad || 'Capacidad no disponible';
                 document.getElementById('camion_habilitado').textContent = camion.habilitado ? 'Sí' : 'No';
-                
+
                 // Actualizar datos del conductor asignado (nuevo)
                 if (camion.conductor_id) {
                     document.getElementById('conductor_cedula').textContent = camion.conductor_cedula || 'Cédula no disponible';
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
-    
+
 
     let isEditing = false;
     let cargueId = null;
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const startDateInput = document.getElementById('fecha_inicio_programada');
             const endDateInput = document.getElementById('fecha_fin_programada');
-            
+
             // Preparar datos para enviar al servidor
             const data = {
                 fecha_inicio_programada: startDateInput.value,
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 documento: document.getElementById('documento').value,
                 placa: document.getElementById('placa').value,
             };
-            
+
             fetch(`/admin/cargue/${cargueId}/update`, {
                 method: 'POST',
                 headers: {
@@ -112,13 +112,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log("[6] Datos de respuesta:", data);
-                // Limpiar solo los errores del servidor anteriores
-                document.querySelectorAll('.server-error').forEach(el => el.remove());
-                
-                if (data.success) {
+                .then(response => response.json())
+                .then(data => {
+                    // Limpiar solo los errores del servidor anteriores
+                    document.querySelectorAll('.server-error').forEach(el => el.remove());
+
+                    if (data.success) {
                         alert('Cambios guardados exitosamente');
                         isEditing = false;
                         const editButton = document.querySelector('.btn-edit-save');
@@ -262,11 +261,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function getLocalDatetimeString(date = new Date()) {
         const offset = date.getTimezoneOffset() * 60000;
         const localISOTime = new Date(date - offset)
-                              .toISOString()
-                              .slice(0, 16);
+            .toISOString()
+            .slice(0, 16);
         return localISOTime;
     }
-    
+
     const fechaHoy = getLocalDatetimeString();
 
     document.getElementById('fecha_inicio_programada').min = fechaHoy;
