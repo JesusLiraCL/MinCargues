@@ -96,35 +96,51 @@ const adminController = {
     },
 
     getCalendarData: async (req, res) => {
-        const cargues = await cargueModel.getCarguesDesdeEsteMes();
-        const tableHeaders = [
-            { isEstado: true },
-            { title: 'ID', sortField: 'id' },
-            { title: 'Placa', sortField: 'placa' },
-            { title: 'Conductor', sortField: 'conductor' },
-            { title: 'Material', sortField: 'material' },
-            { title: 'Cantidad', sortField: 'cantidad' },
-            { title: 'Cliente', sortField: 'cliente' },
-            { title: 'Fecha', sortField: 'fecha_inicio_programada' },
-            { title: 'Inicio Prog.' }
-        ];
+        try {
+            const cargues = await cargueModel.getCarguesDesdeEsteMes();
+            const tableHeaders = [
+                { isEstado: true },
+                { title: 'ID', sortField: 'id' },
+                { title: 'Placa', sortField: 'placa' },
+                { title: 'Conductor', sortField: 'conductor' },
+                { title: 'Material', sortField: 'material' },
+                { title: 'Cantidad', sortField: 'cantidad' },
+                { title: 'Cliente', sortField: 'cliente' },
+                { title: 'Fecha', sortField: 'fecha_inicio_programada' },
+                { title: 'Inicio Prog.' }
+            ];
 
-        res.render("pages/admin/calendarioAdmin", {
-            layout: "main",
-            user: req.user,
-            title: 'Calendario',
-            carguesCalendario: JSON.stringify(cargues),
-            success_msg: req.flash('success_msg')[0],
-            tableHeaders,
-            addButtonUrl: '/admin/agregar-cargue?referrer=calendario-admin',
-        });
+            res.render("pages/admin/calendarioAdmin", {
+                layout: "main",
+                user: req.user,
+                title: 'Calendario',
+                carguesCalendario: JSON.stringify(cargues || []),
+                success_msg: req.flash('success_msg')[0],
+                tableHeaders,
+                addButtonUrl: '/admin/agregar-cargue?referrer=calendario-admin',
+            });
+        } catch (error) {
+            console.error('Error al cargar los datos del calendario:', error);
+            req.flash('error_msg', 'Error al cargar el calendario. Por favor, intente nuevamente.');
+            res.redirect('/admin/calendario-admin');
+        }
     },
 
     getCargueData: async (req, res) => {
         try {
-            let cargue = await cargueModel.getCargueDetails(req.params.id);
+            const cargue = await cargueModel.getCargueDetails(req.params.id);
+            
+            if (!cargue) {
+                req.flash('error_msg', 'Cargue no encontrado');
+                return res.redirect('/admin/calendario-admin');
+            }
+
             const conductor = await usersModel.findById(cargue.conductor_id);
-            cargue.conductor_id = conductor.cedula;
+            
+            // If conductor is not found, keep the original conductor_id
+            if (conductor) {
+                cargue.conductor_id = conductor.cedula;
+            }
 
             res.render("pages/admin/cargueDetails", {
                 layout: "main",
@@ -134,6 +150,7 @@ const adminController = {
             });
         } catch (error) {
             console.error('Error al obtener detalles del cargue:', error);
+            req.flash('error_msg', 'Error al cargar los detalles del cargue');
             res.redirect('/admin/calendario-admin');
         }
     },
@@ -168,8 +185,8 @@ const adminController = {
 
             // Actualizar el cargue
             const result = await cargueModel.updateCargue(req.params.id, {
-                fecha_inicio_programada: fecha_inicio_programada,
-                fecha_fin_programada: fecha_fin_programada,
+                fecha_inicio_programada: req.body.fecha_inicio_programada, // Use the exact value from request
+                fecha_fin_programada: req.body.fecha_fin_programada, // Use the exact value from request
                 codigo_material,
                 cantidad,
                 estado,
@@ -177,7 +194,8 @@ const adminController = {
                 documento,
                 conductor_id: conductor_id,
                 placa,
-                user_id: req.user.id
+                user_id: req.user.id,
+                material_nombre
             });
 
             if (result) {

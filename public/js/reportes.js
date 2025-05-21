@@ -96,17 +96,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function formatFechaSoloDia(fechaString) {
         if (!fechaString) return 'N/A';
 
-        // Parseo manual para evitar problemas de zona horaria
+        /* Parseo manual para evitar problemas de zona horaria
         const [year, month, day] = fechaString.split('T')[0].split('-');
         return `${day}/${month}/${year}`;
+        */
 
-        /* Alternativa si prefieres formato local:
+        // usando formato local
         const fecha = new Date(fechaString);
         return fecha.toLocaleDateString('es-CO', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
-        });*/
+        });
     }
 
     async function generarPDFenCliente(cargues, accion, parametros = {}) {
