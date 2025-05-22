@@ -132,8 +132,8 @@ describe('PDF Service', () => {
     });
 
     describe('generarPDF', () => {
-        it('should generate a PDF file in preview mode', async () => {
-            // Act - Call with isPreview = true
+        it('debe generar un archivo PDF en modo vista previa', async () => {
+            // Act - Llamar con isPreview = true
             const result = await generarPDF(mockCargues, true, mockFiltros);
 
             // Assert
@@ -144,8 +144,8 @@ describe('PDF Service', () => {
             expect(result).toContain('/reportes/');
         });
 
-        it('should return arraybuffer in non-preview mode', async () => {
-            // Act - Call with isPreview = false (default)
+        it('debe retornar un ArrayBuffer en modo no vista previa', async () => {
+            // Act - Llamar con isPreview = false (por defecto)
             const result = await generarPDF(mockCargues, false, mockFiltros);
 
             // Assert
@@ -160,29 +160,29 @@ describe('PDF Service', () => {
         let mockTransport;
 
         beforeEach(() => {
-            // Set up environment variables needed by the function
+            // Configurar las variables de entorno necesarias para la función
             process.env.SMTP_HOST = 'smtp.test.com';
             process.env.SMTP_PORT = '587';
             process.env.SMTP_USER = 'test@example.com';
             process.env.SMTP_PASS = 'testpass';
 
-            // Reset all mocks before each test
+            // Limpiar todos los mocks antes de cada prueba
             jest.clearAllMocks();
             
-            // Mock the reporteModel
+            // Mock del modelo de reporte
             const reporteModel = require('../../src/models/reporteModel');
             reporteModel.obtenerCargues = jest.fn().mockResolvedValue(mockCargues);
             
-            // Mock generarPDF to return a buffer-like object
+            // Mock de generarPDF para retornar un objeto similar a un buffer
             const pdfService = require('../../src/middlewares/pdfService');
             jest.spyOn(pdfService, 'generarPDF').mockResolvedValue(Buffer.from('mocked-pdf-buffer'));
             
-            // Mock nodemailer transport
+            // Mock del transporte de nodemailer
             mockTransport = {
                 sendMail: jest.fn().mockImplementation((mailOptions, callback) => {
-                    // Call the callback with success
+                    // Llamar al callback con éxito
                     callback(null, { messageId: 'test-message-id' });
-                    // Also return a promise for async/await support
+                    // También retornar una promesa para soporte async/await
                     return Promise.resolve({ messageId: 'test-message-id' });
                 })
             };
@@ -191,28 +191,28 @@ describe('PDF Service', () => {
             nodemailer.createTransport.mockReturnValue(mockTransport);
         });
 
-        it('should handle errors when sending email fails', async () => {
+        it('debe manejar errores al enviar el correo', async () => {
             // Arrange
             const testEmail = 'test@example.com';
-            const error = new Error('Failed to send email');
+            const error = new Error('Error al enviar el correo');
             
-            // Silence console.error for this test
+            // Silenciar console.error para esta prueba
             const originalConsoleError = console.error;
             console.error = jest.fn();
             
             try {
                 // Override the mock to simulate error
-                mockTransport.sendMail.mockImplementationOnce((mailOptions, callback) => {
+            mockTransport.sendMail.mockImplementationOnce((mailOptions, callback) => {
                     if (typeof callback === 'function') {
-                        callback(error);
+                callback(error);
                     }
-                    return Promise.reject(error);
-                });
-
-                // Act
+                return Promise.reject(error);
+            });
+            
+            // Act
                 const result = await enviarReportePorCorreo(testEmail);
-
-                // Assert
+            
+            // Assert
                 expect(require('nodemailer').createTransport).toHaveBeenCalled();
                 expect(mockTransport.sendMail).toHaveBeenCalled();
                 expect(result).toBe(false);

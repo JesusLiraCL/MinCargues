@@ -16,7 +16,7 @@ const usersModel = {
             LEFT JOIN roles ON usuarios.codigo_rol = roles.codigo_rol
             WHERE usuarios.eliminado = false`
         );
-        return result.rows || null;
+        return result.rows;
     },
 
     findByUsername: async (nombre_usuario) => {
@@ -102,15 +102,15 @@ const usersModel = {
             ]
         );
 
-        return result.rows[0] || null;
+        return { rowCount: result.rowCount || 0 };
     },
 
     deleteUser: async (nombre_usuario) => {
         const result = await db.query(
-            'UPDATE usuarios SET eliminado = true WHERE nombre_usuario = $1 AND eliminado = false RETURNING *',
+            'UPDATE usuarios SET eliminado = true WHERE nombre_usuario = $1',
             [nombre_usuario]
         );
-        return result.rows[0] || null;
+        return result;
     }
 };
 

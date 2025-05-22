@@ -24,7 +24,7 @@ describe('Auth Middleware', () => {
     });
 
     describe('isAuthenticated', () => {
-        it('should call next if user is authenticated', () => {
+        it('debe llamar a next cuando el usuario está autenticado', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(true);
             
@@ -36,7 +36,7 @@ describe('Auth Middleware', () => {
             expect(res.redirect).not.toHaveBeenCalled();
         });
 
-        it('should redirect to / if user is not authenticated', () => {
+        it('debe redirigir a / cuando el usuario no está autenticado', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(false);
             
@@ -50,7 +50,7 @@ describe('Auth Middleware', () => {
     });
 
     describe('isAdmin', () => {
-        it('should call next if user is authenticated and has admin role', () => {
+        it('debe llamar a next cuando el usuario es administrador', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(true);
             req.user = { codigo_rol: 'ROL001' };
@@ -63,7 +63,7 @@ describe('Auth Middleware', () => {
             expect(res.redirect).not.toHaveBeenCalled();
         });
 
-        it('should redirect to / if user is not authenticated', () => {
+        it('debe redirigir a / cuando el usuario no está autenticado', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(false);
             
@@ -75,7 +75,7 @@ describe('Auth Middleware', () => {
             expect(next).not.toHaveBeenCalled();
         });
 
-        it('should redirect to / if user has no role', () => {
+        it('debe redirigir a / cuando el usuario no tiene rol', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(true);
             req.user = {};
@@ -88,10 +88,10 @@ describe('Auth Middleware', () => {
             expect(next).not.toHaveBeenCalled();
         });
 
-        it('should redirect to / if user is not an admin', () => {
+        it('debe redirigir a / cuando el usuario no es administrador', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(true);
-            req.user = { codigo_rol: 'ROL002' }; // Non-admin role
+            req.user = { codigo_rol: 'ROL002' }; // No es administrador
             
             // Act
             authMiddleware.isAdmin(req, res, next);
@@ -103,7 +103,7 @@ describe('Auth Middleware', () => {
     });
 
     describe('isConductor', () => {
-        it('should call next if user is authenticated and has conductor role', () => {
+        it('debe llamar a next cuando el usuario es conductor', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(true);
             req.user = { codigo_rol: 'ROL002' };
@@ -116,7 +116,7 @@ describe('Auth Middleware', () => {
             expect(res.redirect).not.toHaveBeenCalled();
         });
 
-        it('should redirect to / if user is not authenticated', () => {
+        it('debe redirigir a / cuando el usuario no está autenticado', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(false);
             
@@ -128,10 +128,10 @@ describe('Auth Middleware', () => {
             expect(next).not.toHaveBeenCalled();
         });
 
-        it('should redirect to / if user is not a conductor', () => {
+        it('debe redirigir a / cuando el usuario no es conductor', () => {
             // Arrange
             req.isAuthenticated.mockReturnValue(true);
-            req.user = { codigo_rol: 'ROL001' }; // Admin role, not conductor
+            req.user = { codigo_rol: 'ROL001' }; // No es conductor
             
             // Act
             authMiddleware.isConductor(req, res, next);

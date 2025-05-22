@@ -60,7 +60,7 @@ describe('Cargue Middleware', () => {
             fecha_fin_programada: formatDate(dayAfterTomorrow)
         };
 
-        it('should call next for valid cargue data', async () => {
+        it('debe llamar a next cuando los datos del cargue son válidos', async () => {
             // Arrange
             req.body = { ...validCargue };
             
@@ -72,7 +72,7 @@ describe('Cargue Middleware', () => {
             expect(res.status).not.toHaveBeenCalled();
         });
 
-        it('should return error if cantidad is missing', async () => {
+        it('debe retornar error cuando falta el campo cantidad', async () => {
             // Arrange
             const invalidCargue = { ...validCargue, cantidad: undefined };
             req.body = invalidCargue;
@@ -90,7 +90,7 @@ describe('Cargue Middleware', () => {
             });
         });
 
-        it('should return error if placa is not found', async () => {
+        it('debe retornar error cuando no se encuentra la placa del camión', async () => {
             // Arrange
             camionModel.getCamionByPlaca.mockResolvedValueOnce(null);
             req.body = { ...validCargue };
@@ -108,7 +108,7 @@ describe('Cargue Middleware', () => {
             });
         });
 
-        it('should return error if material is not found', async () => {
+        it('debe retornar error cuando no se encuentra el material', async () => {
             // Arrange
             materialModel.getMaterialCodeByName.mockResolvedValueOnce(null);
             req.body = { ...validCargue };
@@ -126,7 +126,7 @@ describe('Cargue Middleware', () => {
             });
         });
 
-        it('should return error if cliente is not found by documento', async () => {
+        it('debe retornar error cuando no se encuentra el cliente por documento', async () => {
             // Arrange
             clienteModel.getClienteByDocumento.mockResolvedValueOnce(null);
             req.body = { ...validCargue };
@@ -144,7 +144,7 @@ describe('Cargue Middleware', () => {
             });
         });
 
-        it('should return error if conductor is not available', async () => {
+        it('debe retornar error cuando el conductor no está disponible', async () => {
             // Arrange
             cargueModel.getCarguesByConductor.mockResolvedValueOnce([{ id: 2 }]);
             req.body = { ...validCargue };
@@ -162,7 +162,7 @@ describe('Cargue Middleware', () => {
             });
         });
 
-        it('should return error if camion is not available', async () => {
+        it('debe retornar error cuando el camión no está disponible', async () => {
             // Arrange
             cargueModel.getCarguesByCamion.mockResolvedValueOnce([{ id: 2 }]);
             req.body = { ...validCargue };
@@ -180,9 +180,9 @@ describe('Cargue Middleware', () => {
             });
         });
 
-        it('should handle errors and return 500', async () => {
+        it('debe manejar errores inesperados y retornar 500', async () => {
             // Arrange
-            const error = new Error('Database error');
+            const error = new Error('Error de base de datos');
             jest.spyOn(console, 'error').mockImplementation(() => {}); // Mock console.error
             camionModel.getCamionByPlaca.mockRejectedValueOnce(error);
             req.body = { ...validCargue };
@@ -200,7 +200,6 @@ describe('Cargue Middleware', () => {
             });
             
             // Cleanup
-            console.error.mockRestore();
-        });
+            console.error.mockRestore();        });
     });
 });
